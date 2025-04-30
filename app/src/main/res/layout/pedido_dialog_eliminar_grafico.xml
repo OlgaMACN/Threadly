@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondoPantallas">
+
+    <TextView
+        android:id="@+id/txtVw_cabeceraDialogEliminarGrafico"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="@drawable/reutilizable_cabecera"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/cabeceraDialogEliminarGrafico"
+        android:textAlignment="center"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/txtVw_mensajeEliminar"
+        android:layout_width="297dp"
+        android:layout_height="106dp"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/mensajeEliminar"
+        android:textAlignment="center"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraDialogEliminarGrafico"
+        app:layout_constraintVertical_bias="0.055" />
+
+    <TextView
+        android:id="@+id/txtVw_nombreGrafico"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/nombreGrafico"
+        android:textColor="@color/red"
+        android:textSize="20dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_mensajeEliminar"
+        app:layout_constraintVertical_bias="0.050000012" />
+
+    <ImageView
+        android:id="@+id/imgVw_exclamacionVertical"
+        android:layout_width="96dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.55"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_nombreGrafico"
+        app:layout_constraintVertical_bias="0.060000002"
+        app:srcCompat="@drawable/img_exclamacion_vertical" />
+
+    <Button
+        android:id="@+id/btn_volver_pedido_dialog_eliminarGrafico"
+        android:layout_width="133dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/fondoBoton"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/volver_pedido"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.28"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imgVw_exclamacionVertical"
+        app:layout_constraintVertical_bias="0.110000014" />
+
+    <Button
+        android:id="@+id/btn_eliminarGrafico"
+        android:layout_width="133dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/fondoBoton"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/eliminarGrafico"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.269"
+        app:layout_constraintStart_toEndOf="@id/btn_volver_pedido_dialog_eliminarGrafico"
+        app:layout_constraintTop_toBottomOf="@id/imgVw_exclamacionVertical"
+        app:layout_constraintVertical_bias="0.111" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

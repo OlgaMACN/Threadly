@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@color/Cabeceras_y_Toolbar"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="16dp">
+
+    <TextView
+        android:id="@+id/txtVw_columnaNombreGrafico"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/columnaNombreGrafico"
+        android:textStyle="bold"
+        android:fontFamily="@font/catchy_mager"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/txtVw_columnaMadejasPedido"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/columnaMadejasPedido"
+        android:textStyle="bold"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:gravity="center" />
+</LinearLayout>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/img_login_no_existe">
+
+    <TextView
+        android:id="@+id/txtVw_bienvenidaNewUser"
+        android:layout_width="292dp"
+        android:layout_height="95dp"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/bienvenidaNewUser"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.19" />
+
+    <EditText
+        android:id="@+id/edTxt_ingresarNombreNewUser"
+        android:layout_width="234dp"
+        android:layout_height="61dp"
+        android:background="@drawable/reutilizable_campo_texto_redondeado"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:hint="@string/ingresarNombreUser"
+        android:inputType="text"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_bienvenidaNewUser"
+        app:layout_constraintVertical_bias="0.110000014" />
+
+    <!-- TODO Comentar a Sandra la elección de este ID -->
+    <EditText
+        android:id="@+id/edTxt_ingresarConstrasenaNewUser"
+        android:layout_width="234dp"
+        android:layout_height="61dp"
+        android:background="@drawable/reutilizable_campo_texto_redondeado"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:hint="@string/ingresarConstrasenaUser"
+        android:inputType="text"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edTxt_ingresarNombreNewUser"
+        app:layout_constraintVertical_bias="0.110000014" />
+
+    <Button
+        android:id="@+id/btn_ingresarThreadly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/fondoBoton"
+        android:text="@string/ingresarThreadly"
+        android:textColor="@color/textoCabecera_y_Botones"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edTxt_ingresarConstrasenaNewUser"
+        app:layout_constraintVertical_bias="0.19" />
+
+    <TextView
+        android:id="@+id/txtVw_agradecerRegistro"
+        android:layout_width="285dp"
+        android:layout_height="46dp"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/agradecerRegistro"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_ingresarThreadly"
+
+        app:layout_constraintVertical_bias="0.32999998" />
+</androidx.constraintlayout.widget.ConstraintLayout>

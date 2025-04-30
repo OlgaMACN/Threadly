@@ -1,0 +1,89 @@
+<resources>
+    <!-- REUTILIZABLE -->
+    <!-- Volver Stock -->
+    <string name="volver_stock">Volver</string>
+    <!-- Volver Pedido -->
+    <string name="volver_pedido">Volver</string>
+    <!-- Volver Pedido desde Gráfico -->
+    <string name="volver_grafico">Volver</string>
+
+    <!-- Splash (stock_aa_principal) -->
+    <string name="app_name">Threadly</string>
+
+    <!-- Login Existe (login_user_existe) -->
+    <string name="bienvenidaUser">Siempre es un buen momento para empezar a crear</string>
+    <string name="ingresarNombreUser">Nombre de Usuario</string>
+    <string name="ingresarConstrasenaUser">Contraseña</string>
+    <string name="crearCuenta">¿No tienes cuenta? Pincha aquí</string>
+    <string name="ingresarThreadly">Entrar</string>
+    <!-- Login No Existe (login_user_no_existe) -->
+    <string name="bienvenidaNewUser">¡Te damos la bienvenida a Threadly!</string>
+    <string name="agradecerRegistro">Gracias por confiar en nosotras</string>
+
+    <!-- Stock Personal (stock_aa_principal) -->
+    <string name="cabeceraStockPersonal">STOCK PERSONAL</string>
+    <string name="agregarHiloStk">Añadir Hilo</string>
+    <string name="botonAgregarMadejaStk">Añadir Madeja</string>
+    <string name="botonEliminarMadejaStk">Eliminar Madeja</string>
+    <!-- tabla stock cabecera (stock_tabla_filas_cabecera) -->
+    <string name="numeroHiloStk">Nº HILO</string>
+    <string name="numeroMadejasStk">Nº MADEJAS</string>
+    <!-- tabla stock filas (stock_tabla_filas_contenido) -->
+    <string name="hiloID">Hilo</string>
+    <string name="numeroMadejasTabla">Madejas</string>
+    <!--Dialog Agregar Hilo (stock_dialog_agregar_hilo) -->
+    <string name="cabeceraDialogAgregarHiloStk">AÑADIR HILO</string>
+    <string name="textoEntradaStk">Vamos a añadir un hilo a tu Stock Personal</string>
+    <string name="pedirHiloStk">Introduce el nº del hilo</string>
+    <string name="botonAgregarHiloStk">Guardar</string>
+    <!--Dialog Agregar Hilo Duplicado (stock_dialog_agregar_hilo_duplicado) -->
+    <string name="cabececeraUps">UPS...</string>
+    <string name="textoEntradaUps">El hilo ya contiene registros. ¿Deseas añadirle más madejas?</string>
+    <string name="alertMejorMadejasStk">Sí, quiero añadir madejas</string>
+    <string name="volverStockAlerta">No, me he equivocado</string>
+    <!--Dialog Eliminar Hilo (stock_dialog_eliminar_hilo) -->
+    <string name="cabeceraDialogEliminarHiloStk">ELIMINAR HILO</string>
+    <string name="confirmarEliminarHiloStk">¿Seguro que quieres borrar el hilo de tu stock personal?</string>
+    <string name="botonEliminarHiloStk">Sí, eliminar</string>
+    <!-- Dialog Añadir Madejas (stock_dialog_agregar_madeja) -->
+    <string name="cabeceraAgregarMadejaStk">AÑADIR MADEJAS</string>
+    <string name="textoAgregarMadejaStk">Número de madejas a añadir para el hilo: </string>
+    <string name="agregarMadejasStk">Nº de madejas a añadir</string>
+    <string name="madejasActualesStk">Actuales: </string>
+    <string name="guardarMadejaStk">Guardar</string>
+    <!-- Dialog Eliminar Madejas (stock_dialog_eliminar_madeja) -->
+    <string name="cabeceraEliminarMadejaStk">ELIMINAR MADEJAS</string>
+    <string name="textoEliminarMadejaInfoStk">Número de madejas a eliminar para el hilo: </string>
+    <string name="introducirNumMadejasEliminarStk">Nº de madejas a eliminar</string>
+    <string name="eliminarMadejaStk">Eliminar</string>
+
+    <!-- Pedido Hilos (pedidob_aa_principal) -->
+    <string name="cabeceraPedido">PEDIDO HILOS</string>
+    <string name="madejasTotalPedido">Total Madejas: </string>
+    <string name="agregarGraficoPedido">Añadir Gráfico</string>
+    <string name="descargarPedido">Descargar Pedido</string>
+    <string name="realizarPedido">Realizar Pedido</string>
+    <!-- tabla pedidos cabecera (pedido_tabla_filas_cabecera) -->
+    <string name="columnaNombreGrafico">NOMBRE</string>
+    <string name="columnaMadejasPedido">MADEJAS</string>
+    <!-- Dialog Añadir Gráfico (pedido_dialog_agregar_grafico) -->
+    <string name="cabeceraDialogAgregarGrafico">AÑADIR GRÁFICO AL PEDIDO</string>
+    <string name="pedirNombreGrafico">Nombre del gráfico</string>
+    <string name="pedirCountTela">Count de la tela (en número)</string>
+    <string name="guardarGrafico">Guardar</string>
+    <!-- Dialog Eliminar Gráfico (pedido_dialog_eliminar_grafico) -->
+    <string name="cabeceraDialogEliminarGrafico">ELIMINAR GRÁFICO DEL PEDIDO</string>
+    <string name="mensajeEliminar">¿Seguro que quieres eliminar este gráfico del pedido actual?</string>
+    <string name="nombreGrafico">Nombre</string>
+    <string name="eliminarGrafico">Eliminar</string>
+    <!-- Gráfico Individual (pedidob_aa_principal)  -->
+    <string name="cabeceraGrafico">NOMBRE GRÁFICO</string>
+    <string name="totalMadejasGraficoIndividual">Total Madejas: </string>
+    <string name="stockHiloActual">Stock: </string>
+    <string name="agregarHiloGraficoIndividual">Añadir Hilo</string>
+    <!-- tabla gráfico cabecera (pedidob_tabla_filas_cabecera_grafico) -->
+    <string name="columnaHiloGrafico">HILO</string>
+    <string name="columnaPuntadasGrafico">PUNTADAS</string>
+    <string name="columnaMadejasGrafico">MADEJAS</string>
+    <string name="columnaHilografico">PEDIR</string>
+</resources>

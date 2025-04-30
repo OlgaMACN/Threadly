@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="red">#FF0000</color>
+    <color name="Cabeceras_y_Toolbar">#72223b</color>
+    <color name="fondoPantallas">#ebdfe3</color>
+    <color name="fondoBoton">#72223b</color>
+    <color name="textoCabecera_y_Botones">#f3d9e0</color>
+    <color name="crearCuenta">#8d59e8</color>
+    <color name="fondoTextField">#fff5f4</color>
+    <color name="bordeTextField">#8c6472</color>
+
+</resources>

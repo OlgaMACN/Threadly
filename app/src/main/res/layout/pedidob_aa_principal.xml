@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondoPantallas">
+
+    <TextView
+        android:id="@+id/txtVw_cabeceraGrafico"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="@drawable/reutilizable_cabecera"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/cabeceraGrafico"
+        android:textAlignment="center"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/edTxt_buscadorGrafico"
+        android:layout_width="338dp"
+        android:layout_height="46dp"
+        android:background="@drawable/reutilizable_campo_texto_redondeado"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:inputType="text"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraGrafico"
+        app:layout_constraintVertical_bias="0.048" />
+
+    <ImageView
+        android:id="@+id/imgVw_lupaGrafico"
+        android:layout_width="38dp"
+        android:layout_height="43dp"
+        app:layout_constraintBottom_toBottomOf="@id/edTxt_buscadorGrafico"
+        app:layout_constraintEnd_toEndOf="@id/edTxt_buscadorGrafico"
+        app:layout_constraintHorizontal_bias="0.90"
+        app:layout_constraintStart_toStartOf="@id/edTxt_buscadorGrafico"
+        app:layout_constraintTop_toTopOf="@id/edTxt_buscadorGrafico"
+        app:srcCompat="@drawable/img_lupa" />
+
+    <TextView
+        android:id="@+id/txtVw_totalMadejasGraficoIndividual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/totalMadejasGraficoIndividual"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorGrafico"
+        app:layout_constraintVertical_bias="0.060" />
+
+    <TextView
+        android:id="@+id/txtVw_stockHiloActual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/stockHiloActual"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.52"
+        app:layout_constraintStart_toEndOf="@id/txtVw_totalMadejasGraficoIndividual"
+        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorGrafico"
+        app:layout_constraintVertical_bias="0.060" />
+
+    <!-- Tabla Gráfico Pedido -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tabla_grafico"
+        android:layout_width="305dp"
+        android:layout_height="294dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_totalMadejasGraficoIndividual"
+        app:layout_constraintVertical_bias="0.17000002" />
+
+    <Button
+        android:id="@+id/btn_volver_pedido_desde_grafico"
+        android:layout_width="109dp"
+        android:layout_height="49dp"
+        android:backgroundTint="@color/fondoBoton"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/volver_pedido"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabla_grafico"
+        app:layout_constraintVertical_bias="0.40" />
+
+    <Button
+        android:id="@+id/btn_agregarHiloGraficoIndividual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/fondoBoton"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/agregarHiloGraficoIndividual"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toEndOf="@id/btn_volver_pedido_desde_grafico"
+        app:layout_constraintTop_toBottomOf="@id/tabla_grafico"
+        app:layout_constraintVertical_bias="0.40" />
+
+    <!-- Reutilizar el layout del Toolbar -->
+    <include
+        android:id="@+id/reutil_toolbar"
+        layout="@layout/toolbar_layout"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <!-- No hay botón para eliminar hilo porque se mantendrá pulsado-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

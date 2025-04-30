@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:background="@color/Cabeceras_y_Toolbar"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+
+    <!-- Al poner 'weight' todos pesan lo mismo, así se distribuyen igualitariamente-->
+    <ImageButton
+        android:id="@+id/botonInicio"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/img_toolbar_home"
+        app:tint="@color/white" />
+    <!-- app:tint en vez de android:tint por la versión antigua que usamos -->
+
+    <ImageButton
+        android:id="@+id/botonCatalogo"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/img_toolbar_catalogo"
+        app:tint="@color/white" />
+
+    <ImageButton
+        android:id="@+id/botonStock"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/img_toolbar_stock"
+        app:tint="@color/white" />
+
+    <ImageButton
+        android:id="@+id/botonForo"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/img_toolbar_foro"
+        app:tint="@color/white" />
+
+    <ImageButton
+        android:id="@+id/botonPedido"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/img_toolbar_pedido"
+        app:tint="@color/white" />
+</LinearLayout>
