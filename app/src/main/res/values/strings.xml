@@ -20,6 +20,23 @@
     <string name="bienvenidaNewUser">¡Te damos la bienvenida a Threadly!</string>
     <string name="agradecerRegistro">Gracias por confiar en nosotras</string>
 
+    <!-- Pantalla de Inicio -->
+    <string name="principal_threadly">THREADLY</string>
+    <string name="saludo">Hola,</string>
+    <string name="mensaje_Stock">Stock Actual de Madejas</string>
+    <string name="mensaje_grafico">Último Gráfico añadido</string>
+    <string name="mensaje_tip">Tip del día</string>
+
+    <!-- Pantalla Datos Personales -->
+    <string name="datosPersonales">Datos Personales</string>
+    <string name="nombreUsuario">Nombre de Usuario : </string>
+    <string name="fotoPerfil">Foto de Perfil :</string>
+    <string name="miembroDesde">Miembro desde :</string>
+    <string name="botonModificar">Modificar Datos</string>
+    <string name="botonCerrarSesion">Cerrar Sesión</string>
+    <string name="botonEliminar">Eliminar Cuenta</string>
+    <string name="botonVolver">Volver</string>
+
     <!-- Stock Personal (stock_aa_principal) -->
     <string name="cabeceraStockPersonal">STOCK PERSONAL</string>
     <string name="agregarHiloStk">Añadir Hilo</string>
