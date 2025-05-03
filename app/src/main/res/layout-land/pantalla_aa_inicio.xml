@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondoPantallas">
+
+
+    <TextView
+        android:id="@+id/txtVw_principal_threadly"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/reutilizable_cabecera"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/principal_threadly"
+        android:textAlignment="center"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="96dp"
+        android:layout_height="97dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="115dp"
+        android:layout_marginBottom="236dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.002"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/avatar_ejemplo" />
+
+    <TextView
+        android:id="@+id/txtvw_saludo"
+        android:layout_width="96dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="29dp"
+        android:layout_marginEnd="114dp"
+        android:layout_marginBottom="184dp"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="left"
+        android:text="@string/saludo"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtVw_nombreUsuario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="29dp"
+        android:layout_marginEnd="85dp"
+        android:layout_marginBottom="143dp"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="left"
+        android:text="TextView"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtVw_mensaje_Stock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="236dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="242dp"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="left"
+        android:text="@string/mensaje_Stock"
+        android:textSize="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_principal_threadly" />
+
+    <TextView
+        android:id="@+id/txtVw_mensaje_grafico"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="236dp"
+        android:layout_marginEnd="253dp"
+        android:layout_marginBottom="1dp"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="left"
+        android:text="@string/mensaje_grafico"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_contenidoGrafico"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtVw_mensaje_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="239dp"
+        android:layout_marginEnd="297dp"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="left"
+        android:text="@string/mensaje_tip"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_contenidoStock"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtVw_contenidoStock"
+        android:layout_width="325dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="239dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="68dp"
+        android:background="@color/morado_claro"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtVw_contenidoGrafico"
+        android:layout_width="325dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="236dp"
+        android:layout_marginEnd="170dp"
+        android:layout_marginBottom="12dp"
+        android:background="@color/morado_palo"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_mensaje_tip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtVw_contenidoTip"
+        android:layout_width="325dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="236dp"
+        android:layout_marginEnd="170dp"
+        android:layout_marginBottom="21dp"
+        android:background="@color/morado_claro"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_mensaje_grafico"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_mensaje_Stock" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="51dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="81dp"
+        android:layout_marginTop="276dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="70dp"
+        android:background="@drawable/boton_redondo"
+        android:padding="6dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/configuraciones"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:tint="@color/textoCabecera_y_Botones" />
+
+    <include
+        android:id="@+id/reutil_toolbar"
+        layout="@layout/toolbar_layout"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
