@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="128dp"
-        android:layout_marginBottom="652dp"
+        android:layout_marginBottom="628dp"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/nombreUsuario"
         android:textSize="25sp"
@@ -60,13 +60,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="257dp"
-        android:layout_marginBottom="610dp"
+        android:layout_marginBottom="592dp"
         android:fontFamily="@font/catchy_mager"
         android:text="TextView"
         android:textColor="@color/morado_palo"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -75,12 +76,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="194dp"
-        android:layout_marginBottom="557dp"
+        android:layout_marginBottom="532dp"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/fotoPerfil"
         android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
@@ -89,64 +91,19 @@
         android:layout_height="94dp"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="244dp"
-        android:layout_marginBottom="445dp"
+        android:layout_marginBottom="416dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/avatar_ejemplo" />
-
-    <TextView
-        android:id="@+id/txtVw_miembroDesde"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="172dp"
-        android:layout_marginBottom="396dp"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/miembroDesde"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/txtVw_fecha"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="260dp"
-        android:layout_marginBottom="347dp"
-        android:fontFamily="@font/catchy_mager"
-        android:text="TextView"
-        android:textColor="@color/morado_palo"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btn_Volver"
-        android:layout_width="180dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="110dp"
-        android:layout_marginEnd="103dp"
-        android:layout_marginBottom="100dp"
-        android:backgroundTint="@color/morado_palo"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/botonVolver"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_EliminarCuenta" />
 
     <Button
         android:id="@+id/btn_ModificarDatos"
         android:layout_width="180dp"
         android:layout_height="51dp"
         android:layout_marginStart="110dp"
+        android:layout_marginTop="500dp"
         android:layout_marginEnd="103dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
@@ -156,8 +113,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtVw_fecha"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
+
+    <Button
+        android:id="@+id/btn_CerrarSesion"
+        android:layout_width="180dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="110dp"
+        android:layout_marginEnd="103dp"
+        android:backgroundTint="@color/morado_palo"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/botonCerrarSesion"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_EliminarCuenta"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_ModificarDatos" />
 
     <Button
         android:id="@+id/btn_EliminarCuenta"
@@ -176,20 +149,21 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_CerrarSesion" />
 
     <Button
-        android:id="@+id/btn_CerrarSesion"
+        android:id="@+id/btn_Volver"
         android:layout_width="180dp"
         android:layout_height="51dp"
         android:layout_marginStart="110dp"
         android:layout_marginEnd="103dp"
+        android:layout_marginBottom="100dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
-        android:text="@string/botonCerrarSesion"
+        android:text="@string/botonVolver"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_EliminarCuenta"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_ModificarDatos" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_EliminarCuenta" />
 
     <include
         android:id="@+id/reutil_toolbar"
