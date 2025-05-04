@@ -83,6 +83,14 @@
     <string name="introducirNumMadejasEliminarStk">Nº de madejas a eliminar</string>
     <string name="eliminarMadejaStk">Eliminar</string>
 
+    <!-- Pantalla Consultar Hilos -->
+    <string name="ConsultarHilosEncabezado">CONSULTAR HILOS</string>
+    <string name="buscarHiloConsulta">Buscar hilo...</string>
+    <string name="NumHiloConsulta">Nº Hilo</string>
+    <string name="nombreHiloConsulta">Nombre</string>
+    <string name="agregarHiloConsulta">Añadir Hilo</string>
+    <string name="modificarHiloConsulta">Modificar Hilo</string>
+
     <!-- Pedido Hilos (pedidob_aa_principal) -->
     <string name="cabeceraPedido">PEDIDO HILOS</string>
     <string name="madejasTotalPedido">Total Madejas: </string>

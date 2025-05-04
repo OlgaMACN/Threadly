@@ -7,7 +7,7 @@
     android:background="@color/fondoPantallas">
 
     <TextView
-        android:id="@+id/txtVw_principal_threadly"
+        android:id="@+id/txtVw_consultarHilosEncabezado"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:layout_marginBottom="666dp"
