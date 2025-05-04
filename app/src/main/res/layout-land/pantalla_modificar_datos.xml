@@ -8,7 +8,7 @@
 
 
     <TextView
-        android:id="@+id/txtVw_principal_threadly"
+        android:id="@+id/txtVw_consultarHilosEncabezado"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:layout_marginBottom="344dp"
@@ -40,7 +40,7 @@
         app:layout_constraintBottom_toTopOf="@+id/txtVw_cambiarNombre"
         app:layout_constraintEnd_toStartOf="@+id/txtVw_escogerImagen"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtVw_principal_threadly" />
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado" />
 
 
     <TextView
@@ -57,7 +57,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.784"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtVw_principal_threadly" />
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado" />
 
     <ImageView
         android:id="@+id/imgVw_avatar1"

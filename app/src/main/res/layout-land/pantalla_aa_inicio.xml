@@ -8,7 +8,7 @@
 
 
     <TextView
-        android:id="@+id/txtVw_principal_threadly"
+        android:id="@+id/txtVw_consultarHilosEncabezado"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:layout_marginBottom="12dp"
@@ -84,7 +84,7 @@
         android:textSize="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtVw_principal_threadly" />
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado" />
 
     <TextView
         android:id="@+id/txtVw_mensaje_grafico"
