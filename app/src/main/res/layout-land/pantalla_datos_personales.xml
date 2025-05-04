@@ -118,15 +118,4 @@
         tools:layout_editor_absoluteX="504dp"
         tools:layout_editor_absoluteY="157dp" />
 
-    <include
-        android:id="@+id/reutil_toolbar"
-        layout="@layout/toolbar_layout"
-        android:layout_width="0dp"
-        android:layout_height="70dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

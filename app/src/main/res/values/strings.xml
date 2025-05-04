@@ -6,6 +6,8 @@
     <string name="volver_pedido">Volver</string>
     <!-- Volver Pedido desde Gráfico -->
     <string name="volver_grafico">Volver</string>
+    <!-- Volver a pantalla anterior -->
+    <string name="botonVolver">Volver</string>
 
     <!-- Splash (stock_aa_principal) -->
     <string name="app_name">Threadly</string>
@@ -35,7 +37,14 @@
     <string name="botonModificar">Modificar Datos</string>
     <string name="botonCerrarSesion">Cerrar Sesión</string>
     <string name="botonEliminar">Eliminar Cuenta</string>
-    <string name="botonVolver">Volver</string>
+
+
+    <!-- Pantalla Datos Personales -->
+    <string name="modificarDatos">Modificar Datos</string>
+    <string name="escogerImagen">Escoge una imagen :</string>
+    <string name="cambiarNombre">Cambiar nombre de usuario :</string>
+    <string name="nuevoNombre">Introduce nuevo nombre de usuario...</string>
+    <string name="botonGuardarCambios">Guardar Cambios</string>
 
     <!-- Stock Personal (stock_aa_principal) -->
     <string name="cabeceraStockPersonal">STOCK PERSONAL</string>

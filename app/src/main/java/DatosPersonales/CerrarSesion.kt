@@ -1,4 +1,0 @@
-package DatosPersonales
-
-class CerrarSesion {
-}
