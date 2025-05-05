@@ -69,7 +69,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/fondoBoton"
         android:fontFamily="@font/catchy_mager"
-        android:text="@string/aregarGraficoPedido"
+        android:text="@string/agregarGraficoPedido"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
