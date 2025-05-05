@@ -44,7 +44,6 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:paddingEnd="50dp"
-
         android:hint="@string/ingresarConstrasenaUser"
         android:inputType="textPassword"
         android:textAlignment="center"

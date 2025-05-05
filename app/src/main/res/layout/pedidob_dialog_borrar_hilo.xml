@@ -21,7 +21,7 @@
         android:text="@string/cabeceraGrafico_dialog_deleteHilo"
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="25dp" />
+        android:textSize="25sp" />
 
     <TextView
         android:id="@+id/txtVw_textoInfo_dialog_deleteHilo"
@@ -31,7 +31,7 @@
         android:gravity="center"
         android:text="@string/textoInfo_dialog_deleteHilo"
         android:textAlignment="center"
-        android:textSize="25dp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
         android:gravity="center"
         android:text="@string/textoInfo_secundario_dialog_deleteHilo"
         android:textAlignment="center"
-        android:textSize="15dp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
