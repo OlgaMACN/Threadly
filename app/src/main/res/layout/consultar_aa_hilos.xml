@@ -93,6 +93,47 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btn_agregarHiloConsulta" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcd_Vw_consultarHilos"
+        android:layout_width="396dp"
+        android:layout_height="457dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="196dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.992" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/txtVw_numHiloConsulta"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/catchy_mager"
+                android:textSize="16sp"
+                android:textColor="@color/morado_palo"
+                android:text="@string/NumHiloConsulta" />
+
+            <TextView
+                android:id="@+id/nombreHiloConsulta"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:fontFamily="@font/catchy_mager"
+                android:textSize="16sp"
+                android:textColor="@color/morado_palo"
+                android:text="TextView" />
+        </LinearLayout>
+    </androidx.recyclerview.widget.RecyclerView>
+
     <include
         android:id="@+id/reutil_toolbar"
         layout="@layout/toolbar_layout"

@@ -37,6 +37,8 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.cardview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
