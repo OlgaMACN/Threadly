@@ -36,7 +36,6 @@
         app:layout_constraintTop_toBottomOf="@id/txtVw_bienvenidaNewUser"
         app:layout_constraintVertical_bias="0.110000014" />
 
-    <!-- TODO Comentar a Sandra la elección de este ID -->
     <EditText
         android:id="@+id/edTxt_ingresarConstrasenaNewUser"
         android:layout_width="234dp"
@@ -44,6 +43,8 @@
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
+        android:paddingEnd="50dp"
+
         android:hint="@string/ingresarConstrasenaUser"
         android:inputType="textPassword"
         android:textAlignment="center"
@@ -80,4 +81,19 @@
         app:layout_constraintTop_toBottomOf="@id/btn_ingresarThreadly"
 
         app:layout_constraintVertical_bias="0.32999998" />
+
+    <ImageView
+        android:id="@+id/imgVw_eye_closed"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="@id/edTxt_ingresarConstrasenaNewUser"
+        app:layout_constraintEnd_toEndOf="@id/edTxt_ingresarConstrasenaNewUser"
+        app:layout_constraintHorizontal_bias="0.86"
+        app:layout_constraintStart_toStartOf="@id/edTxt_ingresarConstrasenaNewUser"
+        app:layout_constraintTop_toTopOf="@id/edTxt_ingresarConstrasenaNewUser"
+        app:srcCompat="@drawable/eye_closed"
+        app:tint="@color/Cabeceras_y_Toolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

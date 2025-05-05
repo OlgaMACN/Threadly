@@ -46,6 +46,7 @@
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
+        android:paddingEnd="50dp"
         android:hint="@string/ingresarConstrasenaUser"
         android:inputType="textPassword"
         android:textAlignment="center"
@@ -96,5 +97,20 @@
         app:srcCompat="@drawable/img_logo_threadly_tranparente"
         tools:layout_editor_absoluteX="69dp"
         tools:layout_editor_absoluteY="583dp" />
+
+    <ImageView
+        android:id="@+id/imgVw_eye_closed"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="@id/edTxt_ingresarConstrasenaUser"
+        app:layout_constraintEnd_toEndOf="@id/edTxt_ingresarConstrasenaUser"
+        app:layout_constraintHorizontal_bias="0.86"
+        app:layout_constraintStart_toStartOf="@id/edTxt_ingresarConstrasenaUser"
+        app:layout_constraintTop_toTopOf="@id/edTxt_ingresarConstrasenaUser"
+        app:srcCompat="@drawable/eye_closed"
+        app:tint="@color/Cabeceras_y_Toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
