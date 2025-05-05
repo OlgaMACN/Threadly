@@ -1,4 +1,4 @@
-package Login
+package login
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

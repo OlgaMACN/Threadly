@@ -1,6 +1,6 @@
 package com.tuapp.tunombre
 
-import StockPersonal.StockItem
+import stock_personal.StockItem
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

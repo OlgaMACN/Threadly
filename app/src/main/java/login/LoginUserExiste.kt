@@ -1,4 +1,4 @@
-package Login
+package login
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,7 +14,7 @@ class LoginUserExiste : AppCompatActivity() {
         val crearCuenta = findViewById<TextView>(R.id.txtVw_crearCuenta)
 
         crearCuenta.setOnClickListener {
-            // Acción al hacer clic: ir a otra pantalla
+            /* en caso de no tener cuenta, redirigir a pantalla de LoginUserNoExiste */
             val intent = Intent(this, LoginUserNoExiste::class.java)
             startActivity(intent)
         }

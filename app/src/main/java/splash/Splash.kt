@@ -1,6 +1,6 @@
-package Splash
+package splash
 
-import Login.LoginUserExiste
+import login.LoginUserExiste
 import java.util.Timer
 import java.util.TimerTask
 import android.content.Intent
@@ -21,7 +21,7 @@ class Splash : AppCompatActivity() {
         setContentView(R.layout.splash_layout)
         val logo = findViewById<ImageView>(R.id.logoThreadly)
 
-        /* mostrar logo después de 2.5 segundos con una animación */
+        /* mostrar el logo después de 2.5 segundos con una animación */
         val timerLogo = Timer()
         timerLogo.schedule(object : TimerTask() {
             override fun run() {
