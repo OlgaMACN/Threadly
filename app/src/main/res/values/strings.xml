@@ -6,8 +6,16 @@
     <string name="volver_pedido">Volver</string>
     <!-- Volver Pedido desde Gráfico -->
     <string name="volver_grafico">Volver</string>
-    <!-- Volver a pantalla anterior -->
-    <string name="botonVolver">Volver</string>
+    <!-- Volver pantalla datos Personales desde Modificar Datos -->
+    <string name="volver_modificarDatos">Volver</string>
+    <!-- Volver pantalla inicio desde Datos Personales -->
+    <string name="volver_datosPersonales">Volver</string>
+    <!-- Volver pantalla consulta desde Agregar Hilo -->
+    <string name="volver_agregarHilo">Volver</string>
+
+    <!-- Guardar pantalla Agregar Hilo en Consultar Hilos -->
+    <string name="guardar_agregarHilo">Guardar</string>
+
 
     <!-- Splash (stock_aa_principal) -->
     <string name="app_name">Threadly</string>
@@ -88,8 +96,13 @@
     <string name="buscarHiloConsulta">Buscar hilo...</string>
     <string name="NumHiloConsulta">Nº Hilo</string>
     <string name="nombreHiloConsulta">Nombre</string>
-    <string name="agregarHiloConsulta">Añadir Hilo</string>
-    <string name="modificarHiloConsulta">Modificar Hilo</string>
+    <!-- Dialog Añadir Hilo (consultar_dialog_agregar_hilo) -->
+    <string name="agregarHiloConsulta">AÑADIR HILO</string>
+    <string name="agregarNumHilo">Introduce número de hilo...</string>
+    <string name="agregarNombreHilo">Introduce nombre de hilo...</string>
+    <!-- Dialog Modificar Hilo (consultar_dialog_modificar_hilo)-->
+    <string name="modificarHiloConsulta">MODIFICAR HILO</string>
+    <string name="introducirNumHilo">Introduce número de hilo...</string>
 
     <!-- Pedido Hilos (pedidob_aa_principal) -->
     <string name="cabeceraPedido">PEDIDO HILOS</string>

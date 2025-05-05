@@ -186,20 +186,20 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/botonGuardarCambios"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_VolverDatos"
+        app:layout_constraintEnd_toStartOf="@+id/btn_VolverModificarDatos"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btn_VolverDatos"
+        android:id="@+id/btn_VolverModificarDatos"
         android:layout_width="174dp"
         android:layout_height="48dp"
         android:layout_marginEnd="117dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
-        android:text="@string/botonVolver"
+        android:text="@string/volver_modificarDatos"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

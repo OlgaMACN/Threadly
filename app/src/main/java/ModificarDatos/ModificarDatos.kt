@@ -1,13 +1,13 @@
-package ConsultarHilos
+package ModificarDatos
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
 
-class ModificarHilo: AppCompatActivity () {
+class ModificarDatos : AppCompatActivity () {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.consultar_aa_hilos)
+        setContentView(R.layout.pantalla_modificar_datos)
     }
 }

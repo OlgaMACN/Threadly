@@ -142,14 +142,14 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/botonEliminar"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_Volver"
+        app:layout_constraintBottom_toTopOf="@+id/btn_VolverDatosPersonales"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_CerrarSesion" />
 
     <Button
-        android:id="@+id/btn_Volver"
+        android:id="@+id/btn_VolverDatosPersonales"
         android:layout_width="180dp"
         android:layout_height="51dp"
         android:layout_marginStart="110dp"
@@ -157,7 +157,7 @@
         android:layout_marginBottom="100dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
-        android:text="@string/botonVolver"
+        android:text="@string/volver_datosPersonales"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

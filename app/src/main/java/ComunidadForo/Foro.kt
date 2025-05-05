@@ -1,13 +1,13 @@
-package ModificarDatos
+package ComunidadForo
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
 
-class GuardarCambios : AppCompatActivity () {
+class Foro : AppCompatActivity () {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.pantalla_modificar_datos)
+//        setContentView(R.layout)
     }
 }
