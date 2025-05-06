@@ -5,8 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tuapp.tunombre.StockAdapter
 
-//class StockPersonal : AppCompatActivity() {
-//
+class StockPersonal : AppCompatActivity() {
+
 //    private lateinit var binding: ActivityStockPersonalBinding
 //    private lateinit var stockAdapter: StockAdapter
 //
@@ -28,5 +28,5 @@ import com.tuapp.tunombre.StockAdapter
 //            // Ejemplo de añadir un nuevo "hilo"
 //            stockAdapter.agregarHilo(StockItem("Hilo123", 5))
 //        }
-//    }
-//}
+
+}
