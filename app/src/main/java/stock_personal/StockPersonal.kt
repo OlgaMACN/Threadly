@@ -64,7 +64,6 @@ class StockPersonal : AppCompatActivity() {
         })
     }
 
-
     private fun dialogAgregarHilo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_agregar_hilo)
