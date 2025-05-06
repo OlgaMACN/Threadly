@@ -9,8 +9,8 @@
 
     <TextView
         android:id="@+id/txtVw_bienvenidaUser"
-        android:layout_width="315dp"
-        android:layout_height="144dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/bienvenidaUser"
@@ -20,32 +20,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.072" />
+        app:layout_constraintVertical_bias="0.100000024" />
 
     <EditText
         android:id="@+id/edTxt_ingresarNombreUser"
-        android:layout_width="234dp"
-        android:layout_height="61dp"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:hint="@string/ingresarNombreUser"
         android:inputType="text"
         android:textAlignment="center"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_bienvenidaUser"
-        app:layout_constraintVertical_bias="0.091" />
+        app:layout_constraintVertical_bias="0.063" />
 
     <EditText
         android:id="@+id/edTxt_ingresarConstrasenaUser"
-        android:layout_width="234dp"
-        android:layout_height="61dp"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
+        android:textSize="20sp"
         android:paddingEnd="50dp"
         android:hint="@string/ingresarConstrasenaUser"
         android:inputType="textPassword"
@@ -59,44 +61,46 @@
 
     <TextView
         android:id="@+id/txtVw_crearCuenta"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/crearCuenta"
         android:textAlignment="center"
         android:textColor="@color/crearCuenta"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/edTxt_ingresarConstrasenaUser"
-        app:layout_constraintVertical_bias="0.060000002" />
+        app:layout_constraintVertical_bias="0.13" />
 
     <Button
         android:id="@+id/btn_ingresarThreadly"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/fondoBoton"
         android:text="@string/ingresarThreadly"
         android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_crearCuenta"
-        app:layout_constraintVertical_bias="0.157" />
+        app:layout_constraintVertical_bias="0.100000024" />
 
     <ImageView
         android:id="@+id/img_logoThreadly"
-        android:layout_width="113dp"
-        android:layout_height="115dp"
+        android:layout_width="wrap_content"
+        android:layout_height="210dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_ingresarThreadly"
-        app:srcCompat="@drawable/img_logo_threadly_tranparente"
-        tools:layout_editor_absoluteX="69dp"
-        tools:layout_editor_absoluteY="583dp" />
+        app:layout_constraintVertical_bias="0.22000003"
+        app:srcCompat="@drawable/img_logo_threadly_tranparente" />
 
     <ImageView
         android:id="@+id/imgVw_eye_closed"
