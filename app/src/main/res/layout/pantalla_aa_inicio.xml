@@ -188,7 +188,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txtVw_mensaje_tip" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/imgBtn_configuracion"
         android:layout_width="70dp"
         android:layout_height="65dp"
         android:layout_marginStart="289dp"
