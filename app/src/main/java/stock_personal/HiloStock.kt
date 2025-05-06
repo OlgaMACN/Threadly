@@ -4,4 +4,5 @@ package stock_personal
 data class HiloStock(
     val hiloId: String,
     var madejas: Int
+
 )

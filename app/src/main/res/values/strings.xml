@@ -56,7 +56,7 @@
     <string name="cabeceraEliminarMadejaStk">ELIMINAR MADEJAS</string>
     <string name="textoEliminarMadejaInfoStk">Número de madejas a eliminar para el hilo: </string>
     <string name="introducirNumMadejasEliminarStk">Nº de madejas a eliminar</string>
-    <string name="eliminarMadejaStk">Eliminar</string>
+    <string name="eliminarMadejaStk">Eliminar Madeja</string>
 
     <!-- Pedido Hilos (pedidob_aa_principal) -->
     <string name="cabeceraPedido">PEDIDO HILOS</string>
