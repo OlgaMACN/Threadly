@@ -35,6 +35,7 @@
     <string name="cabeceraDialogAgregarHiloStk">AÑADIR HILO</string>
     <string name="textoEntradaStk">Vamos a añadir un hilo a tu Stock Personal</string>
     <string name="pedirHiloStk">Introduce el nº del hilo</string>
+    <string name="pedirMadejaStk">Introduce el nº de madejas</string>
     <string name="botonAgregarHiloStk">Guardar</string>
     <!--Dialog Agregar Hilo Duplicado (stock_dialog_agregar_hilo_duplicado) -->
     <string name="cabececeraUps">UPS...</string>
