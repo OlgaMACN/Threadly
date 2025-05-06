@@ -1,14 +1,11 @@
 package stock_personal
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.text.TextWatcher
+import android.text.Editable
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
-import kotlin.collections.mutableListOf
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +16,7 @@ class StockPersonal : AppCompatActivity() {
 
     private lateinit var tablaStock: RecyclerView
     private lateinit var adaptador: StockAdapter
-    private val listaStock: mutableListOf<StockItem>()
+    private val listaStock = mutableListOf<StockItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,23 +39,34 @@ class StockPersonal : AppCompatActivity() {
         btnAgregarMadeja.setOnClickListener { mostrarDialogModificarMadejas(true) }
         btnEliminarMadeja.setOnClickListener { mostrarDialogModificarMadejas(false) }
 
-        buscador.addTextChangedListener {
-            val query = it.toString()
-            val match = listaStock.find { item -> item.hiloId.contains(query, ignoreCase = true) }
-            if (match != null) {
-                val index = listaStock.indexOf(match)
-                tablaStock.scrollToPosition(index)
-            } else if (query.isNotEmpty()) {
-                Toast.makeText(this, "No cuentas con ese hilo en tu stock personal", Toast.LENGTH_SHORT).show()
+        buscador.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val query = s.toString()
+                val match =
+                    listaStock.find { item -> item.hiloId.contains(query, ignoreCase = true) }
+                if (match != null) {
+                    val index = listaStock.indexOf(match)
+                    tablaStock.scrollToPosition(index)
+                } else if (query.isNotEmpty()) {
+                    Toast.makeText(
+                        this@StockPersonal,
+                        "No cuentas con ese hilo en tu stock personal",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-        }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 
     private fun mostrarDialogAgregarHilo() {
         /* con layout inflater se pueden cargar layouts como vistas emergentes, perfecto para dialog */
         val dialogView = layoutInflater.inflate(R.layout.stock_dialog_agregar_hilo, null)
         val inputHilo = dialogView.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
-        val inputMadejas = dialogView.findViewById<EditText>(R.id.edTxt_introducirMadeja_dialog_addHilo)
+        val inputMadejas =
+            dialogView.findViewById<EditText>(R.id.edTxt_introducirMadeja_dialog_addHilo)
 
         AlertDialog.Builder(this)
             .setTitle("Agregar nuevo hilo")
@@ -69,10 +77,14 @@ class StockPersonal : AppCompatActivity() {
                 val madejas = inputMadejas.text.toString().toIntOrNull()
 
                 if (hilo.isEmpty() || madejas == null || madejas < 0) {
-                    Toast.makeText(this, "Sólo números enteros positivos o letras", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this,
+                        "Sólo números enteros positivos o letras",
+                        Toast.LENGTH_LONG
+                    ).show()
                     return@setPositiveButton
                 }
-
+                /* it es una palabra clave implícita en Kotlin usada para referirse al parámetro único de una función lambda.*/
                 if (listaStock.any { it.hiloId == hilo }) {
                     Toast.makeText(this, "El hilo '$hilo' ya existe", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
@@ -128,40 +140,4 @@ class StockPersonal : AppCompatActivity() {
     }
 }
 
-// Modelo
-data class StockItem(var hiloId: String, var madejas: Int)
 
-// Adaptador básico para RecyclerView
-class StockAdapter(
-    private val items: List<StockItem>,
-    private val onLongClick: (Int) -> Unit
-) : RecyclerView.Adapter<StockAdapter.StockViewHolder>() {
-
-    inner class StockViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val txtHilo: TextView = view.findViewById(R.id.txtVw_hiloID)
-        val txtMadejas: TextView = view.findViewById(R.id.txtVw_numeroMadejasTabla)
-
-        init {
-            view.setOnLongClickListener {
-                onLongClick(adapterPosition)
-                true
-            }
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_tabla_fila, parent, false)
-        return StockViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: StockViewHolder, position: Int) {
-        val item = items[position]
-        holder.txtHilo.text = item.hiloId
-        holder.txtMadejas.text = item.madejas.toString()
-    }
-
-    override fun getItemCount(): Int = items.size
-
-
-}
