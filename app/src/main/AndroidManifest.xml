@@ -32,13 +32,6 @@
         <activity
             android:name="stock_personal.StockPersonal"
             android:exported="true" />
-        <activity
-            android:name="stock_personal.AdaptadorStock"
-            android:exported="true" />
-        <activity
-            android:name="stock_personal.HiloStock"
-            android:exported="true" />
-
 
     </application>
 

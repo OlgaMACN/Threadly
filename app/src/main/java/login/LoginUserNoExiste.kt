@@ -1,5 +1,6 @@
 package login
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.widget.Button
@@ -8,6 +9,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
+import stock_personal.StockPersonal
 
 class LoginUserNoExiste : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +53,7 @@ class LoginUserNoExiste : AppCompatActivity() {
                 contrasena.text.clear()
             } else {
                 //TODO redirigir a pantalla de Sandra
-                // startActivity(Intent(this, PantallaInicioActivity::class.java))
+                startActivity(Intent(this, StockPersonal::class.java))
             }
         }
     }

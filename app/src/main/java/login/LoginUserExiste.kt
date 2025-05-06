@@ -55,7 +55,7 @@ class LoginUserExiste : AppCompatActivity() {
             } else {
                 /* en caso de tener cuenta, redirigir a la pantalla de inicio */
                 // TODO redirigir a pantalla de Sandra
-                startActivity(Intent(this, StockPersonal::class.java))
+                //startActivity(Intent(this, Sandra::class.java))
             }
         }
         /* en caso de no tenerla, redirigir a pantalla de LoginUserNoExiste mediante el textView */
