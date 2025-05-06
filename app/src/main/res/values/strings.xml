@@ -146,4 +146,8 @@
     <string name="columnaPuntadasGrafico">PUNTADAS</string>
     <string name="columnaMadejasGrafico">MADEJAS</string>
     <string name="columnaHilografico">PEDIR</string>
+
+    <!-- Comunidad Threadly/Foro (comunidad_aa_foro) -->
+    <string name="cabeceraForo">COMUNIDAD THREADLY</string>
+
 </resources>
