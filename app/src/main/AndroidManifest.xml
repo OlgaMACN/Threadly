@@ -30,6 +30,7 @@
 <!--        <activity android:name="CatalogoHilos.CatalogoHilos" />-->
         <activity android:name="CatalogoHilos.AgregarHilo" />
         <activity android:name="CatalogoHilos.ModificarHilo" />
+        <activity android:name="CatalogoHilos.ModificarHiloFinal" />
         <activity android:name="Toolbar.Toolbar" />
         <activity android:name="Foro.Foro" />
 

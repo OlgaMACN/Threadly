@@ -13,7 +13,7 @@ class AgregarHilo : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.consultar_dialog_agregar_hilo)
 
-        val numHilo = findViewById<EditText>(R.id.editTxt_agregarNumHilo)
+        val numHilo = findViewById<EditText>(R.id.editTxt_numHiloModificar)
 
         val nombreHilo = findViewById<EditText>(R.id.editTxt_agregarNombreHilo)
 
