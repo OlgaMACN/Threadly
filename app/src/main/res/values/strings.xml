@@ -16,6 +16,8 @@
     <string name="volver_modificarHilo">Volver</string>
     <!-- Volver dialog Modificar Hilo desde Modificar Hilo Final-->
     <string name="volver_modificarHiloFinal">Volver</string>
+    <!-- Volver pantalla respuestas tema desde responder tema-->
+    <string name="volver_respuestasTemaForo">Volver</string>
 
 
     <!-- Guardar pantalla Agregar Hilo en Consultar Hilos -->
@@ -149,5 +151,7 @@
 
     <!-- Comunidad Threadly/Foro (comunidad_aa_foro) -->
     <string name="cabeceraForo">COMUNIDAD THREADLY</string>
+    <string name="respuestaTema">Introduce tu respuesta...</string>
+    <string name="enviarRespuestaForo">Enviar</string>
 
 </resources>
