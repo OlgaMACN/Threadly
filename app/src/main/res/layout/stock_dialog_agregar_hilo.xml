@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="450dp"
     android:layout_height="wrap_content"
-    android:background="@color/fondoPantallas"
-    android:padding="24dp"
-    android:elevation="10dp">
+    android:background="@drawable/reutilizable_marco_dialog"
+    android:elevation="10dp"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/txtVw_cabeceraDialogAgregarHiloStk"
@@ -20,9 +19,9 @@
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textSize="25sp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtVw_textoEntradaStk"
@@ -33,9 +32,9 @@
         android:text="@string/textoEntradaStk"
         android:textAlignment="center"
         android:textSize="25sp"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraDialogAgregarHiloStk"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraDialogAgregarHiloStk" />
 
     <EditText
         android:id="@+id/edTxt_introducirHilo_dialog_addHilo"
@@ -48,9 +47,9 @@
         android:hint="@string/pedirHiloStk"
         android:inputType="text"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_textoEntradaStk"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_textoEntradaStk" />
 
     <EditText
         android:id="@+id/edTxt_introducirMadeja_dialog_addHilo"
@@ -63,20 +62,20 @@
         android:hint="@string/pedirMadejaStk"
         android:inputType="number"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirHilo_dialog_addHilo"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirHilo_dialog_addHilo" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirMadeja_dialog_addHilo"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirMadeja_dialog_addHilo">
 
         <Button
             android:id="@+id/btn_volver_stock_dialog_agregarHilo"
