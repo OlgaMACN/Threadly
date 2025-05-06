@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/img_login_existe">
+    android:background="@drawable/horizontal_login_existe">
 
 
     <TextView
@@ -39,7 +39,7 @@
         app:layout_constraintHorizontal_bias="0.20"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_bienvenidaUser"
-        app:layout_constraintVertical_bias="0.063" />
+        app:layout_constraintVertical_bias="0.100" />
 
     <EditText
         android:id="@+id/edTxt_ingresarConstrasenaUser"
@@ -58,7 +58,7 @@
         app:layout_constraintHorizontal_bias="0.27"
         app:layout_constraintStart_toEndOf="@id/edTxt_ingresarNombreUser"
         app:layout_constraintTop_toBottomOf="@id/txtVw_bienvenidaUser"
-        app:layout_constraintVertical_bias="0.069" />
+        app:layout_constraintVertical_bias="0.100" />
 
     <TextView
         android:id="@+id/txtVw_crearCuenta"
@@ -74,7 +74,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/edTxt_ingresarConstrasenaUser"
-        app:layout_constraintVertical_bias="0.08" />
+        app:layout_constraintVertical_bias="0.10" />
 
     <Button
         android:id="@+id/btn_ingresarThreadly"
@@ -93,7 +93,7 @@
     <ImageView
         android:id="@+id/img_logoThreadly"
         android:layout_width="wrap_content"
-        android:layout_height="150dp"
+        android:layout_height="125dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="parent"

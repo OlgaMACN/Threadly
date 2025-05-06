@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/img_login_no_existe">
+    android:background="@drawable/horizontal_login_no_existe">
 
     <TextView
         android:id="@+id/txtVw_bienvenidaNewUser"
@@ -28,14 +28,15 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:hint="@string/ingresarNombreUser"
-        android:textSize="20sp"
         android:inputType="text"
         android:textAlignment="center"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.20"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_bienvenidaNewUser"
-        app:layout_constraintVertical_bias="0.110000014" />
+        app:layout_constraintVertical_bias="0.100" />
 
     <EditText
         android:id="@+id/edTxt_ingresarConstrasenaNewUser"
@@ -44,16 +45,17 @@
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
-        android:paddingEnd="50dp"
-        android:textSize="20sp"
         android:hint="@string/ingresarConstrasenaUser"
         android:inputType="textPassword"
+        android:paddingEnd="50dp"
         android:textAlignment="center"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_ingresarNombreNewUser"
-        app:layout_constraintVertical_bias="0.110000014" />
+        app:layout_constraintHorizontal_bias="0.27"
+        app:layout_constraintStart_toEndOf="@id/edTxt_ingresarNombreNewUser"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_bienvenidaNewUser"
+        app:layout_constraintVertical_bias="0.100" />
 
     <Button
         android:id="@+id/btn_ingresarThreadly"
@@ -81,8 +83,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_ingresarThreadly"
-
-        app:layout_constraintVertical_bias="0.32999998" />
+        app:layout_constraintVertical_bias="0.25" />
 
     <ImageView
         android:id="@+id/imgVw_eye_closed"

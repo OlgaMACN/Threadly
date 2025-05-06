@@ -34,10 +34,6 @@ class LoginUserExiste : AppCompatActivity() {
             contrasena.setSelection(contrasena.text.length) // para poner el cursor de escritura al final
         }
 
-        // TODO poner texto en negrita pese a que el hint esté en gris y fuente diferente
-        // TODO por qué sale el cifrado de contraseña en canijo y luego en grande
-
-
         /* acción de ingresar a la aplicación, validando los datos */
         val btnEntrar = findViewById<Button>(R.id.btn_ingresarThreadly)
         btnEntrar.setOnClickListener {
