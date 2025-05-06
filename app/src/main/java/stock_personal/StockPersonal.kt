@@ -15,15 +15,15 @@ import com.threadly.R
 class StockPersonal : AppCompatActivity() {
 
     private lateinit var tablaStock: RecyclerView
-    private lateinit var adaptador: StockAdapter
-    private val listaStock = mutableListOf<StockItem>()
+    private lateinit var adaptador: AdaptadorStock
+    private val listaStock = mutableListOf<HiloStock>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.stock_aa_principal)
 
         tablaStock = findViewById(R.id.tabla_stock)
-        adaptador = StockAdapter(listaStock, ::onItemLongClick)
+        adaptador = AdaptadorStock(listaStock, ::onItemLongClick)
         /* elementos de la tabla en vertical gracias al LinearLayoutManager */
         tablaStock.layoutManager = LinearLayoutManager(this)
         tablaStock.adapter = adaptador
@@ -90,7 +90,7 @@ class StockPersonal : AppCompatActivity() {
                     return@setPositiveButton
                 }
 
-                listaStock.add(StockItem(hilo, madejas))
+                listaStock.add(HiloStock(hilo, madejas))
                 adaptador.notifyDataSetChanged()
             }.show()
     }

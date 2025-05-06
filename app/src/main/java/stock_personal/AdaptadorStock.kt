@@ -7,10 +7,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 
-class StockAdapter(
-    private val items: List<StockItem>,
+class AdaptadorStock(
+    private val items: List<HiloStock>,
     private val onLongClick: (Int) -> Unit
-) : RecyclerView.Adapter<StockAdapter.StockViewHolder>() {
+) : RecyclerView.Adapter<AdaptadorStock.StockViewHolder>() {
 
     inner class StockViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtHilo: TextView = view.findViewById(R.id.txtVw_hiloID)
@@ -26,7 +26,7 @@ class StockAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_tabla_fila, parent, false)
+            .inflate(R.layout.stock_tabla_filas_contenido, parent, false)
         return StockViewHolder(view)
     }
 

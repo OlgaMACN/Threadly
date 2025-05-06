@@ -26,8 +26,8 @@
     <string name="botonAgregarMadejaStk">Añadir Madeja</string>
     <string name="botonEliminarMadejaStk">Eliminar Madeja</string>
     <!-- tabla stock cabecera (stock_tabla_filas_cabecera) -->
-    <string name="numeroHiloStk">Nº HILO</string>
-    <string name="numeroMadejasStk">Nº MADEJAS</string>
+    <string name="numeroHiloStk">HILO</string>
+    <string name="numeroMadejasStk">MADEJAS</string>
     <!-- tabla stock filas (stock_tabla_filas_contenido) -->
     <string name="hiloID">Hilo</string>
     <string name="numeroMadejasTabla">Madejas</string>

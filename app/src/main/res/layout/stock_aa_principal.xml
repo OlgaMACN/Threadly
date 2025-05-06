@@ -58,6 +58,7 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/agregarHiloStk"
         android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,15 +67,27 @@
         app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraStockPersonal"
         app:layout_constraintVertical_bias="0.048" />
 
+    <!-- Cabecera fija para que no se mueva al hacer scroll -->
+    <include
+        android:id="@+id/cabecera_tabla_stock"
+        layout="@layout/stock_tabla_filas_cabecera"
+        android:layout_width="395dp"
+        android:layout_height="25dp"
+        app:layout_constraintBottom_toTopOf="@id/tabla_stock"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_agregarHiloStk" />
+
     <!-- Tabla Stock -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabla_stock"
-        android:layout_width="300dp"
-        android:layout_height="323dp"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        android:layout_width="395dp"
+        android:layout_height="320dp"
+        app:layout_constraintBottom_toTopOf="@id/btn_agregarMadejaStk"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorPedido"
+        app:layout_constraintTop_toBottomOf="@id/cabecera_tabla_stock"
         app:layout_constraintVertical_bias="0.30" />
 
     <Button
@@ -85,6 +98,7 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/botonAgregarMadejaStk"
         android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -101,10 +115,11 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/eliminarMadejaStk"
         android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.36"
+        app:layout_constraintHorizontal_bias="0.20"
         app:layout_constraintStart_toEndOf="@id/btn_agregarMadejaStk"
         app:layout_constraintTop_toBottomOf="@id/tabla_stock"
         app:layout_constraintVertical_bias="0.32" />
