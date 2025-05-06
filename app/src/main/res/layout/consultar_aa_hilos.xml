@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
+    <EditText
         android:id="@+id/txtVw_buscarHiloConsulta"
         android:layout_width="279dp"
         android:layout_height="45dp"
@@ -37,31 +37,35 @@
         android:gravity="center"
         android:hint="@string/buscarHiloConsulta"
         android:textAlignment="center"
+        android:inputType="number"
         android:textColorHint="@color/morado_palo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado"
-        app:layout_constraintVertical_bias="0.167" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="txtVw_buscarHiloConsulta,imageView2" />
+        app:constraint_referenced_ids="txtVw_buscarHiloConsulta,imgVw_lupaConsultar" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/imgVw_lupaConsultar"
         android:layout_width="45dp"
         android:layout_height="45dp"
+        android:layout_marginStart="268dp"
         android:layout_marginTop="92dp"
-        android:layout_marginEnd="284dp"
+        android:layout_marginEnd="1dp"
         android:layout_marginBottom="714dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.025"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.17"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/img_lupa" />
 
     <Button
@@ -75,20 +79,20 @@
         android:text="@string/boton_agregarHiloConsulta"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_VolverConsulta"
+        app:layout_constraintEnd_toStartOf="@+id/btn_modificarHiloConsulta"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btn_VolverConsulta"
+        android:id="@+id/btn_modificarHiloConsulta"
         android:layout_width="214dp"
         android:layout_height="78dp"
         android:layout_marginEnd="57dp"
         android:layout_marginBottom="108dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
-        android:text="@string/volver_modificarDatos"
+        android:text="@string/boton_ModificarHiloConsulta"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

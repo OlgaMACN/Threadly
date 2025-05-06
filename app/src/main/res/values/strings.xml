@@ -105,6 +105,7 @@
     <string name="NumHiloConsulta">Nº Hilo</string>
     <string name="nombreHiloConsulta">Nombre</string>
     <string name="boton_agregarHiloConsulta">Añadir hilo</string>
+    <string name="boton_ModificarHiloConsulta">Modificar hilo</string>
     <!-- Dialog Añadir Hilo (consultar_dialog_agregar_hilo) -->
     <string name="agregarHiloConsulta">AÑADIR HILO</string>
     <string name="agregarNumHilo">Introduce un número...</string>

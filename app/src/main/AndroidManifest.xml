@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Threadly"
         tools:targetApi="31">
         <activity
-            android:name="PantallaInicio.PantallaPrincipal"
+            android:name="CatalogoHilos.CatalogoHilos"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,8 +27,7 @@
         <activity android:name="PantallaInicio.DatosPersonales"/>
         <activity android:name="PantallaInicio.ModificarDatos" />
         <activity android:name="StockPersonal.StockPersonal" />
-        <activity android:name="CatalogoHilos.ConsultarHilo" />
-        <activity android:name="CatalogoHilos.CatalogoHilos" />
+<!--        <activity android:name="CatalogoHilos.CatalogoHilos" />-->
         <activity android:name="CatalogoHilos.AgregarHilo" />
         <activity android:name="CatalogoHilos.ModificarHilo" />
         <activity android:name="Toolbar.Toolbar" />
