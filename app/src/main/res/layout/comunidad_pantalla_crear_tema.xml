@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondoPantallas">
+
+    <TextView
+        android:id="@+id/txtVw_consultarHilosEncabezado"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_marginBottom="786dp"
+        android:background="@drawable/reutilizable_cabecera"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/cabeceraForo"
+        android:textAlignment="center"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/txtVw_tituloTemaForo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="58dp"
+        android:layout_marginTop="39dp"
+        android:layout_marginEnd="273dp"
+        android:layout_marginBottom="714dp"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="start"
+        android:text="@string/tituloTemaForo"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado" />
+
+    <TextView
+        android:id="@+id/txtVw_hintTituloTema"
+        android:layout_width="301dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="46dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="46dp"
+        android:layout_marginBottom="646dp"
+        android:background="@drawable/reutilizable_campo_texto_redondeado"
+        android:gravity="center"
+        android:hint="@string/hintTituloTema"
+        android:textColorHint="@color/morado_palo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_tituloTemaForo" />
+
+    <TextView
+        android:id="@+id/txtVw_contenidoTemaForo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="58dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="227dp"
+        android:layout_marginBottom="553dp"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/contenidoTemaForo"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_hintTituloTema" />
+
+    <TextView
+        android:id="@+id/txtVw_hintContenidoTema"
+        android:layout_width="349dp"
+        android:layout_height="296dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="233dp"
+        android:background="@drawable/reutilizable_campo_texto_redondeado"
+        android:gravity="center"
+        android:hint="@string/hintContenidoTema"
+        android:textColorHint="@color/morado_palo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/btn_crearTemaForo"
+        android:layout_width="142dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="57dp"
+        android:layout_marginBottom="115dp"
+        android:backgroundTint="@color/morado_palo"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/botonCrearTemaForo"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_volverRespuestaTemaForo"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/btn_volverRespuestaTemaForo"
+        android:layout_width="142dp"
+        android:layout_height="61dp"
+        android:layout_marginTop="57dp"
+        android:layout_marginEnd="44dp"
+        android:layout_marginBottom="115dp"
+        android:backgroundTint="@color/morado_palo"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/volver_respuestasTemaForo"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_crearTemaForo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <include
+        android:id="@+id/reutil_toolbar"
+        layout="@layout/toolbar_layout"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

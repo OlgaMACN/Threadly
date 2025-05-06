@@ -151,7 +151,16 @@
 
     <!-- Comunidad Threadly/Foro (comunidad_aa_foro) -->
     <string name="cabeceraForo">COMUNIDAD THREADLY</string>
+
+    <!-- Comunidad Threadly/Foro (comunidad_pantalla_tema_respuesta) -->
     <string name="respuestaTema">Introduce tu respuesta...</string>
     <string name="enviarRespuestaForo">Enviar</string>
+
+    <!-- Comunidad Threadly/Foro (comunidad_pantalla_crear_tema) -->
+    <string name="tituloTemaForo">Título</string>
+    <string name="contenidoTemaForo">Contenido</string>
+    <string name="hintTituloTema">Introduce un título...</string>
+    <string name="hintContenidoTema">Introduce tu contenido...</string>
+    <string name="botonCrearTemaForo">Crear</string>
 
 </resources>

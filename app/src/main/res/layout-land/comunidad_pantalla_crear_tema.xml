@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondoPantallas">
+
+    <TextView
+        android:id="@+id/txtVw_consultarHilosEncabezado"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_marginBottom="344dp"
+        android:background="@drawable/reutilizable_cabecera"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/cabeceraForo"
+        android:textAlignment="center"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtVw_tituloTemaForo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="84dp"
+        android:layout_marginEnd="638dp"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="start"
+        android:text="@string/tituloTemaForo"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtVw_hintTituloTema"
+        android:layout_width="497dp"
+        android:layout_height="57dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="128dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginBottom="18dp"
+        android:background="@drawable/reutilizable_campo_texto_redondeado"
+        android:gravity="center"
+        android:hint="@string/hintTituloTema"
+        android:textColorHint="@color/morado_palo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/txtVw_contenidoTemaForo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="415dp"
+        android:layout_marginBottom="3dp"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/contenidoTemaForo"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_hintContenidoTema"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_hintTituloTema" />
+
+    <TextView
+        android:id="@+id/txtVw_hintContenidoTema"
+        android:layout_width="497dp"
+        android:layout_height="87dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginBottom="87dp"
+        android:background="@drawable/reutilizable_campo_texto_redondeado"
+        android:gravity="center"
+        android:hint="@string/hintContenidoTema"
+        android:textColorHint="@color/morado_palo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/btn_volverRespuestaTemaForo"
+        android:layout_width="142dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginEnd="34dp"
+        android:layout_marginBottom="84dp"
+        android:backgroundTint="@color/morado_palo"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/volver_respuestasTemaForo"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_crearTemaForo"
+        android:layout_width="142dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="192dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="13dp"
+        android:backgroundTint="@color/morado_palo"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/botonCrearTemaForo"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_volverRespuestaTemaForo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.996"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/reutil_toolbar"
+        layout="@layout/toolbar_layout"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
