@@ -40,8 +40,10 @@
         android:textColorHint="@color/morado_palo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado" />
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado"
+        app:layout_constraintVertical_bias="0.167" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group"
@@ -54,24 +56,24 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginTop="92dp"
-        android:layout_marginEnd="84dp"
+        android:layout_marginEnd="284dp"
         android:layout_marginBottom="714dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintVertical_bias="0.17"
         app:srcCompat="@drawable/img_lupa" />
 
     <Button
         android:id="@+id/btn_agregarHiloConsulta"
-        android:layout_width="135dp"
-        android:layout_height="48dp"
+        android:layout_width="214dp"
+        android:layout_height="78dp"
         android:layout_marginStart="56dp"
-        android:layout_marginBottom="99dp"
+        android:layout_marginBottom="108dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
-        android:text="@string/agregarHiloConsulta"
-        android:textSize="16sp"
+        android:text="@string/boton_agregarHiloConsulta"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_VolverConsulta"
         app:layout_constraintHorizontal_bias="0.5"
@@ -80,14 +82,14 @@
 
     <Button
         android:id="@+id/btn_VolverConsulta"
-        android:layout_width="135dp"
-        android:layout_height="48dp"
+        android:layout_width="214dp"
+        android:layout_height="78dp"
         android:layout_marginEnd="57dp"
-        android:layout_marginBottom="99dp"
+        android:layout_marginBottom="108dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/volver_modificarDatos"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

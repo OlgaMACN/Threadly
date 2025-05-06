@@ -12,10 +12,16 @@
     <string name="volver_datosPersonales">Volver</string>
     <!-- Volver pantalla consulta desde Agregar Hilo -->
     <string name="volver_agregarHilo">Volver</string>
+    <!-- Volver pantalla consulta desde Modificar Hilo-->
+    <string name="volver_modificarHilo">Volver</string>
+    <!-- Volver dialog Modificar Hilo desde Modificar Hilo Final-->
+    <string name="volver_modificarHiloFinal">Volver</string>
+
 
     <!-- Guardar pantalla Agregar Hilo en Consultar Hilos -->
     <string name="guardar_agregarHilo">Guardar</string>
-
+    <!-- Guardar pantalla Agregar Hilo en Consultar Hilos -->
+    <string name="guardar_modificarHilo">Guardar</string>
 
     <!-- Splash (stock_aa_principal) -->
     <string name="app_name">Threadly</string>
@@ -96,13 +102,20 @@
     <string name="buscarHiloConsulta">Buscar hilo...</string>
     <string name="NumHiloConsulta">Nº Hilo</string>
     <string name="nombreHiloConsulta">Nombre</string>
+    <string name="boton_agregarHiloConsulta">Añadir hilo</string>
     <!-- Dialog Añadir Hilo (consultar_dialog_agregar_hilo) -->
     <string name="agregarHiloConsulta">AÑADIR HILO</string>
-    <string name="agregarNumHilo">Introduce número de hilo...</string>
-    <string name="agregarNombreHilo">Introduce nombre de hilo...</string>
+    <string name="agregarNumHilo">Introduce un número...</string>
+    <string name="agregarNombreHilo">Introduce un nombre...</string>
     <!-- Dialog Modificar Hilo (consultar_dialog_modificar_hilo)-->
     <string name="modificarHiloConsulta">MODIFICAR HILO</string>
     <string name="introducirNumHilo">Introduce número de hilo...</string>
+    <string name="marcarCampos">Marca los campos que deseas modificar :</string>
+    <string name="numHiloModificar">Número</string>
+    <string name="nombreHiloModificar">Nombre</string>
+    <string name="botonSiguiente">Siguiente</string>
+    <string name="introducirNumHiloModificar">Introduce un número...</string>
+    <string name="introducirNombreHiloModificar">Introduce un nombre...</string>
 
     <!-- Pedido Hilos (pedidob_aa_principal) -->
     <string name="cabeceraPedido">PEDIDO HILOS</string>

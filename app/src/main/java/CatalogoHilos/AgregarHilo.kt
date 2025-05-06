@@ -1,14 +1,13 @@
-package PantallaPrincipal
+package CatalogoHilos
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
 
-
-class PantallaPrincipal : AppCompatActivity() {
+class AgregarHilo : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.pantalla_aa_inicio)
+        setContentView(R.layout.consultar_dialog_agregar_hilo)
     }
 }

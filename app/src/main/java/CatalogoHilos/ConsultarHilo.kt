@@ -1,13 +1,13 @@
-package ComunidadForo
+package CatalogoHilos
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
 
-class Foro : AppCompatActivity () {
+class ConsultarHilo : AppCompatActivity () {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout)
+        setContentView(R.layout.consultar_aa_hilos)
     }
 }
