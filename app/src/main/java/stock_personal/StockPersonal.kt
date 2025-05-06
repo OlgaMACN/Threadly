@@ -1,5 +1,6 @@
 package stock_personal
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
@@ -134,6 +135,7 @@ class StockPersonal : AppCompatActivity() {
         btnGuardar.isEnabled = false
 
         inputHilo.addTextChangedListener(object : TextWatcher {
+            @SuppressLint("SetTextI18n")
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val hilo = s.toString().uppercase().trim()
                 val item = listaStock.find { it.hiloId == hilo }
@@ -195,6 +197,7 @@ class StockPersonal : AppCompatActivity() {
         var hiloEncontrado: HiloStock? = null
 
         inputHilo.addTextChangedListener(object : TextWatcher {
+            @SuppressLint("SetTextI18n")
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val hilo = s.toString().uppercase().trim()
                 hiloEncontrado = listaStock.find { it.hiloId == hilo }
