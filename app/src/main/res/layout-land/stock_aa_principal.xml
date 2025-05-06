@@ -25,19 +25,19 @@
 
     <EditText
         android:id="@+id/edTxt_buscadorPedido"
-        android:layout_width="170dp"
+        android:layout_width="350dp"
         android:layout_height="50dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:inputType="text"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.02"
+        app:layout_constraintHorizontal_bias="0.15"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraStockPersonal"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.030" />
 
     <ImageView
         android:id="@+id/imgVw_lupaStock"
@@ -52,7 +52,7 @@
 
     <Button
         android:id="@+id/btn_agregarHiloStk"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/fondoBoton"
         android:fontFamily="@font/catchy_mager"
@@ -62,10 +62,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.02"
+        app:layout_constraintHorizontal_bias="0.65"
         app:layout_constraintStart_toEndOf="@id/edTxt_buscadorPedido"
         app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraStockPersonal"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.20" />
 
     <!-- Cabecera fija para que no se mueva al hacer scroll -->
     <include
@@ -73,11 +73,12 @@
         layout="@layout/stock_tabla_filas_cabecera"
         android:layout_width="395dp"
         android:layout_height="25dp"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.10"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraStockPersonal"
-        app:layout_constraintVertical_bias="0.30" />
+        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorPedido"
+        app:layout_constraintVertical_bias="0.060" />
 
     <!-- Tabla Stock con cabecera fija -->
 
@@ -87,14 +88,16 @@
         android:layout_height="155dp"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.10"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cabecera_tabla_stock"
-        tools:layout_editor_absoluteX="109dp"
-        tools:layout_editor_absoluteY="36dp" />
+        app:layout_constraintVertical_bias="0.0" />
+
+    <!-- Reutilizar el layout del Toolbar -->
 
     <Button
         android:id="@+id/btn_agregarMadejaStk"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/fondoBoton"
         android:fontFamily="@font/catchy_mager"
@@ -104,10 +107,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.02"
-        app:layout_constraintStart_toEndOf="@id/btn_agregarHiloStk"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraStockPersonal"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintHorizontal_bias="0.65"
+        app:layout_constraintStart_toEndOf="@id/edTxt_buscadorPedido"
+        app:layout_constraintTop_toBottomOf="@id/btn_agregarHiloStk"
+        app:layout_constraintVertical_bias="0.20" />
 
     <Button
         android:id="@+id/btn_eliminarMadejaStk"
@@ -121,12 +124,11 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.20"
-        app:layout_constraintStart_toEndOf="@id/btn_agregarMadejaStk"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraStockPersonal"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintHorizontal_bias="0.65"
+        app:layout_constraintStart_toEndOf="@id/edTxt_buscadorPedido"
+        app:layout_constraintTop_toBottomOf="@id/btn_agregarMadejaStk"
+        app:layout_constraintVertical_bias="0.40" />
 
-    <!-- Reutilizar el layout del Toolbar -->
     <include
         android:id="@+id/reutil_toolbar"
         layout="@layout/toolbar_layout"
