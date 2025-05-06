@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/imgBtn_CrearTema"
         android:layout_width="70dp"
         android:layout_height="65dp"
         android:layout_marginStart="289dp"

@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/edtTxt_respuestaForo"
         android:layout_width="645dp"
         android:layout_height="59dp"
         android:layout_marginStart="43dp"

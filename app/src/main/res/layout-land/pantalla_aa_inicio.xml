@@ -112,7 +112,7 @@
         android:text="@string/mensaje_tip"
         android:textSize="25dp"
         app:layout_constraintBottom_toTopOf="@+id/txtVw_contenidoStock"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton"
+        app:layout_constraintEnd_toStartOf="@+id/imgBtn_CrearTema"
         app:layout_constraintHorizontal_bias="0.39"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -173,7 +173,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txtVw_mensaje_Stock" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/imgBtn_CrearTema"
         android:layout_width="51dp"
         android:layout_height="54dp"
         android:layout_marginStart="81dp"
