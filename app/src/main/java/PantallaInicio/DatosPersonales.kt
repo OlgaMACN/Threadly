@@ -25,8 +25,8 @@ class DatosPersonales : AppCompatActivity () {
         //caso 1. Modificar datos
         btn_modificarDatos.setOnClickListener() {
 
-            val intent = Intent (this, ModificarDatos::class.java)
-            startActivity(intent)
+            val intentModificarDatos = Intent (this, ModificarDatos::class.java)
+            startActivity(intentModificarDatos)
         }
 
         //caso 2. Cerrar sesión
