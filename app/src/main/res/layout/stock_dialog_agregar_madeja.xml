@@ -43,6 +43,7 @@
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
+        android:textSize="20sp"
         android:hint="@string/pedirHiloStk"
         android:inputType="number"
         android:textAlignment="center"
@@ -60,6 +61,7 @@
         android:gravity="center"
         android:hint="@string/agregarMadejasStk"
         android:inputType="number"
+        android:textSize="20sp"
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@id/edTxt_agregarMadejasStk_hilo"
         app:layout_constraintStart_toStartOf="parent"
@@ -97,6 +99,7 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/volver_stock"
+            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
             android:textStyle="bold" />
 
@@ -112,6 +115,7 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/guardarMadejaStk"
+            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
             android:textStyle="bold" />
     </LinearLayout>

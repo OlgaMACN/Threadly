@@ -15,7 +15,8 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/hiloID"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/txtVw_numeroMadejasTabla"
@@ -25,5 +26,6 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/numeroMadejasTabla"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="20sp" />
 </LinearLayout>

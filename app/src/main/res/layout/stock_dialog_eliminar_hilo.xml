@@ -70,6 +70,7 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/volver_stock"
+            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
             android:textStyle="bold" />
 
@@ -85,6 +86,7 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/botonEliminarHiloStk"
+            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
             android:textStyle="bold" />
     </LinearLayout>

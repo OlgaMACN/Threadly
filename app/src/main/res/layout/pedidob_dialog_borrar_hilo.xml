@@ -4,8 +4,8 @@
     android:layout_width="450dp"
     android:layout_height="wrap_content"
     android:background="@drawable/reutilizable_marco_dialog"
-    android:padding="24dp"
-    android:elevation="10dp">
+    android:elevation="10dp"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/txtVw_cabeceraGrafico_dialog_deleteHilo"
@@ -18,9 +18,9 @@
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textSize="25sp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtVw_textoInfo_dialog_deleteHilo"
@@ -32,9 +32,9 @@
         android:text="@string/textoInfo_dialog_deleteHilo"
         android:textAlignment="center"
         android:textSize="22sp"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraGrafico_dialog_deleteHilo"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraGrafico_dialog_deleteHilo" />
 
     <TextView
         android:id="@+id/txtVw_textoInfo_secundario_dialog_deleteHilo"
@@ -46,20 +46,20 @@
         android:text="@string/textoInfo_secundario_dialog_deleteHilo"
         android:textAlignment="center"
         android:textSize="15sp"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_textoInfo_dialog_deleteHilo"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_textoInfo_dialog_deleteHilo" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_textoInfo_secundario_dialog_deleteHilo"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_textoInfo_secundario_dialog_deleteHilo">
 
         <Button
             android:id="@+id/btn_volver_dialog_pedidob_deleteHilo"
@@ -70,6 +70,7 @@
             android:fontFamily="@font/catchy_mager"
             android:text="@string/volver_grafico"
             android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <Space
@@ -85,6 +86,7 @@
             android:fontFamily="@font/catchy_mager"
             android:text="@string/guardarHilo_dialog_deleteHilo"
             android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
 

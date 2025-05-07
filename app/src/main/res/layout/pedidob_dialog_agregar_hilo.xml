@@ -4,8 +4,8 @@
     android:layout_width="450dp"
     android:layout_height="wrap_content"
     android:background="@drawable/reutilizable_marco_dialog"
-    android:padding="24dp"
-    android:elevation="10dp">
+    android:elevation="10dp"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/txtVw_cabeceraGrafico_dialog_addHilo"
@@ -18,9 +18,9 @@
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textSize="25sp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/edTxt_introducirHilo_dialog_addHilo"
@@ -33,9 +33,10 @@
         android:hint="@string/introducirHilo_dialog_addHilo"
         android:inputType="text"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraGrafico_dialog_addHilo"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraGrafico_dialog_addHilo" />
 
     <EditText
         android:id="@+id/edTxt_introducirPuntadas_dialog_addHilo"
@@ -48,20 +49,21 @@
         android:hint="@string/introducirPuntadas_dialog_addHilo"
         android:inputType="number"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirHilo_dialog_addHilo"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirHilo_dialog_addHilo" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirPuntadas_dialog_addHilo"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirPuntadas_dialog_addHilo">
 
         <Button
             android:id="@+id/btn_volver_dialog_pedidob_addHilo"
@@ -72,6 +74,7 @@
             android:fontFamily="@font/catchy_mager"
             android:text="@string/volver_grafico"
             android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <Space
@@ -87,6 +90,7 @@
             android:fontFamily="@font/catchy_mager"
             android:text="@string/guardarHilo_dialog_addHilo"
             android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
 

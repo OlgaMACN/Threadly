@@ -81,6 +81,7 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/volver_stock"
+            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
             android:textStyle="bold" />
 
@@ -93,6 +94,7 @@
             android:layout_width="0dp"
             android:layout_height="47dp"
             android:layout_weight="1"
+            android:textSize="20sp"
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/eliminarMadejaStk"

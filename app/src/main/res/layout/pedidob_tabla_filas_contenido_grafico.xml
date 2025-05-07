@@ -15,7 +15,8 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/textoHiloGrafico"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/txtVw_textoPuntadasGrafico"
@@ -25,7 +26,8 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/textoPuntadasGrafico"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/txtVw_textoMadejasGrafico"
@@ -35,7 +37,8 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/textoMadejasGrafico"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/txtVw_textoHilografico"
@@ -45,5 +48,6 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/textoHilografico"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="15sp" />
 </LinearLayout>

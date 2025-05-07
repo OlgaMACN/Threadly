@@ -30,6 +30,7 @@
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
+        android:textSize="20sp"
         android:inputType="text"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
