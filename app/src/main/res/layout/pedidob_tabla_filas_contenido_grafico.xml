@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@color/fondoPantallas"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp">
+
+    <TextView
+        android:id="@+id/txtVw_textoHiloGrafico"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/textoHiloGrafico"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/txtVw_textoPuntadasGrafico"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/textoPuntadasGrafico"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/txtVw_textoMadejasGrafico"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/textoMadejasGrafico"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/txtVw_textoHilografico"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/textoHilografico"
+        android:textColor="@color/black" />
+</LinearLayout>

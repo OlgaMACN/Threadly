@@ -8,22 +8,22 @@
     android:paddingHorizontal="16dp">
 
     <TextView
-        android:id="@+id/txtVw_hiloID"
+        android:id="@+id/txtVw_textoNombreGrafico"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
-        android:text="@string/hiloID"
+        android:text="@string/textoNombreGrafico"
         android:textColor="@color/black" />
 
     <TextView
-        android:id="@+id/txtVw_numeroMadejasTabla"
+        android:id="@+id/txtVw_textoMadejasPedido"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
-        android:text="@string/numeroMadejasTabla"
+        android:text="@string/textoMadejasPedido"
         android:textColor="@color/black" />
 </LinearLayout>

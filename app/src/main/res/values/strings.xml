@@ -90,6 +90,11 @@
     <string name="columnaPuntadasGrafico">PUNTADAS</string>
     <string name="columnaMadejasGrafico">MADEJAS</string>
     <string name="columnaHilografico">PEDIR</string>
+    <!-- tabla gráfico contenido (pedidob_tabla_filas_contenido_grafico) -->
+    <string name="textoHiloGrafico">Hilo</string>
+    <string name="textoPuntadasGrafico">Puntadas</string>
+    <string name="textoMadejasGrafico">Madejas</string>
+    <string name="textoHilografico">Pedir</string>
     <!-- Dialog Añadir Hilo (pedidob_dialog_agregar_hilo) -->
     <string name="cabeceraGrafico_dialog_addHilo">AÑADIR HILO</string>
     <string name="introducirHilo_dialog_addHilo">Introduce el nº del hilo</string>
