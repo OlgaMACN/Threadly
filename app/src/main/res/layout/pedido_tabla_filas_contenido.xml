@@ -14,6 +14,7 @@
         android:layout_weight="1"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
+        android:textSize="20sp"
         android:text="@string/textoNombreGrafico"
         android:textColor="@color/black" />
 
@@ -24,6 +25,7 @@
         android:layout_weight="1"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
+        android:textSize="20sp"
         android:text="@string/textoMadejasPedido"
         android:textColor="@color/black" />
 </LinearLayout>

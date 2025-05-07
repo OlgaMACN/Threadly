@@ -51,8 +51,8 @@
 
     <ImageView
         android:id="@+id/imgVw_exclamacionVertical"
-        android:layout_width="96dp"
-        android:layout_height="100dp"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
         android:layout_marginTop="12dp"
         app:srcCompat="@drawable/img_exclamacion_vertical"
         app:layout_constraintTop_toBottomOf="@id/txtVw_nombreGrafico"
@@ -78,6 +78,7 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/volver_pedido"
+            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
             android:textStyle="bold" />
 
@@ -93,6 +94,7 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/eliminarGrafico"
+            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
             android:textStyle="bold" />
     </LinearLayout>

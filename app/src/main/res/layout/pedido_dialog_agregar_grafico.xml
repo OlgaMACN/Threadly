@@ -30,6 +30,7 @@
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:hint="@string/pedirNombreGrafico"
+        android:textSize="20sp"
         android:inputType="text"
         android:gravity="center"
         android:textAlignment="center"
@@ -46,6 +47,7 @@
         android:fontFamily="@font/catchy_mager"
         android:hint="@string/pedirCountTela"
         android:inputType="number"
+        android:textSize="20sp"
         android:gravity="center"
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@id/edTxt_pedirNombreGrafico"
@@ -71,6 +73,7 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/volver_pedido"
+            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
             android:textStyle="bold" />
 
@@ -86,6 +89,7 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/guardarGrafico"
+            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
             android:textStyle="bold" />
     </LinearLayout>

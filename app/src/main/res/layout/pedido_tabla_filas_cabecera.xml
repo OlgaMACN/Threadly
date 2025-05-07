@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/columnaNombreGrafico"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:fontFamily="@font/catchy_mager"
         android:textColor="@color/textoCabecera_y_Botones"
@@ -25,6 +26,7 @@
         android:layout_weight="1"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/columnaMadejasPedido"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/textoCabecera_y_Botones"
         android:gravity="center" />
