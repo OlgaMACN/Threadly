@@ -12,15 +12,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Threadly"
         tools:targetApi="31">
+        <!-- IMPORTANTE: Declarar todas las activities utilizadas -->
         <activity
-            android:name="Foro.Foro"
-            android:exported="true">
+            android:name="splash.Splash"
+                       android:exported="true">
             <intent-filter>
+                <!-- Y el splash será el que dará inicio a la ejecución, de ahí estas etiquetas-->
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="login.LoginUserExiste"
+            android:exported="true" />
+        <activity
+            android:name="login.LoginUserNoExiste"
+            android:exported="true" />
+        <activity
+            android:name="stock_personal.StockPersonal"
+            android:exported="true" />
+
         <!--aqui declaramos el resto de activities para poder navegar-->
         <activity android:name="Login.LoginUserExiste" />
         <activity android:name="Login.LoginUserNoExiste" />

@@ -1,100 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/fondoPantallas">
-
+    android:layout_width="450dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/reutilizable_marco_dialog"
+    android:elevation="10dp"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/txtVw_cabeceraEliminarMadejaStk"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
         android:background="@drawable/reutilizable_cabecera"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/cabeceraEliminarMadejaStk"
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="25sp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/txtVw_textoEliminarMadejaStk"
-        android:layout_width="291dp"
-        android:layout_height="65dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/textoEliminarMadejaInfoStk"
         android:textAlignment="center"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="25sp"
         app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraEliminarMadejaStk"
-        app:layout_constraintVertical_bias="0.079" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/edTxt_introducirNumMadejasEliminarStk"
-        android:layout_width="292dp"
-        android:layout_height="64dp"
+        android:layout_width="0dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:hint="@string/introducirNumMadejasEliminarStk"
-        android:inputType="text"
+        android:inputType="number"
         android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_textoEliminarMadejaStk"
-        app:layout_constraintVertical_bias="0.069" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/txtVw_madejasActualesStk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/madejasActualesStk"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="25sp"
         app:layout_constraintTop_toBottomOf="@id/edTxt_introducirNumMadejasEliminarStk"
-        app:layout_constraintVertical_bias="0.06999999" />
-
-    <Button
-        android:id="@+id/btn_eliminarMadejaConfirmarStk"
-        android:layout_width="220dp"
-        android:layout_height="54dp"
-        android:backgroundTint="@color/fondoBoton"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/eliminarMadejaStk"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/txtVw_madejasActualesStk"
-        app:layout_constraintVertical_bias="0.08" />
-
-    <Button
-        android:id="@+id/btn_volver_stock_dialog_eliminarMadeja"
-        android:layout_width="220dp"
-        android:layout_height="54dp"
-        android:backgroundTint="@color/fondoBoton"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/volver_stock"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_eliminarMadejaConfirmarStk"
-        app:layout_constraintVertical_bias="0.08" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/btn_volver_stock_dialog_eliminarMadeja"
+            android:layout_width="0dp"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/fondoBoton"
+            android:fontFamily="@font/catchy_mager"
+            android:text="@string/volver_stock"
+            android:textSize="20sp"
+            android:textColor="@color/textoCabecera_y_Botones"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <Button
+            android:id="@+id/btn_eliminarMadejaConfirmarStk"
+            android:layout_width="0dp"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:backgroundTint="@color/fondoBoton"
+            android:fontFamily="@font/catchy_mager"
+            android:text="@string/eliminarMadejaStk"
+            android:textColor="@color/textoCabecera_y_Botones"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

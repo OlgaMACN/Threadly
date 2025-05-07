@@ -3,8 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/fondoPantallas">
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/reutilizable_marco_dialog"
+    android:elevation="10dp"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/txtVw_cabeceraDialogEliminarHiloStk"
@@ -16,7 +19,7 @@
         android:text="@string/cabeceraDialogEliminarHiloStk"
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="25dp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,16 +33,16 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/confirmarEliminarHiloStk"
         android:textAlignment="center"
-        android:textSize="25dp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.23000002" />
+        app:layout_constraintVertical_bias="0.29000002" />
 
     <ImageView
         android:id="@+id/img_carrete_alerta"
-        android:layout_width="131dp"
+        android:layout_width="100dp"
         android:layout_height="108dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,37 +51,44 @@
         app:layout_constraintVertical_bias="0.060000002"
         app:srcCompat="@drawable/img_carrete" />
 
-    <Button
-        android:id="@+id/btn_volver_stock_dialog_eliminarHilo"
-        android:layout_width="114dp"
-        android:layout_height="44dp"
-        android:backgroundTint="@color/fondoBoton"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/volver_stock"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.23"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/img_carrete_alerta"
-        app:layout_constraintVertical_bias="0.19" />
-
-    <Button
-        android:id="@+id/btn_botonEliminarHiloStk"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="64dp"
-        android:backgroundTint="@color/fondoBoton"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/botonEliminarHiloStk"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.17"
-        app:layout_constraintStart_toEndOf="@id/btn_volver_stock_dialog_agregarHilo"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/img_carrete_alerta"
-        app:layout_constraintVertical_bias="0.193" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/btn_volver_stock_dialog_eliminarHilo"
+            android:layout_width="0dp"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/fondoBoton"
+            android:fontFamily="@font/catchy_mager"
+            android:text="@string/volver_stock"
+            android:textSize="20sp"
+            android:textColor="@color/textoCabecera_y_Botones"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <Button
+            android:id="@+id/btn_botonEliminarHiloStk"
+            android:layout_width="0dp"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/fondoBoton"
+            android:fontFamily="@font/catchy_mager"
+            android:text="@string/botonEliminarHiloStk"
+            android:textSize="20sp"
+            android:textColor="@color/textoCabecera_y_Botones"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

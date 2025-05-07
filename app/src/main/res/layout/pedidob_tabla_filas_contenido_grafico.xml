@@ -2,56 +2,52 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@color/Cabeceras_y_Toolbar"
+    android:background="@color/fondoPantallas"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingHorizontal="16dp">
 
     <TextView
-        android:id="@+id/txtVw_columnaHiloGrafico"
+        android:id="@+id/txtVw_textoHiloGrafico"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
-        android:text="@string/columnaHiloGrafico"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="15sp"
-        android:textStyle="bold" />
+        android:text="@string/textoHiloGrafico"
+        android:textColor="@color/black"
+        android:textSize="15sp" />
 
     <TextView
-        android:id="@+id/txtVw_columnaPuntadasGrafico"
+        android:id="@+id/txtVw_textoPuntadasGrafico"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
-        android:text="@string/columnaPuntadasGrafico"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="15sp"
-        android:textStyle="bold" />
+        android:text="@string/textoPuntadasGrafico"
+        android:textColor="@color/black"
+        android:textSize="15sp" />
 
     <TextView
-        android:id="@+id/txtVw_columnaMadejasGrafico"
+        android:id="@+id/txtVw_textoMadejasGrafico"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
-        android:text="@string/columnaMadejasGrafico"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="15sp"
-        android:textStyle="bold" />
+        android:text="@string/textoMadejasGrafico"
+        android:textColor="@color/black"
+        android:textSize="15sp" />
 
     <TextView
-        android:id="@+id/txtVw_columnaHilografico"
+        android:id="@+id/txtVw_textoHilografico"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
-        android:text="@string/columnaHilografico"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="15sp"
-        android:textStyle="bold" />
+        android:text="@string/textoHilografico"
+        android:textColor="@color/black"
+        android:textSize="15sp" />
 </LinearLayout>

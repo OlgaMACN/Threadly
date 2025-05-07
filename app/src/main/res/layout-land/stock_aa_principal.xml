@@ -7,16 +7,16 @@
     android:background="@color/fondoPantallas">
 
     <TextView
-        android:id="@+id/txtVw_cabeceraPedido"
+        android:id="@+id/txtVw_cabeceraStockPersonal"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:background="@drawable/reutilizable_cabecera"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
-        android:text="@string/cabeceraPedido"
+        android:text="@string/cabeceraStockPersonal"
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="25dp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,119 +25,111 @@
 
     <EditText
         android:id="@+id/edTxt_buscadorPedido"
-        android:layout_width="338dp"
-        android:layout_height="46dp"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:inputType="text"
+        android:textSize="20sp"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraPedido"
-        app:layout_constraintVertical_bias="0.048" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraStockPersonal"
+        app:layout_constraintVertical_bias="0.030" />
 
     <ImageView
-        android:id="@+id/imgVw_lupaPedido"
+        android:id="@+id/imgVw_lupaStock"
         android:layout_width="38dp"
         android:layout_height="43dp"
         app:layout_constraintBottom_toBottomOf="@id/edTxt_buscadorPedido"
         app:layout_constraintEnd_toEndOf="@id/edTxt_buscadorPedido"
-        app:layout_constraintHorizontal_bias="0.90"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@id/edTxt_buscadorPedido"
         app:layout_constraintTop_toTopOf="@id/edTxt_buscadorPedido"
         app:srcCompat="@drawable/img_lupa" />
 
-    <TextView
-        android:id="@+id/txtVw_madejasTotalPedido"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/madejasTotalPedido"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.16"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorPedido"
-        app:layout_constraintVertical_bias="0.060" />
-
     <Button
-        android:id="@+id/btn_agregarGraficoPedido"
-        android:layout_width="wrap_content"
+        android:id="@+id/btn_agregarHiloStk"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/fondoBoton"
         android:fontFamily="@font/catchy_mager"
-        android:text="@string/agregarGraficoPedido"
+        android:text="@string/agregarHiloStk"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.65"
-        app:layout_constraintStart_toEndOf="@id/txtVw_madejasTotalPedido"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorPedido"
-        app:layout_constraintVertical_bias="0.050" />
+        app:layout_constraintStart_toEndOf="@id/edTxt_buscadorPedido"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraStockPersonal"
+        app:layout_constraintVertical_bias="0.20" />
 
     <!-- Cabecera fija para que no se mueva al hacer scroll -->
     <include
-        android:id="@+id/tabla_pedido"
-        layout="@layout/pedido_tabla_filas_cabecera"
+        android:id="@+id/cabecera_tabla_stock"
+        layout="@layout/stock_tabla_filas_cabecera"
         android:layout_width="395dp"
         android:layout_height="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.10"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_agregarGraficoPedido"
-        app:layout_constraintVertical_bias="0.05" />
-    <!-- Tabla Todos los Gráficos del Pedido -->
+        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorPedido"
+        app:layout_constraintVertical_bias="0.060" />
+
+    <!-- Tabla Stock con cabecera fija -->
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tabla_pedido"
+        android:id="@+id/tabla_stock"
         android:layout_width="395dp"
-        android:layout_height="323dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabla_pedido"
-        app:layout_constraintVertical_bias="0.647" />
-
-    <Button
-        android:id="@+id/btn_descargarPedido"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/fondoBoton"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/descargarPedido"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_height="155dp"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintHorizontal_bias="0.10"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabla_pedido"
-        app:layout_constraintVertical_bias="0.40" />
-
-    <Button
-        android:id="@+id/btn_realizarPedido"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/fondoBoton"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/realizarPedido"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.40"
-        app:layout_constraintStart_toEndOf="@id/btn_descargarPedido"
-        app:layout_constraintTop_toBottomOf="@id/tabla_pedido"
-        app:layout_constraintVertical_bias="0.40" />
+        app:layout_constraintTop_toBottomOf="@id/cabecera_tabla_stock"
+        app:layout_constraintVertical_bias="0.0" />
 
     <!-- Reutilizar el layout del Toolbar -->
+
+    <Button
+        android:id="@+id/btn_agregarMadejaStk"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/fondoBoton"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/botonAgregarMadejaStk"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.65"
+        app:layout_constraintStart_toEndOf="@id/edTxt_buscadorPedido"
+        app:layout_constraintTop_toBottomOf="@id/btn_agregarHiloStk"
+        app:layout_constraintVertical_bias="0.20" />
+
+    <Button
+        android:id="@+id/btn_eliminarMadejaStk"
+        android:layout_width="200dp"
+        android:layout_height="49dp"
+        android:backgroundTint="@color/fondoBoton"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/eliminarMadejaStk"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.65"
+        app:layout_constraintStart_toEndOf="@id/edTxt_buscadorPedido"
+        app:layout_constraintTop_toBottomOf="@id/btn_agregarMadejaStk"
+        app:layout_constraintVertical_bias="0.40" />
+
     <include
         android:id="@+id/reutil_toolbar"
         layout="@layout/toolbar_layout"
@@ -149,5 +141,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <!-- No hay botón para eliminar gráfico porque se mantendrá pulsado-->
+    <!-- No hay botón para eliminar hilo porque se mantendrá pulsado-->
+
 </androidx.constraintlayout.widget.ConstraintLayout>

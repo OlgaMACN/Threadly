@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/fondoPantallas">
+    android:layout_width="450dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/reutilizable_marco_dialog"
+    android:elevation="10dp"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/txtVw_cabeceraGrafico_dialog_deleteHilo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="65dp"
         android:background="@drawable/reutilizable_cabecera"
         android:fontFamily="@font/catchy_mager"
@@ -21,66 +17,77 @@
         android:text="@string/cabeceraGrafico_dialog_deleteHilo"
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="25dp" />
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtVw_textoInfo_dialog_deleteHilo"
-        android:layout_width="277dp"
-        android:layout_height="85dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/textoInfo_dialog_deleteHilo"
         android:textAlignment="center"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraGrafico_dialog_deleteHilo"
-        app:layout_constraintVertical_bias="0.100000024" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraGrafico_dialog_deleteHilo" />
+
     <TextView
         android:id="@+id/txtVw_textoInfo_secundario_dialog_deleteHilo"
-        android:layout_width="277dp"
-        android:layout_height="85dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/textoInfo_secundario_dialog_deleteHilo"
         android:textAlignment="center"
-        android:textSize="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_textoInfo_dialog_deleteHilo"
-        app:layout_constraintVertical_bias="0.02" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_textoInfo_dialog_deleteHilo" />
 
-    <Button
-        android:id="@+id/btn_volver_dialog_pedidob_deleteHilo"
-        android:layout_width="114dp"
-        android:layout_height="44dp"
-        android:backgroundTint="@color/fondoBoton"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/volver_grafico"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textStyle="bold"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.28"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_textoInfo_secundario_dialog_deleteHilo"
-        app:layout_constraintVertical_bias="0.06" />
-    <Button
-        android:id="@+id/btn_guardarHilo_dialog_deleteHilo"
-        android:layout_width="114dp"
-        android:layout_height="44dp"
-        android:backgroundTint="@color/fondoBoton"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/guardarHilo_dialog_deleteHilo"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.28"
-    app:layout_constraintStart_toEndOf="@id/btn_volver_dialog_pedidob_deleteHilo"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_textoInfo_secundario_dialog_deleteHilo"
-        app:layout_constraintVertical_bias="0.06" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_textoInfo_secundario_dialog_deleteHilo">
+
+        <Button
+            android:id="@+id/btn_volver_dialog_pedidob_deleteHilo"
+            android:layout_width="0dp"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/fondoBoton"
+            android:fontFamily="@font/catchy_mager"
+            android:text="@string/volver_grafico"
+            android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <Button
+            android:id="@+id/btn_guardarHilo_dialog_deleteHilo"
+            android:layout_width="0dp"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/fondoBoton"
+            android:fontFamily="@font/catchy_mager"
+            android:text="@string/guardarHilo_dialog_deleteHilo"
+            android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

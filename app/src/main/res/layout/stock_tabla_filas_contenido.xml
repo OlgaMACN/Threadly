@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@color/fondoPantallas"
-    android:orientation="horizontal"
     android:gravity="center_vertical"
+    android:orientation="horizontal"
     android:paddingHorizontal="16dp">
 
     <TextView
@@ -12,18 +12,20 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/hiloID"
         android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/hiloID"
         android:textColor="@color/black"
-        android:gravity="center" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/txtVw_numeroMadejasTabla"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/numeroMadejasTabla"
         android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/numeroMadejasTabla"
         android:textColor="@color/black"
-        android:gravity="center" />
+        android:textSize="20sp" />
 </LinearLayout>

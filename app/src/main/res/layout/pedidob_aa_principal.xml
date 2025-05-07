@@ -16,7 +16,7 @@
         android:text="@string/cabeceraGrafico"
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="25dp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,6 +31,7 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:inputType="text"
+        android:textSize="20sp"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,7 +56,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/totalMadejasGraficoIndividual"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.16"
@@ -69,7 +70,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/stockHiloActual"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.52"
@@ -77,10 +78,22 @@
         app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorGrafico"
         app:layout_constraintVertical_bias="0.060" />
 
+    <!-- Cabecera fija para que no se mueva al hacer scroll -->
+    <include
+        android:id="@+id/cabecera_tabla_grafico"
+        layout="@layout/stock_tabla_filas_cabecera"
+        android:layout_width="395dp"
+        android:layout_height="25dp"
+        app:layout_constraintBottom_toTopOf="@id/tabla_grafico"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_totalMadejasGraficoIndividual"
+        app:layout_constraintVertical_bias="0.95" />
+
     <!-- Tabla Gráfico Pedido -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabla_grafico"
-        android:layout_width="305dp"
+        android:layout_width="395dp"
         android:layout_height="294dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -95,6 +108,7 @@
         android:backgroundTint="@color/fondoBoton"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/volver_pedido"
+        android:textSize="20sp"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
@@ -113,6 +127,7 @@
         android:text="@string/agregarHiloGraficoIndividual"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textStyle="bold"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
