@@ -89,6 +89,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cabecera_tabla_stock"
         app:layout_constraintVertical_bias="0.30" />
+
     <Button
         android:id="@+id/btn_agregarMadejaStk"
         android:layout_width="wrap_content"

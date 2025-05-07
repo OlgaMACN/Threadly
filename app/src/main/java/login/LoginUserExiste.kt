@@ -10,7 +10,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
-import stock_personal.StockPersonal
 
 class LoginUserExiste : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +49,7 @@ class LoginUserExiste : AppCompatActivity() {
                     "Por favor, rellena los campos",
                     Toast.LENGTH_SHORT
                 ).show()
+                /* al saltar el toast se borrar los campos*/
                 usuario.text.clear()
                 contrasena.text.clear()
             } else {

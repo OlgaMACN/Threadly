@@ -31,6 +31,8 @@ class StockPersonal : AppCompatActivity() {
         tablaStock.layoutManager = LinearLayoutManager(this)
         tablaStock.adapter = adaptador
 
+        /* TODO centrar los datos de las columnas */
+
         /* declaracion botones */
         val btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloStk)
         val btnAgregarMadeja = findViewById<Button>(R.id.btn_agregarMadejaStk)
@@ -119,6 +121,7 @@ class StockPersonal : AppCompatActivity() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_agregar_madeja)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
         dialog.window?.setLayout(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -133,6 +136,7 @@ class StockPersonal : AppCompatActivity() {
 
         inputCantidad.isEnabled = false
         btnGuardar.isEnabled = false
+
 
         inputHilo.addTextChangedListener(object : TextWatcher {
             @SuppressLint("SetTextI18n")
