@@ -71,6 +71,7 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/agregarGraficoPedido"
         android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -79,16 +80,28 @@
         app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorPedido"
         app:layout_constraintVertical_bias="0.050" />
 
+    <!-- Cabecera fija para que no se mueva al hacer scroll -->
+    <include
+        android:id="@+id/tabla_pedido"
+        layout="@layout/pedido_tabla_filas_cabecera"
+        android:layout_width="395dp"
+        android:layout_height="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_agregarGraficoPedido"
+        app:layout_constraintVertical_bias="0.05" />
     <!-- Tabla Todos los Gráficos del Pedido -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabla_pedido"
-        android:layout_width="300dp"
+        android:layout_width="395dp"
         android:layout_height="323dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_madejasTotalPedido"
-        app:layout_constraintVertical_bias="0.13" />
+        app:layout_constraintTop_toBottomOf="@id/tabla_pedido"
+        app:layout_constraintVertical_bias="0.647" />
 
     <Button
         android:id="@+id/btn_descargarPedido"
@@ -98,10 +111,11 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/descargarPedido"
         android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.16"
+        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabla_pedido"
         app:layout_constraintVertical_bias="0.40" />
@@ -114,10 +128,11 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/realizarPedido"
         android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.45"
+        app:layout_constraintHorizontal_bias="0.40"
         app:layout_constraintStart_toEndOf="@id/btn_descargarPedido"
         app:layout_constraintTop_toBottomOf="@id/tabla_pedido"
         app:layout_constraintVertical_bias="0.40" />

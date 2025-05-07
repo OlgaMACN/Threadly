@@ -67,6 +67,9 @@
     <!-- tabla pedidos cabecera (pedido_tabla_filas_cabecera) -->
     <string name="columnaNombreGrafico">NOMBRE</string>
     <string name="columnaMadejasPedido">MADEJAS</string>
+    <!-- tabla pedidos contenido (pedido_tabla_filas_contenido) -->
+    <string name="textoNombreGrafico">Nombre</string>
+    <string name="textoMadejasPedido">Madejas</string>
     <!-- Dialog Añadir Gráfico (pedido_dialog_agregar_grafico) -->
     <string name="cabeceraDialogAgregarGrafico">AÑADIR GRÁFICO AL PEDIDO</string>
     <string name="pedirNombreGrafico">Nombre del gráfico</string>
