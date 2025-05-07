@@ -1,4 +1,0 @@
-package PantallaPrincipal
-
-class PantallaPrincipal {
-}

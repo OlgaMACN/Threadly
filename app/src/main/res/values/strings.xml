@@ -6,6 +6,24 @@
     <string name="volver_pedido">Volver</string>
     <!-- Volver Pedido desde Gráfico -->
     <string name="volver_grafico">Volver</string>
+    <!-- Volver pantalla datos Personales desde Modificar Datos -->
+    <string name="volver_modificarDatos">Volver</string>
+    <!-- Volver pantalla inicio desde Datos Personales -->
+    <string name="volver_datosPersonales">Volver</string>
+    <!-- Volver pantalla consulta desde Agregar Hilo -->
+    <string name="volver_agregarHilo">Volver</string>
+    <!-- Volver pantalla consulta desde Modificar Hilo-->
+    <string name="volver_modificarHilo">Volver</string>
+    <!-- Volver dialog Modificar Hilo desde Modificar Hilo Final-->
+    <string name="volver_modificarHiloFinal">Volver</string>
+    <!-- Volver pantalla respuestas tema desde responder tema-->
+    <string name="volver_respuestasTemaForo">Volver</string>
+
+
+    <!-- Guardar pantalla Agregar Hilo en Consultar Hilos -->
+    <string name="guardar_agregarHilo">Guardar</string>
+    <!-- Guardar pantalla Agregar Hilo en Consultar Hilos -->
+    <string name="guardar_modificarHilo">Guardar</string>
 
     <!-- Splash (stock_aa_principal) -->
     <string name="app_name">Threadly</string>
@@ -35,7 +53,14 @@
     <string name="botonModificar">Modificar Datos</string>
     <string name="botonCerrarSesion">Cerrar Sesión</string>
     <string name="botonEliminar">Eliminar Cuenta</string>
-    <string name="botonVolver">Volver</string>
+
+
+    <!-- Pantalla Datos Personales -->
+    <string name="modificarDatos">Modificar Datos</string>
+    <string name="escogerImagen">Escoge una imagen :</string>
+    <string name="cambiarNombre">Cambiar nombre de usuario :</string>
+    <string name="nuevoNombre">Introduce nuevo nombre de usuario...</string>
+    <string name="botonGuardarCambios">Guardar Cambios</string>
 
     <!-- Stock Personal (stock_aa_principal) -->
     <string name="cabeceraStockPersonal">STOCK PERSONAL</string>
@@ -74,6 +99,27 @@
     <string name="introducirNumMadejasEliminarStk">Nº de madejas a eliminar</string>
     <string name="eliminarMadejaStk">Eliminar</string>
 
+    <!-- Pantalla Consultar Hilos -->
+    <string name="ConsultarHilosEncabezado">CONSULTAR HILOS</string>
+    <string name="buscarHiloConsulta">Buscar hilo...</string>
+    <string name="NumHiloConsulta">Nº Hilo</string>
+    <string name="nombreHiloConsulta">Nombre</string>
+    <string name="boton_agregarHiloConsulta">Añadir hilo</string>
+    <string name="boton_ModificarHiloConsulta">Modificar hilo</string>
+    <!-- Dialog Añadir Hilo (consultar_dialog_agregar_hilo) -->
+    <string name="agregarHiloConsulta">AÑADIR HILO</string>
+    <string name="agregarNumHilo">Introduce un número...</string>
+    <string name="agregarNombreHilo">Introduce un nombre...</string>
+    <!-- Dialog Modificar Hilo (consultar_dialog_modificar_hilo)-->
+    <string name="modificarHiloConsulta">MODIFICAR HILO</string>
+    <string name="introducirNumHilo">Introduce número de hilo...</string>
+    <string name="marcarCampos">Marca los campos que deseas modificar :</string>
+    <string name="numHiloModificar">Número</string>
+    <string name="nombreHiloModificar">Nombre</string>
+    <string name="botonSiguiente">Siguiente</string>
+    <string name="introducirNumHiloModificar">Introduce un número...</string>
+    <string name="introducirNombreHiloModificar">Introduce un nombre...</string>
+
     <!-- Pedido Hilos (pedidob_aa_principal) -->
     <string name="cabeceraPedido">PEDIDO HILOS</string>
     <string name="madejasTotalPedido">Total Madejas: </string>
@@ -103,6 +149,21 @@
     <string name="columnaPuntadasGrafico">PUNTADAS</string>
     <string name="columnaMadejasGrafico">MADEJAS</string>
     <string name="columnaHilografico">PEDIR</string>
+
+    <!-- Comunidad Threadly/Foro (comunidad_aa_foro) -->
+    <string name="cabeceraForo">COMUNIDAD THREADLY</string>
+
+    <!-- Comunidad Threadly/Foro (comunidad_pantalla_tema_respuesta) -->
+    <string name="respuestaTema">Introduce tu respuesta...</string>
+    <string name="enviarRespuestaForo">Enviar</string>
+
+    <!-- Comunidad Threadly/Foro (comunidad_pantalla_crear_tema) -->
+    <string name="tituloTemaForo">Título</string>
+    <string name="contenidoTemaForo">Contenido</string>
+    <string name="hintTituloTema">Introduce un título...</string>
+    <string name="hintContenidoTema">Introduce tu contenido...</string>
+    <string name="botonCrearTemaForo">Crear</string>
+
     <!-- Dialog Añadir Hilo (pedidob_dialog_agregar_hilo) -->
     <string name="cabeceraGrafico_dialog_addHilo">AÑADIR HILO</string>
     <string name="introducirHilo_dialog_addHilo">Introduce el nº del hilo</string>
@@ -113,4 +174,5 @@
     <string name="textoInfo_dialog_deleteHilo">¿Seguro que quieres borrar el hilo del gráfico?</string>
     <string name="textoInfo_secundario_dialog_deleteHilo">Se eliminará de este gráfico y por tanto del pedido</string>
     <string name="guardarHilo_dialog_deleteHilo">Borrar</string>
+
 </resources>
