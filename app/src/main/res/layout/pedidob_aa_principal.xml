@@ -78,10 +78,22 @@
         app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorGrafico"
         app:layout_constraintVertical_bias="0.060" />
 
+    <!-- Cabecera fija para que no se mueva al hacer scroll -->
+    <include
+        android:id="@+id/cabecera_tabla_grafico"
+        layout="@layout/stock_tabla_filas_cabecera"
+        android:layout_width="395dp"
+        android:layout_height="25dp"
+        app:layout_constraintBottom_toTopOf="@id/tabla_grafico"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_totalMadejasGraficoIndividual"
+        app:layout_constraintVertical_bias="0.95" />
+
     <!-- Tabla Gráfico Pedido -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabla_grafico"
-        android:layout_width="305dp"
+        android:layout_width="395dp"
         android:layout_height="294dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
