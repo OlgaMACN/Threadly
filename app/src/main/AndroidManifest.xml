@@ -15,7 +15,7 @@
         <!-- IMPORTANTE: Declarar todas las activities utilizadas -->
         <activity
             android:name="splash.Splash"
-            android:exported="true">
+                       android:exported="true">
             <intent-filter>
                 <!-- Y el splash será el que dará inicio a la ejecución, de ahí estas etiquetas-->
                 <action android:name="android.intent.action.MAIN" />
@@ -32,6 +32,22 @@
         <activity
             android:name="stock_personal.StockPersonal"
             android:exported="true" />
+
+        <!--aqui declaramos el resto de activities para poder navegar-->
+        <activity android:name="Login.LoginUserExiste" />
+        <activity android:name="Login.LoginUserNoExiste" />
+        <activity android:name="PantallaInicio.DatosPersonales" />
+        <activity android:name="PantallaInicio.ModificarDatos" />
+        <activity android:name="StockPersonal.StockPersonal" />
+        <activity android:name="CatalogoHilos.CatalogoHilos" />
+        <activity android:name="CatalogoHilos.AgregarHilo" />
+        <activity android:name="CatalogoHilos.ModificarHilo" />
+        <activity android:name="CatalogoHilos.ModificarHiloFinal" />
+        <activity android:name="Toolbar.Toolbar" />
+        <!--        <activity android:name="Foro.Foro" />-->
+        <activity android:name="Foro.CrearTema" />
+        <activity android:name="Foro.ResponderTema" />
+        <activity android:name="Foro.VisualizarTema" />
 
     </application>
 

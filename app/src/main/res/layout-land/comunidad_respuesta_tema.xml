@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondoPantallas">
+
+    <TextView
+        android:id="@+id/txtVw_consultarHilosEncabezado"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_marginBottom="346dp"
+        android:background="@drawable/reutilizable_cabecera"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/cabeceraForo"
+        android:textAlignment="center"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/edtTxt_respuestaForo"
+        android:layout_width="645dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="131dp"
+        android:layout_marginEnd="43dp"
+        android:layout_marginBottom="17dp"
+        android:background="@drawable/reutilizable_campo_texto_redondeado"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:hint="@string/respuestaTema"
+        android:textAlignment="center"
+        android:textColorHint="@color/morado_palo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado"
+        app:layout_constraintVertical_bias="0.05" />
+
+    <Button
+        android:id="@+id/btn_volver_respuestasTemaForo"
+        android:layout_width="155dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="272dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="79dp"
+        android:backgroundTint="@color/morado_palo"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/volver_respuestasTemaForo"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_enviarRespuestaForo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_enviarRespuestaForo"
+        android:layout_width="155dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="272dp"
+        android:layout_marginBottom="79dp"
+        android:backgroundTint="@color/morado_palo"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/enviarRespuestaForo"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_volver_respuestasTemaForo"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/reutil_toolbar"
+        layout="@layout/toolbar_layout"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
