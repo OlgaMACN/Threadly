@@ -18,7 +18,7 @@ import com.threadly.R
 class StockPersonal : AppCompatActivity() {
 
     private lateinit var tablaStock: RecyclerView
-    private lateinit var adaptador: AdaptadorStock
+    private lateinit var adaptadorStock: AdaptadorStock
     private val listaStock = mutableListOf<HiloStock>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,10 +26,11 @@ class StockPersonal : AppCompatActivity() {
         setContentView(R.layout.stock_aa_principal)
 
         tablaStock = findViewById(R.id.tabla_stock)
-        adaptador = AdaptadorStock(listaStock, ::dialogEliminarHilo)
+        /* callback: pasa la función de eliminar hilo directamente al adaptador, es decir, la tabla */
+        adaptadorStock = AdaptadorStock(listaStock, ::dialogEliminarHilo)
         /* elementos de la tabla en vertical gracias al LinearLayoutManager */
         tablaStock.layoutManager = LinearLayoutManager(this)
-        tablaStock.adapter = adaptador
+        tablaStock.adapter = adaptadorStock
 
         /* declaracion botones */
         val btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloStk)
@@ -107,7 +108,7 @@ class StockPersonal : AppCompatActivity() {
             }
 
             listaStock.add(HiloStock(hilo, madejas))
-            adaptador.notifyItemInserted(listaStock.size - 1)
+            adaptadorStock.notifyItemInserted(listaStock.size - 1)
             /* una vez insertado el hilo, se cierra el dialog*/
             dialog.dismiss()
         }
@@ -169,7 +170,7 @@ class StockPersonal : AppCompatActivity() {
             val item = listaStock.find { it.hiloId == hilo }
             if (item != null) {
                 item.madejas += cantidad
-                adaptador.notifyItemChanged(listaStock.indexOf(item))
+                adaptadorStock.notifyItemChanged(listaStock.indexOf(item))
                 dialog.dismiss()
             }
         }
@@ -228,7 +229,7 @@ class StockPersonal : AppCompatActivity() {
 
             hiloEncontrado?.let { hilo ->
                 hilo.madejas = maxOf(0, hilo.madejas - cantidad)
-                adaptador.notifyItemChanged(listaStock.indexOf(hilo))
+                adaptadorStock.notifyItemChanged(listaStock.indexOf(hilo))
                 dialog.dismiss()
             }
         }
@@ -263,7 +264,7 @@ class StockPersonal : AppCompatActivity() {
         btnEliminar.setOnClickListener {
             val hiloEliminado = listaStock[posicion].hiloId
             listaStock.removeAt(posicion)
-            adaptador.notifyItemRemoved(posicion)
+            adaptadorStock.notifyItemRemoved(posicion)
 
             Toast.makeText(this, "Hilo '$hiloEliminado' eliminado", Toast.LENGTH_SHORT).show()
             dialog.dismiss()

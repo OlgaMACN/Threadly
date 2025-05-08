@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.threadly.R
 import androidx.recyclerview.widget.RecyclerView
+import com.threadly.R
 
 class AdaptadorPedido_A(
 
@@ -26,6 +26,7 @@ class AdaptadorPedido_A(
         }
     }
 
+    /* el adaptador no sabe qué hacer, y delega la acción que hace el usuario (mantener pulsado) a la actividad */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PedidoViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.pedido_tabla_filas_contenido, parent, false)

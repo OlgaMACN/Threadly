@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fondoPantallas">
@@ -16,7 +15,7 @@
         android:text="@string/cabeceraPedido"
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="25dp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +54,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/madejasTotalPedido"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.16"
@@ -80,9 +79,35 @@
         app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorPedido"
         app:layout_constraintVertical_bias="0.050" />
 
+    <!-- Para poder enseñar el resultado de la búsqueda -->
+    <LinearLayout
+        android:id="@+id/contenedor_resultado_busqueda"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/tabla_pedido"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_agregarGraficoPedido">
+
+        <TextView
+            android:id="@+id/txt_resultado_nombre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/catchy_mager"
+            android:padding="4dp"
+            android:text="@string/resultado_nombre"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+    </LinearLayout>
+
     <!-- Cabecera fija para que no se mueva al hacer scroll -->
     <include
-        android:id="@+id/tabla_pedido"
+        android:id="@+id/cabecera_tabla_pedido"
         layout="@layout/pedido_tabla_filas_cabecera"
         android:layout_width="395dp"
         android:layout_height="25dp"
@@ -91,8 +116,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_agregarGraficoPedido"
         app:layout_constraintVertical_bias="0.05" />
-    <!-- Tabla Todos los Gráficos del Pedido -->
 
+    <!-- Tabla Todos los Gráficos del Pedido -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabla_pedido"
         android:layout_width="395dp"
@@ -100,8 +125,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabla_pedido"
-        app:layout_constraintVertical_bias="0.647" />
+        app:layout_constraintTop_toBottomOf="@id/cabecera_tabla_pedido"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btn_descargarPedido"
