@@ -31,8 +31,6 @@ class StockPersonal : AppCompatActivity() {
         tablaStock.layoutManager = LinearLayoutManager(this)
         tablaStock.adapter = adaptador
 
-        /* TODO centrar los datos de las columnas */
-
         /* declaracion botones */
         val btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloStk)
         val btnAgregarMadeja = findViewById<Button>(R.id.btn_agregarMadejaStk)

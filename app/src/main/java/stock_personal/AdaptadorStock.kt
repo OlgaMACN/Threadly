@@ -13,6 +13,7 @@ class AdaptadorStock(
 ) : RecyclerView.Adapter<AdaptadorStock.StockViewHolder>() {
 
     inner class StockViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        /* cabecera de la tabla*/
         val txtHilo: TextView = view.findViewById(R.id.txtVw_hiloID)
         val txtMadejas: TextView = view.findViewById(R.id.txtVw_numeroMadejasTabla)
 
