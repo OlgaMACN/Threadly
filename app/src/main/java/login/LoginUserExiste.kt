@@ -1,5 +1,6 @@
 package login
 
+import PantallaInicio.PantallaPrincipal
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -53,9 +54,10 @@ class LoginUserExiste : AppCompatActivity() {
                 usuario.text.clear()
                 contrasena.text.clear()
             } else {
-                /* en caso de tener cuenta, redirigir a la pantalla de inicio */
-                // TODO redirigir a pantalla de Sandra
-                //startActivity(Intent(this, Sandra::class.java))
+                /* TODO en caso de tener cuenta, redirigir a la pantalla de inicio sino toast de que no existe el usuario */
+
+
+                startActivity(Intent(this, PantallaPrincipal::class.java))
             }
         }
         /* en caso de no tenerla, redirigir a pantalla de LoginUserNoExiste mediante el textView */

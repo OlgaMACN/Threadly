@@ -1,5 +1,6 @@
 package login
 
+import PantallaInicio.PantallaPrincipal
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -52,8 +53,7 @@ class LoginUserNoExiste : AppCompatActivity() {
                 usuario.text.clear()
                 contrasena.text.clear()
             } else {
-                //TODO redirigir a pantalla de Sandra
-                startActivity(Intent(this, StockPersonal::class.java))
+                startActivity(Intent(this, PantallaPrincipal::class.java))
             }
         }
     }
