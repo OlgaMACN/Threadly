@@ -36,7 +36,7 @@ class StockPersonal : AppCompatActivity() {
         val btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloStk)
         val btnAgregarMadeja = findViewById<Button>(R.id.btn_agregarMadejaStk)
         val btnEliminarMadeja = findViewById<Button>(R.id.btn_eliminarMadejaStk)
-        val buscador = findViewById<EditText>(R.id.edTxt_buscadorPedido)
+        val buscadorHilo = findViewById<EditText>(R.id.edTxt_buscadorPedido)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarHilo.setOnClickListener { dialogAgregarHilo() }
@@ -44,7 +44,7 @@ class StockPersonal : AppCompatActivity() {
         btnEliminarMadeja.setOnClickListener { dialogEliminarMadeja() }
 
         /* acción del buscador */
-        buscador.addTextChangedListener(object : TextWatcher {
+        buscadorHilo.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val query = s.toString()

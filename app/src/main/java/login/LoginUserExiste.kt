@@ -28,11 +28,11 @@ class LoginUserExiste : AppCompatActivity() {
             contrasenaVisible = !contrasenaVisible
             if (contrasenaVisible) {
                 contrasena.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                botonOjo.setImageResource(R.drawable.eye_open)
+                botonOjo.setImageResource(R.drawable.img_eye_open)
             } else {
                 contrasena.inputType =
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                botonOjo.setImageResource(R.drawable.eye_closed)
+                botonOjo.setImageResource(R.drawable.img_eye_closed)
             }
             contrasena.setSelection(contrasena.text.length) // para poner el cursor de escritura al final
         }

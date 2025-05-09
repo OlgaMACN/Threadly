@@ -10,7 +10,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
-import stock_personal.StockPersonal
 
 class LoginUserNoExiste : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,11 +27,11 @@ class LoginUserNoExiste : AppCompatActivity() {
             contrasenaVisible = !contrasenaVisible
             if (contrasenaVisible) {
                 contrasena.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                botonOjo.setImageResource(R.drawable.eye_open)
+                botonOjo.setImageResource(R.drawable.img_eye_open)
             } else {
                 contrasena.inputType =
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                botonOjo.setImageResource(R.drawable.eye_closed)
+                botonOjo.setImageResource(R.drawable.img_eye_closed)
             }
             contrasena.setSelection(contrasena.text.length)
         }

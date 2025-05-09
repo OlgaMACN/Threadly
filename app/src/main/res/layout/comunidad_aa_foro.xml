@@ -35,7 +35,7 @@
         android:background="@drawable/boton_redondo"
         android:padding="6dp"
         android:scaleType="centerInside"
-        android:src="@drawable/agregar"
+        android:src="@drawable/img_agregar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

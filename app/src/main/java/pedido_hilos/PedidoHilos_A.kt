@@ -2,18 +2,24 @@ package pedido_hilos
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextWatcher
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class PedidoHilos_A : AppCompatActivity() {
 
@@ -28,30 +34,22 @@ class PedidoHilos_A : AppCompatActivity() {
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
         val txtTotal = findViewById<TextView>(R.id.txtVw_madejasTotalPedido)
 
-        /* callback: pasa la función de eliminar hilo directamente al adaptador, es decir, la tabla */
+        /* callback: pasa la función de eliminar gráfico directamente al adaptador, es decir, la tabla */
         adaptadorpedidoA = AdaptadorPedido_A(listaGraficos, ::dialogEliminarGrafico)
         tablaPedido.layoutManager = LinearLayoutManager(this)
         tablaPedido.adapter = adaptadorpedidoA
 
         /* declaración de botones */
-        val botonAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
+        val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
+        val btnDescargarPedido = findViewById<Button>(R.id.btn_descargarPedido)
+        val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
+        val buscadorGrafico = findViewById<EditText>(R.id.edTxt_buscadorPedido)
 
+        /* cuando se pulsan se llevan a cabo sus acciones */
+        btnAgregarGrafico.setOnClickListener({ dialogAgregarGrafico() })
+        btnDescargarPedido.setOnClickListener({ descargarCSV() })
+        btnRealizarPedido.setOnClickListener({ realizarPedido() })
 
-        findViewById<Button>(R.id.btn_agregarGraficoPedido).setOnClickListener {
-            dialogAgregarGrafico()
-        }
-
-        findViewById<Button>(R.id.btn_descargarPedido).setOnClickListener {
-            descargarCSV()
-        }
-
-        findViewById<Button>(R.id.btn_realizarPedido).setOnClickListener {
-            realizarPedido()
-        }
-
-        findViewById<EditText>(R.id.edTxt_buscadorPedido).addTextChangedListener {
-            buscadorGrafico(it.toString())
-        }
     }
 
     fun buscadorGrafico() {
@@ -104,16 +102,20 @@ class PedidoHilos_A : AppCompatActivity() {
 
             when {
                 nombre.isBlank() || countStr.isBlank() -> {
-                    Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT)
+                        .show()
                 }
+
                 count == null -> {
                     Toast.makeText(this, "El count debe ser numérico", Toast.LENGTH_SHORT).show()
                 }
+
                 else -> {
                     val grafico = Grafico(nombre, count)
                     listaGraficos.add(grafico)
                     totalMadejas += count
-                    findViewById<TextView>(R.id.txtVw_madejasTotalPedido).text = "Total: $totalMadejas"
+                    findViewById<TextView>(R.id.txtVw_madejasTotalPedido).text =
+                        "Total: $totalMadejas"
                     adaptadorpedidoA.notifyDataSetChanged()
                     dialog.dismiss()
                 }
@@ -180,7 +182,8 @@ class PedidoHilos_A : AppCompatActivity() {
 
     fun realizarPedido() {
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse("https://www.amazon.es") // puedes alternar con Aliexpress
+        intent.data =
+            Uri.parse("https://www.amazon.es") // TODO a ver si se puede poner también AliExpress...
         startActivity(intent)
     }
 
