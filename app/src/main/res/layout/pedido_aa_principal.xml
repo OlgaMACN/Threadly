@@ -37,16 +37,22 @@
         app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraPedido"
         app:layout_constraintVertical_bias="0.048" />
 
-    <ImageView
-        android:id="@+id/imgVw_lupaPedido"
-        android:layout_width="38dp"
+    <ImageButton
+        android:id="@+id/imgBtn_lupaPedido"
+        android:layout_width="43dp"
         android:layout_height="43dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/buscarGrafico"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="@id/edTxt_buscadorPedido"
         app:layout_constraintEnd_toEndOf="@id/edTxt_buscadorPedido"
         app:layout_constraintHorizontal_bias="0.90"
         app:layout_constraintStart_toStartOf="@id/edTxt_buscadorPedido"
         app:layout_constraintTop_toTopOf="@id/edTxt_buscadorPedido"
         app:srcCompat="@drawable/img_lupa" />
+
 
     <TextView
         android:id="@+id/txtVw_madejasTotalPedido"

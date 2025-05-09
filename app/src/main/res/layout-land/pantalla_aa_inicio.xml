@@ -180,7 +180,7 @@
         android:layout_marginTop="276dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="70dp"
-        android:background="@drawable/boton_redondo"
+        android:background="@drawable/reutilizable_boton_redondo"
         android:padding="6dp"
         android:scaleType="centerInside"
         android:src="@drawable/img_configuraciones"

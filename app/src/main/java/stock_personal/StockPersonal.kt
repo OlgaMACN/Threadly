@@ -47,13 +47,13 @@ class StockPersonal : AppCompatActivity() {
         buscadorHilo.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s.toString()
+                val busqueda = s.toString()
                 val match =
-                    listaStock.find { item -> item.hiloId.contains(query, ignoreCase = true) }
+                    listaStock.find { item -> item.hiloId.contains(busqueda, ignoreCase = true) }
                 if (match != null) {
                     val index = listaStock.indexOf(match)
                     tablaStock.scrollToPosition(index)
-                } else if (query.isNotEmpty()) {
+                } else if (busqueda.isNotEmpty()) {
                     Toast.makeText(
                         this@StockPersonal,
                         "No cuentas con ese hilo en tu stock personal",

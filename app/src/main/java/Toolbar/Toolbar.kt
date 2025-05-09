@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
-import pedido_hilos.PedidoHilos_A
+import pedido_hilos.PedidoHilosA
 import stock_personal.StockPersonal
 
 class Toolbar : AppCompatActivity() {
@@ -50,7 +50,7 @@ class Toolbar : AppCompatActivity() {
 
         /* configuración botón pedido */
         btn_pedido.setOnClickListener() {
-            val intentPedido = Intent(this, PedidoHilos_A::class.java)
+            val intentPedido = Intent(this, PedidoHilosA::class.java)
         }
     }
 }

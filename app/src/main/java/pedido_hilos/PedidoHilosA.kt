@@ -7,9 +7,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,17 +24,19 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class PedidoHilos_A : AppCompatActivity() {
+class PedidoHilosA : AppCompatActivity() {
 
     private lateinit var adaptadorpedidoA: AdaptadorPedido_A
     private val listaGraficos = mutableListOf<Grafico>()
     private var totalMadejas = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    @SuppressLint("WrongViewCast")
+    public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
 
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
+        // TODO madejas totales
         val txtTotal = findViewById<TextView>(R.id.txtVw_madejasTotalPedido)
 
         /* callback: pasa la función de eliminar gráfico directamente al adaptador, es decir, la tabla */
@@ -43,41 +48,67 @@ class PedidoHilos_A : AppCompatActivity() {
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
         val btnDescargarPedido = findViewById<Button>(R.id.btn_descargarPedido)
         val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
-        val buscadorGrafico = findViewById<EditText>(R.id.edTxt_buscadorPedido)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
-        btnAgregarGrafico.setOnClickListener({ dialogAgregarGrafico() })
-        btnDescargarPedido.setOnClickListener({ descargarCSV() })
-        btnRealizarPedido.setOnClickListener({ realizarPedido() })
-
+        btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
+        btnDescargarPedido.setOnClickListener { descargarCSV() }
+        btnRealizarPedido.setOnClickListener { realizarPedido() }
+        buscadorGrafico()
     }
 
+    @SuppressLint("SetTextI18n")
     fun buscadorGrafico() {
-        val buscador = findViewById<EditText>(R.id.edTxt_buscadorPedido)
+        val graficoBuscado = findViewById<EditText>(R.id.edTxt_buscadorPedido)
+        val btnBuscar = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
+        val resultadoBusqueda = findViewById<LinearLayout>(R.id.contenedor_resultado_busqueda)
+        val txtResultado = findViewById<TextView>(R.id.txt_resultado_nombre)
+        val tablaGraficos = findViewById<RecyclerView>(R.id.tabla_pedido)
+        val cabecera = findViewById<View>(R.id.cabecera_tabla_pedido)
 
-        buscador.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        btnBuscar.setOnClickListener {
+            val busqueda = graficoBuscado.text.toString().trim()
+            /* 'it' representa cada elemento individual de la lista sobre la que se va a buscar */
+            val match = listaGraficos.find { it.nombre.contains(busqueda, ignoreCase = true) }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s.toString()
-                val match = listaGraficos.find { it.nombre.contains(query, ignoreCase = true) }
+            /* si encuentra gráficos con el nombre dado, se verá el resultado*/
+            if (match != null) {
+                resultadoBusqueda.visibility = View.VISIBLE
+                tablaGraficos.visibility = View.GONE
+                cabecera.visibility = View.GONE
+                txtResultado.text = match.nombre // nombre del gráfico
 
-                if (match != null) {
+                txtResultado.setOnClickListener {
                     val index = listaGraficos.indexOf(match)
-                    findViewById<RecyclerView>(R.id.tabla_pedido).scrollToPosition(index)
-                } else if (query.isNotEmpty()) {
-                    Toast.makeText(
-                        this@PedidoHilos_A,
-                        "No se encontraron gráficos con ese nombre",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    tablaGraficos.scrollToPosition(index)
+                    resultadoBusqueda.visibility = View.GONE
+                    tablaGraficos.visibility = View.VISIBLE
+                    cabecera.visibility = View.VISIBLE
+                    graficoBuscado.text.clear()
+                }
+            } else {
+                Toast.makeText(
+                    this,
+                    "No se encontraron gráficos con ese nombre :(",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        /* el text watcher no deja de ser un listener que activa una acción con cada texto introducido */
+        graficoBuscado.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                /* cuando el campo este vacío, se ocultará el resultado y se mostrará la tabla */
+                if (s.isNullOrEmpty()) {
+                    resultadoBusqueda.visibility = View.GONE
+                    tablaGraficos.visibility = View.VISIBLE
+                    cabecera.visibility = View.VISIBLE
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
-
 
     @SuppressLint("SetTextI18n")
     fun dialogAgregarGrafico() {
@@ -116,19 +147,16 @@ class PedidoHilos_A : AppCompatActivity() {
                     totalMadejas += count
                     findViewById<TextView>(R.id.txtVw_madejasTotalPedido).text =
                         "Total: $totalMadejas"
-                    adaptadorpedidoA.notifyDataSetChanged()
+                    adaptadorpedidoA.notifyItemInserted(listaGraficos.size - 1)
                     dialog.dismiss()
                 }
             }
         }
-
         btnVolver.setOnClickListener {
             dialog.dismiss()
         }
-
         dialog.show()
     }
-
 
     @SuppressLint("SetTextI18n")
     fun dialogEliminarGrafico(index: Int) {
@@ -151,8 +179,7 @@ class PedidoHilos_A : AppCompatActivity() {
             totalMadejas -= listaGraficos[index].countTela
             listaGraficos.removeAt(index)
             findViewById<TextView>(R.id.txtVw_madejasTotalPedido).text = "Total: $totalMadejas"
-            // TODO cambiar esto por algo más eficiente
-            adaptadorpedidoA.notifyDataSetChanged()
+            adaptadorpedidoA.notifyItemRemoved(index)
             dialog.dismiss()
         }
 
@@ -163,7 +190,7 @@ class PedidoHilos_A : AppCompatActivity() {
         dialog.show()
     }
 
-    fun descargarCSV() {
+    private fun descargarCSV() {
         val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         val fileName = "Pedido_$date.csv"
         val file = File(getExternalFilesDir(null), fileName)
@@ -180,7 +207,7 @@ class PedidoHilos_A : AppCompatActivity() {
         Toast.makeText(this, "Archivo guardado: $fileName", Toast.LENGTH_LONG).show()
     }
 
-    fun realizarPedido() {
+    private fun realizarPedido() {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data =
             Uri.parse("https://www.amazon.es") // TODO a ver si se puede poner también AliExpress...
