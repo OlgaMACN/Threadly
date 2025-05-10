@@ -55,7 +55,7 @@
 
     <!-- Mensaje si no hay resultados -->
     <TextView
-        android:id="@+id/txt_no_resultados"
+        android:id="@+id/txtVw_sinResultados"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/catchy_mager"

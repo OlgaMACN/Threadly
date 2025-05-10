@@ -38,66 +38,58 @@ class StockPersonal : AppCompatActivity() {
         val btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloStk)
         val btnAgregarMadeja = findViewById<Button>(R.id.btn_agregarMadejaStk)
         val btnEliminarMadeja = findViewById<Button>(R.id.btn_eliminarMadejaStk)
-        val buscadorHilo = findViewById<EditText>(R.id.edTxt_buscadorHilo)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarHilo.setOnClickListener { dialogAgregarHilo() }
         btnAgregarMadeja.setOnClickListener { dialogAgregarMadeja() }
         btnEliminarMadeja.setOnClickListener { dialogEliminarMadeja() }
+
+        buscadorHilo()
     }
 
     /* acción del buscador */
-    private fun configurarBuscador() {
+    private fun buscadorHilo() {
         val editTextBuscar = findViewById<EditText>(R.id.edTxt_buscadorHilo)
         val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
-        val recyclerView = findViewById<RecyclerView>(R.id.tabla_stock)
-        val txtNoResultados =
-            findViewById<TextView>(R.id.txt_no_resultados) // Debes crearlo en el XML
+        val tablaStock = findViewById<RecyclerView>(R.id.tabla_stock)
+        val txtNoResultados = findViewById<TextView>(R.id.txtVw_sinResultados)
 
         txtNoResultados.visibility = View.GONE
 
         btnLupa.setOnClickListener {
             val texto = editTextBuscar.text.toString().trim().uppercase()
-            val match = listaStock.find { it.hiloId == texto }
+            val coincidencia = listaStock.find { it.hiloId == texto }
 
-            if (match != null) {
-                // Mostrar solo el resultado
-                val resultados = listOf(match)
-                adaptadorStock.actualizarLista(resultados)
-                recyclerView.visibility = View.VISIBLE
+            if (coincidencia != null) {
+                val resultados = listOf(coincidencia)
+                adaptadorStock.actualizarHilo(coincidencia)
+                tablaStock.visibility = View.VISIBLE
                 txtNoResultados.visibility = View.GONE
 
-                recyclerView.setOnClickListener {
-                    val index = listaStock.indexOf(match)
-                    recyclerView.scrollToPosition(index)
+                tablaStock.setOnClickListener {
+                    val index = listaStock.indexOf(coincidencia)
+                    tablaStock.scrollToPosition(index)
                     // Restaura lista original si quieres tras el scroll
                     adaptadorStock.actualizarLista(listaStock)
                 }
             } else {
                 // No hay resultados
-                recyclerView.visibility = View.GONE
+                tablaStock.visibility = View.GONE
                 txtNoResultados.visibility = View.VISIBLE
             }
         }
 
-        // Mostrar lista completa si se borra el texto
+        /* volver a mostrar tabla si se borra la búsqueda */
         editTextBuscar.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     adaptadorStock.actualizarLista(listaStock)
-                    recyclerView.visibility = View.VISIBLE
+                    tablaStock.visibility = View.VISIBLE
                     txtNoResultados.visibility = View.GONE
                 }
             }
 
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
@@ -126,7 +118,7 @@ class StockPersonal : AppCompatActivity() {
         val btnGuardar = dialog.findViewById<Button>(R.id.btn_botonAgregarHiloStk)
 
         btnVolver.setOnClickListener {
-            dialog.dismiss() // se cierra el dialog
+            dialog.dismiss() /* se cierra el dialog */
         }
 
         btnGuardar.setOnClickListener {
@@ -265,14 +257,7 @@ class StockPersonal : AppCompatActivity() {
                 }
             }
 
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
 

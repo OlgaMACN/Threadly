@@ -13,7 +13,6 @@ class AdaptadorStock(
 ) : RecyclerView.Adapter<AdaptadorStock.StockViewHolder>() {
 
     inner class StockViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        /* cabecera de la tabla*/
         val txtHilo: TextView = view.findViewById(R.id.txtVw_hiloID)
         val txtMadejas: TextView = view.findViewById(R.id.txtVw_numeroMadejasTabla)
 
@@ -38,6 +37,11 @@ class AdaptadorStock(
     }
 
     override fun getItemCount(): Int = items.size
+
+    fun actualizarLista(nuevaLista: List<HiloStock>) {
+        items = nuevaLista
+        notifyDataSetChanged()
+    }
 
     fun actualizarHilo(hiloActualizado: HiloStock) {
         val index = items.indexOfFirst { it.hiloId == hiloActualizado.hiloId }
