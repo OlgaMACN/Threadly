@@ -7,11 +7,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 
-class AdaptadorPedido_A(
+class AdaptadorPedido(
 
     private val graficos: MutableList<Grafico>,
     private val onLongClick: (Int) -> Unit
-) : RecyclerView.Adapter<AdaptadorPedido_A.PedidoViewHolder>() {
+) : RecyclerView.Adapter<AdaptadorPedido.PedidoViewHolder>() {
 
     inner class PedidoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         /* cabecera de la tabla*/

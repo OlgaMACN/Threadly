@@ -24,7 +24,7 @@ import java.util.Locale
 
 class PedidoHilos : AppCompatActivity() {
 
-    private lateinit var adaptadorpedidoA: AdaptadorPedido_A
+    private lateinit var adaptadorpedidoA: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
 
     @SuppressLint("WrongViewCast")
@@ -35,7 +35,7 @@ class PedidoHilos : AppCompatActivity() {
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
 
         /* callback: pasa la función de eliminar gráfico directamente al adaptador, es decir, la tabla */
-        adaptadorpedidoA = AdaptadorPedido_A(listaGraficos, ::dialogEliminarGrafico)
+        adaptadorpedidoA = AdaptadorPedido(listaGraficos, ::dialogEliminarGrafico)
         tablaPedido.layoutManager = LinearLayoutManager(this)
         tablaPedido.adapter = adaptadorpedidoA
 
@@ -53,7 +53,7 @@ class PedidoHilos : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun actualizarTotalMadejas() {
-        val total = listaGraficos.sumOf { it.madejas } 
+        val total = listaGraficos.sumOf { it.madejas }
         findViewById<TextView>(R.id.txtVw_madejasTotalPedido).text = "Total: $total"
     }
 
@@ -183,7 +183,7 @@ class PedidoHilos : AppCompatActivity() {
         listaGraficos.forEach {
             contenido.append("${it.nombre},${it.countTela}\n")
         }
-
+        val totalMadejas = listaGraficos.sumOf { it.madejas }
         contenido.append("\nTotal Madejas,$totalMadejas")
 
         file.writeText(contenido.toString())
