@@ -66,14 +66,12 @@ class StockPersonal : AppCompatActivity() {
                 tablaStock.visibility = View.VISIBLE
                 txtNoResultados.visibility = View.GONE
 
-                tablaStock.setOnClickListener {
-                    val index = listaStock.indexOf(coincidencia)
-                    tablaStock.scrollToPosition(index)
-                    // Restaura lista original si quieres tras el scroll
-                    adaptadorStock.actualizarLista(listaStock)
-                }
+                val index = listaStock.indexOf(coincidencia)
+                tablaStock.scrollToPosition(index)
+                adaptadorStock.actualizarLista(listaStock)
+
             } else {
-                // No hay resultados
+                /* si no hay resultados */
                 tablaStock.visibility = View.GONE
                 txtNoResultados.visibility = View.VISIBLE
             }
@@ -210,7 +208,7 @@ class StockPersonal : AppCompatActivity() {
             val item = listaStock.find { it.hiloId == hilo }
             if (item != null) {
                 item.madejas += cantidad
-                adaptadorStock.notifyItemChanged(listaStock.indexOf(item))
+                adaptadorStock.actualizarHilo(item)
                 dialog.dismiss()
             }
         }
@@ -273,7 +271,7 @@ class StockPersonal : AppCompatActivity() {
             if (hiloEncontrado != null) {
                 val index = listaStock.indexOf(hiloEncontrado)
                 hiloEncontrado!!.madejas = maxOf(0, hiloEncontrado!!.madejas - cantidad)
-                adaptadorStock.notifyItemChanged(index)
+                adaptadorStock.actualizarHilo(hiloEncontrado!!)
                 dialog.dismiss()
             }
         }
