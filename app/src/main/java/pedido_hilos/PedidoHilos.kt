@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class PedidoHilosA : AppCompatActivity() {
+class PedidoHilos : AppCompatActivity() {
 
     private lateinit var adaptadorpedidoA: AdaptadorPedido_A
     private val listaGraficos = mutableListOf<Grafico>()
@@ -53,7 +53,7 @@ class PedidoHilosA : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun actualizarTotalMadejas() {
-        val total = listaGraficos.sumOf { it.countTela } //todo count?
+        val total = listaGraficos.sumOf { it.madejas } 
         findViewById<TextView>(R.id.txtVw_madejasTotalPedido).text = "Total: $total"
     }
 
@@ -123,23 +123,17 @@ class PedidoHilosA : AppCompatActivity() {
             val countStr = countEdit.text.toString().trim()
             val count = countStr.toIntOrNull()
 
-            when {
-                nombre.isBlank() || countStr.isBlank() -> {
-                    Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT)
-                        .show()
-                }
-
-                count == null -> {
-                    Toast.makeText(this, "El count debe ser numérico", Toast.LENGTH_SHORT).show()
-                }
-
-                else -> {
-                    // todo solventar este problema con pantalla siguiente
-                    listaGraficos.add(Grafico(nombre, count, madejas = ))
-                    adaptadorpedidoA.notifyItemInserted(listaGraficos.size - 1)
-                    actualizarTotalMadejas()
-                    dialog.dismiss()
-                }
+            if (nombre.isBlank() || countStr.isBlank()) {
+                Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
+            } else if (count == null) {
+                Toast.makeText(this, "El count debe ser numérico", Toast.LENGTH_SHORT).show()
+            } else {
+                val nuevoGrafico =
+                    Grafico(nombre, count, madejas = 0) /* placeholder, el valor se sabe luego */
+                listaGraficos.add(nuevoGrafico)
+                adaptadorpedidoA.notifyItemInserted(listaGraficos.size - 1)
+                actualizarTotalMadejas()
+                dialog.dismiss()
             }
         }
         btnVolver.setOnClickListener {
@@ -189,6 +183,7 @@ class PedidoHilosA : AppCompatActivity() {
         listaGraficos.forEach {
             contenido.append("${it.nombre},${it.countTela}\n")
         }
+
         contenido.append("\nTotal Madejas,$totalMadejas")
 
         file.writeText(contenido.toString())
