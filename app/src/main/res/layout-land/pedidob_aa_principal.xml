@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fondoPantallas">
@@ -31,10 +30,11 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:inputType="text"
-        android:textSize="20sp"
         android:textAlignment="center"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraGrafico"
         app:layout_constraintVertical_bias="0.048" />
@@ -60,9 +60,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.16"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorGrafico"
-        app:layout_constraintVertical_bias="0.060" />
+        app:layout_constraintStart_toEndOf="@id/edTxt_buscadorGrafico"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraGrafico"
+        app:layout_constraintVertical_bias="0.075" />
 
     <TextView
         android:id="@+id/txtVw_stockHiloActual"
@@ -75,8 +75,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.52"
         app:layout_constraintStart_toEndOf="@id/txtVw_totalMadejasGraficoIndividual"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorGrafico"
-        app:layout_constraintVertical_bias="0.060" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraGrafico"
+        app:layout_constraintVertical_bias="0.075" />
 
     <!-- Cabecera fija para que no se mueva al hacer scroll -->
     <include
@@ -84,39 +84,25 @@
         layout="@layout/pedidob_tabla_filas_cabecera_grafico"
         android:layout_width="395dp"
         android:layout_height="25dp"
-        app:layout_constraintBottom_toTopOf="@id/tabla_grafico"
+        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.08"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_totalMadejasGraficoIndividual"
-        app:layout_constraintVertical_bias="0.95" />
+        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorGrafico"
+        app:layout_constraintVertical_bias="0.080" />
 
     <!-- Tabla Gráfico Pedido -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabla_grafico"
-        android:layout_width="395dp"
-        android:layout_height="294dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_totalMadejasGraficoIndividual"
-        app:layout_constraintVertical_bias="0.17000002" />
-
-    <Button
-        android:id="@+id/btn_volver_pedido_desde_grafico"
-        android:layout_width="109dp"
-        android:layout_height="49dp"
-        android:backgroundTint="@color/fondoBoton"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/volver_pedido"
-        android:textSize="20sp"
-        android:textColor="@color/textoCabecera_y_Botones"
-        android:textStyle="bold"
+        android:layout_width="393dp"
+        android:layout_height="156dp"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintHorizontal_bias="0.08"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabla_grafico"
-        app:layout_constraintVertical_bias="0.40" />
+        app:layout_constraintTop_toBottomOf="@id/cabecera_tabla_grafico"
+        app:layout_constraintVertical_bias="0.0" />
+
 
     <Button
         android:id="@+id/btn_agregarHiloGraficoIndividual"
@@ -126,16 +112,35 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/agregarHiloGraficoIndividual"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textStyle="bold"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
-        app:layout_constraintStart_toEndOf="@id/btn_volver_pedido_desde_grafico"
-        app:layout_constraintTop_toBottomOf="@id/tabla_grafico"
-        app:layout_constraintVertical_bias="0.40" />
+        app:layout_constraintStart_toEndOf="@id/tabla_grafico"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_stockHiloActual"
+        app:layout_constraintVertical_bias="0.25" />
+
 
     <!-- Reutilizar el layout del Toolbar -->
+
+    <Button
+        android:id="@+id/btn_volver_pedido_desde_grafico"
+        android:layout_width="150dp"
+        android:layout_height="49dp"
+        android:backgroundTint="@color/fondoBoton"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/volver_pedido"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toEndOf="@id/tabla_grafico"
+        app:layout_constraintTop_toBottomOf="@id/btn_agregarHiloGraficoIndividual"
+        app:layout_constraintVertical_bias="0.25" />
+
     <include
         android:id="@+id/reutil_toolbar"
         layout="@layout/toolbar_layout"

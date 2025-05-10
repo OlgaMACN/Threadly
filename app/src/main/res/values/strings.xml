@@ -67,6 +67,7 @@
     <string name="agregarHiloStk">Añadir Hilo</string>
     <string name="botonAgregarMadejaStk">Añadir Madeja</string>
     <string name="botonEliminarMadejaStk">Eliminar Madeja</string>
+    <string name="no_hay_resultados">No hay resultados</string>
     <!-- tabla stock cabecera (stock_tabla_filas_cabecera) -->
     <string name="numeroHiloStk">HILO</string>
     <string name="numeroMadejasStk">MADEJAS</string>
@@ -97,8 +98,9 @@
     <!-- Dialog Eliminar Madejas (stock_dialog_eliminar_madeja) -->
     <string name="cabeceraEliminarMadejaStk">ELIMINAR MADEJAS</string>
     <string name="textoEliminarMadejaInfoStk">Número de madejas a eliminar para el hilo: </string>
+    <string name="edTxt_introducirNumHiloMadejasEliminarStk">Nº del hilo</string>
     <string name="introducirNumMadejasEliminarStk">Nº de madejas a eliminar</string>
-    <string name="eliminarMadejaStk">Eliminar Madeja</string>
+       <string name="eliminarMadejaStk">Eliminar Madeja</string>
 
     <!-- Pantalla Consultar Hilos -->
     <string name="ConsultarHilosEncabezado">CONSULTAR HILOS</string>
@@ -188,6 +190,7 @@
     <string name="textoInfo_dialog_deleteHilo">¿Seguro que quieres borrar el hilo del gráfico?</string>
     <string name="textoInfo_secundario_dialog_deleteHilo">Se eliminará de este gráfico y por tanto del pedido</string>
     <string name="guardarHilo_dialog_deleteHilo">Borrar</string>
+
 
 
 </resources>

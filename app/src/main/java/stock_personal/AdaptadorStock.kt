@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 
 class AdaptadorStock(
-    private val items: List<HiloStock>,
+    private var items: List<HiloStock> = listOf(),
     private val onLongClick: (Int) -> Unit
 ) : RecyclerView.Adapter<AdaptadorStock.StockViewHolder>() {
 
@@ -38,4 +38,14 @@ class AdaptadorStock(
     }
 
     override fun getItemCount(): Int = items.size
+
+    fun actualizarHilo(hiloActualizado: HiloStock) {
+        val index = items.indexOfFirst { it.hiloId == hiloActualizado.hiloId }
+        if (index != -1) {
+            items = items.toMutableList().apply {
+                set(index, hiloActualizado)
+            }
+            notifyItemChanged(index)
+        }
+    }
 }

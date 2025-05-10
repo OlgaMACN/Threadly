@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-08T14:19:01.333187500Z">
+        <DropdownSelection timestamp="2025-05-10T11:27:48.826091600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Olga\.android\avd\Tablet_Mamita.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Olga\.android\avd\Pixel_7_API_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>

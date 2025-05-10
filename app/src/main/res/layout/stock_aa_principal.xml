@@ -30,8 +30,8 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:inputType="text"
-        android:textSize="20sp"
         android:textAlignment="center"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.167"
@@ -39,16 +39,33 @@
         app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraStockPersonal"
         app:layout_constraintVertical_bias="0.048" />
 
-    <ImageView
-        android:id="@+id/imgVw_lupaStock"
+    <ImageButton
+        android:id="@+id/imgBtn_lupaStock"
         android:layout_width="38dp"
         android:layout_height="43dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/buscarHiloConsulta"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@id/edTxt_buscadorHilo"
         app:layout_constraintEnd_toEndOf="@id/edTxt_buscadorHilo"
         app:layout_constraintHorizontal_bias="0.90"
         app:layout_constraintStart_toStartOf="@id/edTxt_buscadorHilo"
         app:layout_constraintTop_toTopOf="@id/edTxt_buscadorHilo"
         app:srcCompat="@drawable/img_lupa" />
+
+    <!-- Mensaje si no hay resultados -->
+    <TextView
+        android:id="@+id/txt_no_resultados"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/no_hay_resultados"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorHilo" />
 
     <Button
         android:id="@+id/btn_agregarHiloStk"
