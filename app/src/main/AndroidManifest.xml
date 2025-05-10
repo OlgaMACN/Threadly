@@ -15,7 +15,8 @@
         <!-- IMPORTANTE: Declarar todas las activities utilizadas -->
         <activity
             android:name="splash.Splash"
-                       android:exported="true">
+            android:exported="true"
+            android:theme="@style/Base.Theme.Threadly">
             <intent-filter>
                 <!-- Y el splash será el que dará inicio a la ejecución, de ahí estas etiquetas-->
                 <action android:name="android.intent.action.MAIN" />
