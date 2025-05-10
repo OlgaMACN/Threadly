@@ -81,7 +81,7 @@
     <!-- Cabecera fija para que no se mueva al hacer scroll -->
     <include
         android:id="@+id/cabecera_tabla_grafico"
-        layout="@layout/stock_tabla_filas_cabecera"
+        layout="@layout/pedidob_tabla_filas_cabecera_grafico"
         android:layout_width="395dp"
         android:layout_height="25dp"
         app:layout_constraintBottom_toTopOf="@id/tabla_grafico"

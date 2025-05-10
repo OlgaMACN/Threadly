@@ -5,8 +5,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -28,7 +26,6 @@ class PedidoHilosA : AppCompatActivity() {
 
     private lateinit var adaptadorpedidoA: AdaptadorPedido_A
     private val listaGraficos = mutableListOf<Grafico>()
-    private var totalMadejas = 0
 
     @SuppressLint("WrongViewCast")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,8 +33,6 @@ class PedidoHilosA : AppCompatActivity() {
         setContentView(R.layout.pedido_aa_principal)
 
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
-        // TODO madejas totales
-        val txtTotal = findViewById<TextView>(R.id.txtVw_madejasTotalPedido)
 
         /* callback: pasa la función de eliminar gráfico directamente al adaptador, es decir, la tabla */
         adaptadorpedidoA = AdaptadorPedido_A(listaGraficos, ::dialogEliminarGrafico)
@@ -57,60 +52,57 @@ class PedidoHilosA : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    fun buscadorGrafico() {
-        val graficoBuscado = findViewById<EditText>(R.id.edTxt_buscadorPedido)
-        val btnBuscar = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
-        val resultadoBusqueda = findViewById<LinearLayout>(R.id.contenedor_resultado_busqueda)
-        val txtResultado = findViewById<TextView>(R.id.txt_resultado_nombre)
-        val tablaGraficos = findViewById<RecyclerView>(R.id.tabla_pedido)
-        val cabecera = findViewById<View>(R.id.cabecera_tabla_pedido)
-
-        btnBuscar.setOnClickListener {
-            val busqueda = graficoBuscado.text.toString().trim()
-            /* 'it' representa cada elemento individual de la lista sobre la que se va a buscar */
-            val match = listaGraficos.find { it.nombre.contains(busqueda, ignoreCase = true) }
-
-            /* si encuentra gráficos con el nombre dado, se verá el resultado*/
-            if (match != null) {
-                resultadoBusqueda.visibility = View.VISIBLE
-                tablaGraficos.visibility = View.GONE
-                cabecera.visibility = View.GONE
-                txtResultado.text = match.nombre // nombre del gráfico
-
-                txtResultado.setOnClickListener {
-                    val index = listaGraficos.indexOf(match)
-                    tablaGraficos.scrollToPosition(index)
-                    resultadoBusqueda.visibility = View.GONE
-                    tablaGraficos.visibility = View.VISIBLE
-                    cabecera.visibility = View.VISIBLE
-                    graficoBuscado.text.clear()
-                }
-            } else {
-                Toast.makeText(
-                    this,
-                    "No se encontraron gráficos con ese nombre :(",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-
-        /* el text watcher no deja de ser un listener que activa una acción con cada texto introducido */
-        graficoBuscado.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                /* cuando el campo este vacío, se ocultará el resultado y se mostrará la tabla */
-                if (s.isNullOrEmpty()) {
-                    resultadoBusqueda.visibility = View.GONE
-                    tablaGraficos.visibility = View.VISIBLE
-                    cabecera.visibility = View.VISIBLE
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+    private fun actualizarTotalMadejas() {
+        val total = listaGraficos.sumOf { it.countTela } //todo count?
+        findViewById<TextView>(R.id.txtVw_madejasTotalPedido).text = "Total: $total"
     }
 
     @SuppressLint("SetTextI18n")
+    fun buscadorGrafico() {
+        val edTxtBuscador = findViewById<EditText>(R.id.edTxt_buscadorPedido)
+        val btnBuscar = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
+        val resultadoBusquedaContenedor =
+            findViewById<LinearLayout>(R.id.contenedor_resultado_busqueda)
+        val resultadoBusquedaTexto = findViewById<TextView>(R.id.txt_resultado_nombre)
+        val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
+        val cabecera = findViewById<View>(R.id.cabecera_tabla_pedido)
+
+        btnBuscar.setOnClickListener {
+            val busqueda = edTxtBuscador.text.toString().trim()
+
+            if (busqueda.isEmpty()) {
+                /* si no hay nada escrito, la tabla vuelve a ser visible */
+                resultadoBusquedaContenedor.visibility = View.GONE
+                tablaPedido.visibility = View.VISIBLE
+                cabecera.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+            /* con it se representa cada elemento de la lista, es como el índice de un array */
+            val coincidencia =
+                listaGraficos.find { it.nombre.contains(busqueda, ignoreCase = true) }
+
+            if (coincidencia != null) {
+                resultadoBusquedaContenedor.visibility = View.VISIBLE
+                tablaPedido.visibility = View.GONE
+                cabecera.visibility = View.GONE
+                resultadoBusquedaTexto.text = coincidencia.nombre
+
+                resultadoBusquedaTexto.setOnClickListener {
+                    val index = listaGraficos.indexOf(coincidencia)
+                    tablaPedido.scrollToPosition(index)
+                    resultadoBusquedaContenedor.visibility = View.GONE
+                    tablaPedido.visibility = View.VISIBLE
+                    cabecera.visibility = View.VISIBLE
+                    edTxtBuscador.text.clear()
+                }
+            } else {
+                Toast.makeText(this, "No tienes gráficos con ese nombre :(", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n") /* estas anotaciones surgen de ignorar las advertencias de lint para usar los recursos */
     fun dialogAgregarGrafico() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pedido_dialog_agregar_grafico)
@@ -142,12 +134,10 @@ class PedidoHilosA : AppCompatActivity() {
                 }
 
                 else -> {
-                    val grafico = Grafico(nombre, count)
-                    listaGraficos.add(grafico)
-                    totalMadejas += count
-                    findViewById<TextView>(R.id.txtVw_madejasTotalPedido).text =
-                        "Total: $totalMadejas"
+                    // todo solventar este problema con pantalla siguiente
+                    listaGraficos.add(Grafico(nombre, count, madejas = ))
                     adaptadorpedidoA.notifyItemInserted(listaGraficos.size - 1)
+                    actualizarTotalMadejas()
                     dialog.dismiss()
                 }
             }
@@ -176,10 +166,9 @@ class PedidoHilosA : AppCompatActivity() {
         txtNombre.text = listaGraficos[index].nombre
 
         btnEliminar.setOnClickListener {
-            totalMadejas -= listaGraficos[index].countTela
             listaGraficos.removeAt(index)
-            findViewById<TextView>(R.id.txtVw_madejasTotalPedido).text = "Total: $totalMadejas"
             adaptadorpedidoA.notifyItemRemoved(index)
+            actualizarTotalMadejas()
             dialog.dismiss()
         }
 
@@ -208,10 +197,36 @@ class PedidoHilosA : AppCompatActivity() {
     }
 
     private fun realizarPedido() {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data =
-            Uri.parse("https://www.amazon.es") // TODO a ver si se puede poner también AliExpress...
-        startActivity(intent)
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.pedido_dialog_escoger_tienda)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        dialog.findViewById<Button>(R.id.btn_amazon).setOnClickListener {
+            abrirEnlace("https://www.amazon.es")
+            dialog.dismiss()
+        }
+
+        dialog.findViewById<Button>(R.id.btn_aliexpress).setOnClickListener {
+            abrirEnlace("https://www.aliexpress.com")
+            dialog.dismiss()
+        }
+
+        dialog.findViewById<Button>(R.id.btn_temu).setOnClickListener {
+            abrirEnlace("https://www.temu.com")
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
+    /* esta funcion es complementaria a realizar pedido, para abrir el enlace que el usuario escoja */
+    private fun abrirEnlace(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        intent.addCategory(Intent.CATEGORY_BROWSABLE)
+        startActivity(intent)
+    }
 }

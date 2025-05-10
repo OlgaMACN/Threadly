@@ -128,6 +128,10 @@
     <string name="agregarGraficoPedido">Añadir Gráfico</string>
     <string name="descargarPedido">Descargar Pedido</string>
     <string name="realizarPedido">Realizar Pedido</string>
+    <string name="textoElegirTienda">Escoge una tienda para realizar tu pedido</string>
+    <string name="textoAmazon">Amazon</string>
+    <string name="textoAliExpress">AliExpress</string>
+    <string name="textoTemu">Temu</string>
     <!-- tabla pedidos cabecera (pedido_tabla_filas_cabecera) -->
     <string name="columnaNombreGrafico">NOMBRE</string>
     <string name="columnaMadejasPedido">MADEJAS</string>
