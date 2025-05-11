@@ -1,4 +1,4 @@
-package grafico_pedido_hilos
+package grafico_pedido
 
 import android.content.Intent
 import android.os.Bundle
@@ -28,9 +28,11 @@ class GraficoPedido : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedidob_aa_principal)
 
+        /* llamada a la función para usar el toolbar */
+        Toolbar.funcionToolbar(this)
+
         countTela = intent.getIntExtra("countTela",14)
         val index = intent.getIntExtra("graficoIndex", -1)
-
 
         buscador = findViewById(R.id.edTxt_buscadorGrafico)
         totalMadejasView = findViewById(R.id.txtVw_totalMadejasGraficoIndividual)

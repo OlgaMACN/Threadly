@@ -1,6 +1,8 @@
 package pedido_hilos
 
+import AdaptadorPedido
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
@@ -18,7 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import grafico_pedido_hilos.GraficoPedido
+import grafico_pedido.GraficoPedido
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -26,24 +28,30 @@ import java.util.Locale
 
 class PedidoHilos : AppCompatActivity() {
 
-    private lateinit var adaptadorpedido: AdaptadorPedido
+    private lateinit var adaptadorPedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
 
+    /* llamada a la función para usar el toolbar */
+    Toolbar.funcionToolbar(this)
+
     /* recibe las madejas actualizadas para el grafico */
-    private val launcher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val data = result.data
-                val totalMadejas = data?.getIntExtra("totalMadejas", 0) ?: 0
-                val index = data?.getIntExtra("graficoIndex", -1) ?: -1
+    private val launcher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            if (data != null) {
+                val totalMadejas = data.getIntExtra("totalMadejas", 0)
+                val index = data.getIntExtra("graficoIndex", -1)
                 if (index != -1) {
                     val grafico = listaGraficos[index]
                     listaGraficos[index] = grafico.copy(madejas = totalMadejas)
-                    adaptadorpedido.notifyItemChanged(index)
+                    adaptadorPedido.notifyItemChanged(index)
                     actualizarTotalMadejas()
                 }
             }
         }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +60,7 @@ class PedidoHilos : AppCompatActivity() {
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
 
         /* callback: pasa la función de del gráfico directamente al adaptador, es decir, la tabla */
-        adaptadorpedido = AdaptadorPedido(listaGraficos) { position ->
+        adaptadorPedido = AdaptadorPedido(listaGraficos) { position ->
             val grafico = listaGraficos[position]
             val intent = Intent(this, GraficoPedido::class.java).apply {
                 putExtra("countTela", grafico.countTela)
@@ -61,7 +69,7 @@ class PedidoHilos : AppCompatActivity() {
             launcher.launch(intent)
         }
         tablaPedido.layoutManager = LinearLayoutManager(this)
-        tablaPedido.adapter = adaptadorpedido
+        tablaPedido.adapter = adaptadorPedido
 
         /* declaración de botones */
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
@@ -73,6 +81,10 @@ class PedidoHilos : AppCompatActivity() {
         btnDescargarPedido.setOnClickListener { descargarCSV() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
         buscadorGrafico()
+    }
+
+    private fun AdaptadorPedido(graficos: MutableList<Grafico>, onLongClick: (Int) -> Unit): AdaptadorPedido {
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -155,7 +167,7 @@ class PedidoHilos : AppCompatActivity() {
                 val nuevoGrafico =
                     Grafico(nombre, count, madejas = 0) /* placeholder, el valor se sabe luego */
                 listaGraficos.add(nuevoGrafico)
-                adaptadorpedido.notifyItemInserted(listaGraficos.size - 1)
+                adaptadorPedido.notifyItemInserted(listaGraficos.size - 1)
                 actualizarTotalMadejas()
                 dialog.dismiss()
             }
@@ -185,7 +197,7 @@ class PedidoHilos : AppCompatActivity() {
 
         btnEliminar.setOnClickListener {
             listaGraficos.removeAt(index)
-            adaptadorpedido.notifyItemRemoved(index)
+            adaptadorPedido.notifyItemRemoved(index)
             actualizarTotalMadejas()
             dialog.dismiss()
         }

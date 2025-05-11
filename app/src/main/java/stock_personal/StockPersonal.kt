@@ -27,6 +27,9 @@ class StockPersonal : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.stock_aa_principal)
 
+        /* llamada a la función para usar el toolbar */
+        Toolbar.funcionToolbar(this)
+
         tablaStock = findViewById(R.id.tabla_stock)
         /* callback: pasa la función de eliminar hilo directamente al adaptador, es decir, la tabla */
         adaptadorStock = AdaptadorStock(listaStock, ::dialogEliminarHilo)

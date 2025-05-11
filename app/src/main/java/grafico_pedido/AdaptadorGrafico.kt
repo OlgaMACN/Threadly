@@ -1,4 +1,4 @@
-package grafico_pedido_hilos
+package grafico_pedido
 
 import android.view.LayoutInflater
 import android.view.View

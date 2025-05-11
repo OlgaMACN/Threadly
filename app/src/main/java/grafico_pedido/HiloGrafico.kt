@@ -1,4 +1,4 @@
-package grafico_pedido_hilos
+package grafico_pedido
 
 data class HiloGrafico(
     val hilo: String,
