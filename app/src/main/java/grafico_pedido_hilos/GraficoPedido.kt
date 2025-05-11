@@ -1,11 +1,12 @@
 package grafico_pedido_hilos
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.tuapp.R
+import com.threadly.R
 import kotlin.math.ceil
 class GraficoPedido : AppCompatActivity() {
 
@@ -30,15 +31,21 @@ class GraficoPedido : AppCompatActivity() {
         btnAgregarHilo = findViewById(R.id.btn_agregarHiloGraficoIndividual)
         btnVolver = findViewById(R.id.btn_volver_pedido_desde_grafico)
 
-        // Aquí puedes configurar el RecyclerView con tu adapter personalizado
         actualizarTotalMadejas()
 
         btnAgregarHilo.setOnClickListener {
             mostrarDialogAgregarHilo()
         }
 
+        /* vuelve a la pantalla anterior, con el número de madejas */
         btnVolver.setOnClickListener {
-            finish() // o pasa los datos de vuelta mediante Intent
+            val total = listaHilos.sumOf { it.madejas }
+            val resultIntent = Intent().apply {
+                putExtra("totalMadejas", total)
+                putExtra("graficoIndex", intent.getIntExtra("graficoIndex", -1))
+            }
+            setResult(RESULT_OK, resultIntent)
+            finish()
         }
     }
 
@@ -95,14 +102,13 @@ class GraficoPedido : AppCompatActivity() {
         totalMadejasView.text = total.toString()
     }
 
-    // Puedes conectar este método con el clic en el campo "Hilo" de cada fila
     private fun mostrarStockPersonalDeHilo(hilo: String) {
         val stock = obtenerStockHilo(hilo)
         stockHiloView.text = stock ?: "-"
     }
 
     private fun obtenerStockHilo(hilo: String): String? {
-        /* todo necesito la BdD para pulir esto */
+        /* todo necesito la BdD para pulir esto pero aun no la vamos a hacer */
         val stockFicticio = mapOf("310" to "3", "321" to "0", "666" to "2")
         return stockFicticio[hilo]
     }

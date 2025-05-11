@@ -1,11 +1,14 @@
 package pedido_hilos
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import grafico_pedido_hilos.GraficoPedido
 
 class AdaptadorPedido(
 
@@ -18,10 +21,17 @@ class AdaptadorPedido(
         val txtNombre: TextView = view.findViewById(R.id.txtVw_columnaNombreGrafico)
         val txtMadejas: TextView = view.findViewById(R.id.txtVw_columnaMadejasPedido)
 
+        /* para pasar el count de la tela y el índide a la pantalla secundaria */
         init {
-            view.setOnLongClickListener {
-                onLongClick(adapterPosition)
-                true
+            view.setOnClickListener {
+                val position = adapterPosition
+                val grafico = graficos[position]
+                val context = view.context
+                val intent = Intent(context, GraficoPedido::class.java).apply {
+                    putExtra("countTela", grafico.countTela)
+                    putExtra("graficoIndex", position)
+                }
+                (context as? AppCompatActivity)?.startActivityForResult(intent, 123)
             }
         }
     }
@@ -36,7 +46,7 @@ class AdaptadorPedido(
     override fun onBindViewHolder(holder: PedidoViewHolder, position: Int) {
         val grafico = graficos[position]
         holder.txtNombre.text = grafico.nombre
-        holder.txtMadejas.text = grafico.countTela.toString()
+        holder.txtMadejas.text = grafico.madejas.toString()
     }
 
     override fun getItemCount(): Int = graficos.size

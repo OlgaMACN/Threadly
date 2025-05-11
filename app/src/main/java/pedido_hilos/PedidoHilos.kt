@@ -24,20 +24,20 @@ import java.util.Locale
 
 class PedidoHilos : AppCompatActivity() {
 
-    private lateinit var adaptadorpedidoA: AdaptadorPedido
+    private lateinit var adaptadorpedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
 
     @SuppressLint("WrongViewCast")
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
 
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
 
         /* callback: pasa la función de eliminar gráfico directamente al adaptador, es decir, la tabla */
-        adaptadorpedidoA = AdaptadorPedido(listaGraficos, ::dialogEliminarGrafico)
+        adaptadorpedido = AdaptadorPedido(listaGraficos, ::dialogEliminarGrafico)
         tablaPedido.layoutManager = LinearLayoutManager(this)
-        tablaPedido.adapter = adaptadorpedidoA
+        tablaPedido.adapter = adaptadorpedido
 
         /* declaración de botones */
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
@@ -113,14 +113,14 @@ class PedidoHilos : AppCompatActivity() {
         )
         dialog.setCancelable(false)
 
-        val nombreEdit = dialog.findViewById<EditText>(R.id.edTxt_pedirNombreGrafico)
-        val countEdit = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
+        val nombreGrafico = dialog.findViewById<EditText>(R.id.edTxt_pedirNombreGrafico)
+        val countTela = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
         val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarGrafico)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog_agregarGrafico)
 
         btnGuardar.setOnClickListener {
-            val nombre = nombreEdit.text.toString().trim()
-            val countStr = countEdit.text.toString().trim()
+            val nombre = nombreGrafico.text.toString().trim()
+            val countStr = countTela.text.toString().trim()
             val count = countStr.toIntOrNull()
 
             if (nombre.isBlank() || countStr.isBlank()) {
@@ -131,7 +131,7 @@ class PedidoHilos : AppCompatActivity() {
                 val nuevoGrafico =
                     Grafico(nombre, count, madejas = 0) /* placeholder, el valor se sabe luego */
                 listaGraficos.add(nuevoGrafico)
-                adaptadorpedidoA.notifyItemInserted(listaGraficos.size - 1)
+                adaptadorpedido.notifyItemInserted(listaGraficos.size - 1)
                 actualizarTotalMadejas()
                 dialog.dismiss()
             }
@@ -161,7 +161,7 @@ class PedidoHilos : AppCompatActivity() {
 
         btnEliminar.setOnClickListener {
             listaGraficos.removeAt(index)
-            adaptadorpedidoA.notifyItemRemoved(index)
+            adaptadorpedido.notifyItemRemoved(index)
             actualizarTotalMadejas()
             dialog.dismiss()
         }
@@ -224,4 +224,22 @@ class PedidoHilos : AppCompatActivity() {
         intent.addCategory(Intent.CATEGORY_BROWSABLE)
         startActivity(intent)
     }
+
+
+    /* recibe las madejas actualizadas para el grafico */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 123 && resultCode == RESULT_OK && data != null) {
+            val totalMadejas = data.getIntExtra("totalMadejas", 0)
+            val index = data.getIntExtra("graficoIndex", -1)
+            if (index != -1) {
+                val grafico = listaGraficos[index]
+                listaGraficos[index] = grafico.copy(madejas = totalMadejas)
+                adaptadorpedido.notifyItemChanged(index)
+                actualizarTotalMadejas()
+            }
+        }
+    }
+
 }
