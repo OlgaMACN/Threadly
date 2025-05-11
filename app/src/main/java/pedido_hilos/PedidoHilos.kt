@@ -13,10 +13,12 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import grafico_pedido_hilos.GraficoPedido
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -27,15 +29,37 @@ class PedidoHilos : AppCompatActivity() {
     private lateinit var adaptadorpedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
 
-    @SuppressLint("WrongViewCast")
+    /* recibe las madejas actualizadas para el grafico */
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data
+                val totalMadejas = data?.getIntExtra("totalMadejas", 0) ?: 0
+                val index = data?.getIntExtra("graficoIndex", -1) ?: -1
+                if (index != -1) {
+                    val grafico = listaGraficos[index]
+                    listaGraficos[index] = grafico.copy(madejas = totalMadejas)
+                    adaptadorpedido.notifyItemChanged(index)
+                    actualizarTotalMadejas()
+                }
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
 
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
 
-        /* callback: pasa la función de eliminar gráfico directamente al adaptador, es decir, la tabla */
-        adaptadorpedido = AdaptadorPedido(listaGraficos, ::dialogEliminarGrafico)
+        /* callback: pasa la función de del gráfico directamente al adaptador, es decir, la tabla */
+        adaptadorpedido = AdaptadorPedido(listaGraficos) { position ->
+            val grafico = listaGraficos[position]
+            val intent = Intent(this, GraficoPedido::class.java).apply {
+                putExtra("countTela", grafico.countTela)
+                putExtra("graficoIndex", position)
+            }
+            launcher.launch(intent)
+        }
         tablaPedido.layoutManager = LinearLayoutManager(this)
         tablaPedido.adapter = adaptadorpedido
 
@@ -59,20 +83,20 @@ class PedidoHilos : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     fun buscadorGrafico() {
-        val edTxtBuscador = findViewById<EditText>(R.id.edTxt_buscadorPedido)
+        val buscadorPedido = findViewById<EditText>(R.id.edTxt_buscadorPedido)
         val btnBuscar = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
-        val resultadoBusquedaContenedor =
+        val resContenedorTexto =
             findViewById<LinearLayout>(R.id.contenedor_resultado_busqueda)
         val resultadoBusquedaTexto = findViewById<TextView>(R.id.txt_resultado_nombre)
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
         val cabecera = findViewById<View>(R.id.cabecera_tabla_pedido)
 
         btnBuscar.setOnClickListener {
-            val busqueda = edTxtBuscador.text.toString().trim()
+            val busqueda = buscadorPedido.text.toString().trim()
 
             if (busqueda.isEmpty()) {
                 /* si no hay nada escrito, la tabla vuelve a ser visible */
-                resultadoBusquedaContenedor.visibility = View.GONE
+                resContenedorTexto.visibility = View.GONE
                 tablaPedido.visibility = View.VISIBLE
                 cabecera.visibility = View.VISIBLE
                 return@setOnClickListener
@@ -82,7 +106,7 @@ class PedidoHilos : AppCompatActivity() {
                 listaGraficos.find { it.nombre.contains(busqueda, ignoreCase = true) }
 
             if (coincidencia != null) {
-                resultadoBusquedaContenedor.visibility = View.VISIBLE
+                resContenedorTexto.visibility = View.VISIBLE
                 tablaPedido.visibility = View.GONE
                 cabecera.visibility = View.GONE
                 resultadoBusquedaTexto.text = coincidencia.nombre
@@ -90,10 +114,10 @@ class PedidoHilos : AppCompatActivity() {
                 resultadoBusquedaTexto.setOnClickListener {
                     val index = listaGraficos.indexOf(coincidencia)
                     tablaPedido.scrollToPosition(index)
-                    resultadoBusquedaContenedor.visibility = View.GONE
+                    resContenedorTexto.visibility = View.GONE
                     tablaPedido.visibility = View.VISIBLE
                     cabecera.visibility = View.VISIBLE
-                    edTxtBuscador.text.clear()
+                    buscadorPedido.text.clear()
                 }
             } else {
                 Toast.makeText(this, "No tienes gráficos con ese nombre :(", Toast.LENGTH_SHORT)
@@ -224,22 +248,4 @@ class PedidoHilos : AppCompatActivity() {
         intent.addCategory(Intent.CATEGORY_BROWSABLE)
         startActivity(intent)
     }
-
-
-    /* recibe las madejas actualizadas para el grafico */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 123 && resultCode == RESULT_OK && data != null) {
-            val totalMadejas = data.getIntExtra("totalMadejas", 0)
-            val index = data.getIntExtra("graficoIndex", -1)
-            if (index != -1) {
-                val grafico = listaGraficos[index]
-                listaGraficos[index] = grafico.copy(madejas = totalMadejas)
-                adaptadorpedido.notifyItemChanged(index)
-                actualizarTotalMadejas()
-            }
-        }
-    }
-
 }

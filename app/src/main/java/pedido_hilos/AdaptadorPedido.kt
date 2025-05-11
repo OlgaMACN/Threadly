@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import grafico_pedido_hilos.GraficoPedido
@@ -31,7 +30,7 @@ class AdaptadorPedido(
                     putExtra("countTela", grafico.countTela)
                     putExtra("graficoIndex", position)
                 }
-                (context as? AppCompatActivity)?.startActivityForResult(intent, 123)
+                launcher.launch(intent)
             }
         }
     }
@@ -43,6 +42,7 @@ class AdaptadorPedido(
         return PedidoViewHolder(view)
     }
 
+    /* para configurar cómo se muestra cada fila */
     override fun onBindViewHolder(holder: PedidoViewHolder, position: Int) {
         val grafico = graficos[position]
         holder.txtNombre.text = grafico.nombre

@@ -7,10 +7,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 
-class AdaptadorHiloGrafico(
+class AdaptadorGrafico(
     private val hilos: MutableList<HiloGrafico>,
     private val onClickHilo: (String) -> Unit
-) : RecyclerView.Adapter<AdaptadorHiloGrafico.HiloViewHolder>() {
+) : RecyclerView.Adapter<AdaptadorGrafico.HiloViewHolder>() {
 
     inner class HiloViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtHilo: TextView = view.findViewById(R.id.txtVw_columnaHiloGrafico)

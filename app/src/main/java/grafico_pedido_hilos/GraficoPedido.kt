@@ -2,39 +2,47 @@ package grafico_pedido_hilos
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import kotlin.math.ceil
+
 class GraficoPedido : AppCompatActivity() {
 
     private lateinit var buscador: EditText
     private lateinit var totalMadejasView: TextView
     private lateinit var stockHiloView: TextView
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var tablaGrafico: RecyclerView
     private lateinit var btnAgregarHilo: Button
     private lateinit var btnVolver: Button
 
-    private var countTela: Int = 14 // Este valor debería llegar desde el Intent o la tabla_pedido
+    private var countTela: Int = 14 /* por defecto, para tener la variable, pero simpre va a llegar relleno */
     private var listaHilos = mutableListOf<HiloGrafico>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedidob_aa_principal)
 
+        countTela = intent.getIntExtra("countTela",14)
+        val index = intent.getIntExtra("graficoIndex", -1)
+
+
         buscador = findViewById(R.id.edTxt_buscadorGrafico)
         totalMadejasView = findViewById(R.id.txtVw_totalMadejasGraficoIndividual)
         stockHiloView = findViewById(R.id.txtVw_stockHiloActual)
-        recyclerView = findViewById(R.id.tabla_grafico)
+        tablaGrafico = findViewById(R.id.tabla_grafico)
         btnAgregarHilo = findViewById(R.id.btn_agregarHiloGraficoIndividual)
         btnVolver = findViewById(R.id.btn_volver_pedido_desde_grafico)
 
         actualizarTotalMadejas()
 
         btnAgregarHilo.setOnClickListener {
-            mostrarDialogAgregarHilo()
+            dialogAgregarHilo()
         }
 
         /* vuelve a la pantalla anterior, con el número de madejas */
@@ -49,7 +57,7 @@ class GraficoPedido : AppCompatActivity() {
         }
     }
 
-    private fun mostrarDialogAgregarHilo() {
+    private fun dialogAgregarHilo() {
         val dialogView = layoutInflater.inflate(R.layout.pedidob_dialog_agregar_hilo, null)
         val hiloInput = dialogView.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
         val puntadasInput =
@@ -108,9 +116,8 @@ class GraficoPedido : AppCompatActivity() {
     }
 
     private fun obtenerStockHilo(hilo: String): String? {
-        /* todo necesito la BdD para pulir esto pero aun no la vamos a hacer */
-        val stockFicticio = mapOf("310" to "3", "321" to "0", "666" to "2")
-        return stockFicticio[hilo]
+        /* todo necesito la BdD para poder coger datos */
+        return TODO("Provide the return value")
     }
 }
 
