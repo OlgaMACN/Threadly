@@ -1,17 +1,15 @@
 package pedido_hilos
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import grafico_pedido_hilos.GraficoPedido
 
 class AdaptadorPedido(
-
     private val graficos: MutableList<Grafico>,
+    private val onItemClick: (Int) -> Unit,
     private val onLongClick: (Int) -> Unit
 ) : RecyclerView.Adapter<AdaptadorPedido.PedidoViewHolder>() {
 
@@ -24,13 +22,19 @@ class AdaptadorPedido(
         init {
             view.setOnClickListener {
                 val position = adapterPosition
-                val grafico = graficos[position]
-                val context = view.context
-                val intent = Intent(context, GraficoPedido::class.java).apply {
-                    putExtra("countTela", grafico.countTela)
-                    putExtra("graficoIndex", position)
+                if (position != RecyclerView.NO_POSITION) {
+                    onItemClick(position)  // DELEGAMOS a la activity
                 }
-                launcher.launch(intent)
+            }
+
+            view.setOnLongClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onLongClick(position)
+                    true
+                } else {
+                    false
+                }
             }
         }
     }
