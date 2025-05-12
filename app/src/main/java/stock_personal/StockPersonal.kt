@@ -73,7 +73,6 @@ class StockPersonal : AppCompatActivity() {
 
                 val index = listaStock.indexOf(coincidencia)
                 tablaStock.scrollToPosition(index)
-
             } else {
                 tablaStock.visibility = View.GONE
                 txtNoResultados.visibility = View.VISIBLE

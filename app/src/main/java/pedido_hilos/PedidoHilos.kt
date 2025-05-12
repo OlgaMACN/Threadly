@@ -1,18 +1,18 @@
 package pedido_hilos
 
-import AdaptadorPedido
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -59,7 +59,7 @@ class PedidoHilos : AppCompatActivity() {
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
 
         /* callback: pasa la función de del gráfico directamente al adaptador, es decir, la tabla */
-        /* adaptadorPedido = AdaptadorPedido(listaGraficos) { position ->
+        /* adaptadorPedido = pedido_hilos.pedido_hilos.AdaptadorPedido(listaGraficos) { position ->
              val grafico = listaGraficos[position]
              val intent = Intent(this, GraficoPedido::class.java).apply {
                  putExtra("countTela", grafico.countTela)
@@ -88,50 +88,50 @@ class PedidoHilos : AppCompatActivity() {
         findViewById<TextView>(R.id.txtVw_madejasTotalPedido).text = "Total: $total"
     }
 
-    @SuppressLint("SetTextI18n")
-    fun buscadorGrafico() {
-        val buscadorPedido = findViewById<EditText>(R.id.edTxt_buscadorPedido)
-        val btnBuscar = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
-        val resContenedorTexto =
-            findViewById<LinearLayout>(R.id.contenedor_resultado_busqueda)
-        val resultadoBusquedaTexto = findViewById<TextView>(R.id.txt_resultado_nombre)
+
+    private fun buscadorGrafico() {
+        val editTextBuscar = findViewById<EditText>(R.id.edTxt_buscadorPedido)
+        val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
-        val cabecera = findViewById<View>(R.id.cabecera_tabla_pedido)
+        val txtNoResultados = findViewById<TextView>(R.id.txt_resultado_nombre)
 
-        btnBuscar.setOnClickListener {
-            val busqueda = buscadorPedido.text.toString().trim()
+        txtNoResultados.visibility = View.GONE
 
-            if (busqueda.isEmpty()) {
-                /* si no hay nada escrito, la tabla vuelve a ser visible */
-                resContenedorTexto.visibility = View.GONE
-                tablaPedido.visibility = View.VISIBLE
-                cabecera.visibility = View.VISIBLE
-                return@setOnClickListener
-            }
-            /* con it se representa cada elemento de la lista, es como el índice de un array */
-            val coincidencia =
-                listaGraficos.find { it.nombre.contains(busqueda, ignoreCase = true) }
+        btnLupa.setOnClickListener {
+            val texto = editTextBuscar.text.toString().trim().uppercase()
+            val coincidencia = listaGraficos.find { it.nombre.uppercase() == texto }
 
             if (coincidencia != null) {
-                resContenedorTexto.visibility = View.VISIBLE
-                tablaPedido.visibility = View.GONE
-                cabecera.visibility = View.GONE
-                resultadoBusquedaTexto.text = coincidencia.nombre
+                val resultados = listOf(coincidencia)
+                /* si encuentra el hilo lo resaltará en la tabla */
+                adaptadorPedido.resaltarGrafico(coincidencia.nombre)
+                adaptadorPedido.actualizarLista(listaGraficos)
+                tablaPedido.visibility = View.VISIBLE
+                txtNoResultados.visibility = View.GONE
 
-                resultadoBusquedaTexto.setOnClickListener {
-                    val index = listaGraficos.indexOf(coincidencia)
-                    tablaPedido.scrollToPosition(index)
-                    resContenedorTexto.visibility = View.GONE
-                    tablaPedido.visibility = View.VISIBLE
-                    cabecera.visibility = View.VISIBLE
-                    buscadorPedido.text.clear()
-                }
+                val index = listaGraficos.indexOf(coincidencia)
+                tablaPedido.scrollToPosition(index)
             } else {
-                Toast.makeText(this, "No tienes gráficos con ese nombre :(", Toast.LENGTH_SHORT)
-                    .show()
+                tablaPedido.visibility = View.GONE
+                txtNoResultados.visibility = View.VISIBLE
             }
         }
+        /* si se borra la búsqueda la tabla vuelve a aparecer */
+        editTextBuscar.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) {
+                    adaptadorPedido.resaltarGrafico(null)
+                    adaptadorPedido.actualizarLista(listaGraficos)
+                    tablaPedido.visibility = View.VISIBLE
+                    txtNoResultados.visibility = View.GONE
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
+
 
     @SuppressLint("SetTextI18n") /* estas anotaciones surgen de ignorar las advertencias de lint para usar los recursos */
     fun dialogAgregarGrafico() {

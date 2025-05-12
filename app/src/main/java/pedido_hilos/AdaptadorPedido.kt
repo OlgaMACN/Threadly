@@ -1,15 +1,18 @@
+package pedido_hilos
+
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import pedido_hilos.Grafico
 
 class AdaptadorPedido(
-    private val graficos: MutableList<Grafico>,
-    private val onItemClick: (Int) -> Unit,   // ✅ este es el que faltaba
-    private val onLongClick: (Int) -> Unit = {} // opcional por si lo usas
+    private var graficos: MutableList<Grafico>,
+    private val onItemClick: (Int) -> Unit,
+    private val onLongClick: (Int) -> Unit = {},
+    private var graficoResaltado: String? = null // <- nuevo
 ) : RecyclerView.Adapter<AdaptadorPedido.PedidoViewHolder>() {
 
     inner class PedidoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -20,7 +23,7 @@ class AdaptadorPedido(
             view.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onItemClick(position) // ✅ usa el callback que recibe la actividad
+                    onItemClick(position)
                 }
             }
 
@@ -44,7 +47,27 @@ class AdaptadorPedido(
         val grafico = graficos[position]
         holder.txtNombre.text = grafico.nombre
         holder.txtMadejas.text = grafico.madejas.toString()
+
+        /* misma lógica que para resaltar que en la tabla de stock*/
+        if (grafico.nombre.equals(graficoResaltado, ignoreCase = true)) {
+            holder.itemView.setBackgroundResource(R.drawable.reutilizable_resaltar_busqueda)
+        } else {
+            holder.itemView.setBackgroundResource(android.R.color.transparent)
+        }
     }
 
     override fun getItemCount(): Int = graficos.size
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun actualizarLista(nuevaLista: List<Grafico>) {
+        graficos = nuevaLista.toMutableList()
+        // TODO cambiar a algo más eficiente pero de momento tira
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun resaltarGrafico(nombre: String?) {
+        graficoResaltado = nombre
+        notifyDataSetChanged()
+    }
 }

@@ -54,7 +54,7 @@
         app:layout_constraintTop_toTopOf="@id/edTxt_buscadorHilo"
         app:srcCompat="@drawable/img_lupa" />
 
-    <!-- Mensaje si no hay resultados -->
+    <!-- Para poder enseñar el resultado de la búsqueda -->
     <TextView
         android:id="@+id/txtVw_sinResultados"
         android:layout_width="wrap_content"
