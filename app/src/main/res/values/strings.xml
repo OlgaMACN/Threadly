@@ -67,7 +67,7 @@
     <string name="agregarHiloStk">Añadir Hilo</string>
     <string name="botonAgregarMadejaStk">Añadir Madeja</string>
     <string name="botonEliminarMadejaStk">Eliminar Madeja</string>
-    <string name="no_hay_resultados">No hay resultados</string>
+    <string name="no_hay_resultados">No tienes ese hilo en tu stock :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
     <!-- tabla stock cabecera (stock_tabla_filas_cabecera) -->
     <string name="numeroHiloStk">HILO</string>
     <string name="numeroMadejasStk">MADEJAS</string>

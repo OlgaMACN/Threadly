@@ -64,9 +64,11 @@
         android:textColor="@android:color/darker_gray"
         android:textSize="18sp"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorHilo" />
+        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorHilo"
+        app:layout_constraintVertical_bias="0.05" />
 
     <Button
         android:id="@+id/btn_agregarHiloStk"
@@ -102,7 +104,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabla_stock"
         android:layout_width="395dp"
-        android:layout_height="500dp"
+        android:layout_height="350dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cabecera_tabla_stock"
