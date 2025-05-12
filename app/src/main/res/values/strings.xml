@@ -123,7 +123,7 @@
     <string name="introducirNumHiloModificar">Introduce un número...</string>
     <string name="introducirNombreHiloModificar">Introduce un nombre...</string>
 
-    <!-- Pedido Hilos (pedidob_aa_principal) -->
+    <!-- Pedido Hilos (pedido_aa_principal) -->
     <string name="cabeceraPedido">PEDIDO HILOS</string>
     <string name="resultado_nombre">Resultado: Nombre</string>
     <string name="madejasTotalPedido">Total Madejas: </string>
@@ -151,8 +151,10 @@
     <string name="mensajeEliminar">¿Seguro que quieres eliminar este gráfico del pedido actual?</string>
     <string name="nombreGrafico">Nombre</string>
     <string name="eliminarGrafico">Eliminar</string>
+
     <!-- Gráfico Individual (pedidob_aa_principal)  -->
     <string name="cabeceraGrafico">NOMBRE GRÁFICO</string>
+    <string name="no_hay_resultadosGrafico">No tienes ese hilo registrado para este gráfico :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
     <string name="totalMadejasGraficoIndividual">Total Madejas: </string>
     <string name="stockHiloActual">Stock: </string>
     <string name="agregarHiloGraficoIndividual">Añadir Hilo</string>

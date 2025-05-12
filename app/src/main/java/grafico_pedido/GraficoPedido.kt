@@ -2,8 +2,12 @@ package grafico_pedido
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -14,15 +18,11 @@ import kotlin.math.ceil
 
 class GraficoPedido : AppCompatActivity() {
 
-    private lateinit var buscador: EditText
-    private lateinit var totalMadejasView: TextView
-    private lateinit var stockHiloView: TextView
-    private lateinit var tablaGrafico: RecyclerView
-    private lateinit var btnAgregarHilo: Button
-    private lateinit var btnVolver: Button
+    private lateinit var adaptadorGrafico: AdaptadorGrafico
+    private val listaHilosGrafico = mutableListOf<HiloGrafico>()
 
-    private var countTela: Int = 14 /* por defecto, para tener la variable, pero simpre va a llegar relleno */
-    private var listaHilos = mutableListOf<HiloGrafico>()
+    /* por defecto, para tener la variable, pero siempre va a llegar relleno de PedidoHilos.kt */
+    private var countTela: Int = 14
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,25 +31,26 @@ class GraficoPedido : AppCompatActivity() {
         /* llamada a la función para usar el toolbar */
         Toolbar.funcionToolbar(this)
 
-        countTela = intent.getIntExtra("countTela",14)
+        /* entrada de los datos de la otra pantalla, recogidos */
+        countTela = intent.getIntExtra("countTela", 14)
         val index = intent.getIntExtra("graficoIndex", -1)
 
-        buscador = findViewById(R.id.edTxt_buscadorGrafico)
-        totalMadejasView = findViewById(R.id.txtVw_totalMadejasGraficoIndividual)
-        stockHiloView = findViewById(R.id.txtVw_stockHiloActual)
-        tablaGrafico = findViewById(R.id.tabla_grafico)
-        btnAgregarHilo = findViewById(R.id.btn_agregarHiloGraficoIndividual)
-        btnVolver = findViewById(R.id.btn_volver_pedido_desde_grafico)
+        /* declaración de componenentes */
+        var buscador = findViewById<EditText>(R.id.edTxt_buscadorGrafico)
+        var totalMadejasView = findViewById<TextView>(R.id.txtVw_totalMadejasGraficoIndividual)
+        var stockHiloView = findViewById<TextView>(R.id.txtVw_stockHiloActual)
+        var tablaGrafico = findViewById<RecyclerView>(R.id.tabla_grafico)
+        val btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloGraficoIndividual)
+        val btnVolver = findViewById<Button>(R.id.btn_volver_pedido_desde_grafico)
 
+        /* inicio de las funciones en constante uso */
+        buscadorHilo()
         actualizarTotalMadejas()
 
-        btnAgregarHilo.setOnClickListener {
-            dialogAgregarHilo()
-        }
-
-        /* vuelve a la pantalla anterior, con el número de madejas */
+        btnAgregarHilo.setOnClickListener { dialogAgregarHilo() }
+        /* vuelve a la pantalla anterior, llevándose consigo el número de madejas del gráfico */
         btnVolver.setOnClickListener {
-            val total = listaHilos.sumOf { it.madejas }
+            val total = listaHilosGrafico.sumOf { it.madejas }
             val resultIntent = Intent().apply {
                 putExtra("totalMadejas", total)
                 putExtra("graficoIndex", intent.getIntExtra("graficoIndex", -1))
@@ -57,6 +58,49 @@ class GraficoPedido : AppCompatActivity() {
             setResult(RESULT_OK, resultIntent)
             finish()
         }
+    }
+
+    private fun buscadorHilo() {
+        val buscarGrafico = findViewById<EditText>(R.id.edTxt_buscadorGrafico)
+        val btnLupaGrafico = findViewById<ImageView>(R.id.imgVw_lupaGrafico)
+        val tablaGrafico = findViewById<RecyclerView>(R.id.tabla_grafico)
+        val txtNoResultadosGrafico = findViewById<TextView>(R.id.txtVw_sinResultadosGrafico)
+
+        txtNoResultadosGrafico.visibility = View.GONE
+
+        btnLupaGrafico.setOnClickListener {
+            val texto = buscarGrafico.text.toString().trim().uppercase()
+            val coincidencia = listaHilosGrafico.find { it.hilo.uppercase() == texto }
+
+            if (coincidencia != null) {
+                /* si encuentra el hilo lo resaltará en la tabla */
+                adaptadorGrafico.resaltarHilo(coincidencia.hilo)
+                adaptadorGrafico.actualizarLista(listaHilosGrafico)
+                tablaGrafico.visibility = View.VISIBLE
+                txtNoResultadosGrafico.visibility = View.GONE
+
+                val index = listaHilosGrafico.indexOf(coincidencia)
+                tablaGrafico.scrollToPosition(index)
+            } else {
+                tablaGrafico.visibility = View.GONE
+                txtNoResultadosGrafico.visibility = View.VISIBLE
+            }
+        }
+
+        /* si se borra la búsqueda la tabla vuelve a aparecer */
+        buscarGrafico.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) {
+                    adaptadorGrafico.resaltarHilo(null)
+                    adaptadorGrafico.actualizarLista(listaHilosGrafico)
+                    tablaGrafico.visibility = View.VISIBLE
+                    txtNoResultadosGrafico.visibility = View.GONE
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 
     private fun dialogAgregarHilo() {
@@ -88,7 +132,7 @@ class GraficoPedido : AppCompatActivity() {
                 val madejas = calcularMadejas(puntadas, countTela)
 
                 val nuevoHilo = HiloGrafico(hilo, puntadas, madejas)
-                listaHilos.add(nuevoHilo)
+                listaHilosGrafico.add(nuevoHilo)
                 // recyclerView.adapter?.notifyDataSetChanged()
                 actualizarTotalMadejas()
                 dialog.dismiss()
@@ -108,13 +152,13 @@ class GraficoPedido : AppCompatActivity() {
     }
 
     private fun actualizarTotalMadejas() {
-        val total = listaHilos.sumOf { it.madejas }
-        totalMadejasView.text = total.toString()
+        /* val total = listaHilosGrafico.sumOf { it.madejas }
+         totalMadejasView.text = total.toString()*/
     }
 
     private fun mostrarStockPersonalDeHilo(hilo: String) {
-        val stock = obtenerStockHilo(hilo)
-        stockHiloView.text = stock ?: "-"
+       /* val stock = obtenerStockHilo(hilo)
+        stockHiloView.text = stock ?: "-"*/
     }
 
     private fun obtenerStockHilo(hilo: String): String? {
