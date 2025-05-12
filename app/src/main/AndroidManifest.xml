@@ -12,44 +12,73 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Threadly"
         tools:targetApi="31">
-        <!-- IMPORTANTE: Declarar todas las activities utilizadas -->
+
+        <!-- TODO IMPORTANTE: Declarar todas las activities utilizadas -->
+
+        <!-- Splash: será la que dará inicio a la ejecución -->
         <activity
             android:name="splash.Splash"
             android:exported="true"
             android:theme="@style/Base.Theme.Threadly">
             <intent-filter>
-                <!-- Y el splash será el que dará inicio a la ejecución, de ahí estas etiquetas-->
+
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- Login -->
         <activity
             android:name="login.LoginUserExiste"
             android:exported="true" />
         <activity
             android:name="login.LoginUserNoExiste"
             android:exported="true" />
+
+        <!-- Pantalla Inicio -->
+        <activity
+            android:name="PantallaInicio.PantallaPrincipal"
+            android:exported="true" />
+
+        <activity
+            android:name="PantallaInicio.DatosPersonales"
+            android:exported="true" />
+
+        <activity
+            android:name="PantallaInicio.ModificarDatos"
+            android:exported="true" />
+
+        <!-- Catálogo -->
+        <activity
+            android:name="CatalogoHilos.CatalogoHilos"
+            android:exported="true" />
+        <activity android:name="CatalogoHilos.AgregarHilo" />
+        <activity android:name="CatalogoHilos.ModificarHilo" />
+        <activity android:name="CatalogoHilos.ModificarHiloFinal" />
+
+        <!-- Stock Personal -->
         <activity
             android:name="stock_personal.StockPersonal"
             android:exported="true" />
 
-        <!--aqui declaramos el resto de activities para poder navegar-->
-        <activity android:name="Login.LoginUserExiste" />
-        <activity android:name="Login.LoginUserNoExiste" />
-        <activity android:name="PantallaInicio.DatosPersonales" />
-        <activity android:name="PantallaInicio.ModificarDatos" />
-        <activity android:name="StockPersonal.StockPersonal" />
-        <activity android:name="CatalogoHilos.CatalogoHilos" />
-        <activity android:name="CatalogoHilos.AgregarHilo" />
-        <activity android:name="CatalogoHilos.ModificarHilo" />
-        <activity android:name="CatalogoHilos.ModificarHiloFinal" />
-        <activity android:name="Toolbar.Toolbar" />
-        <!--        <activity android:name="Foro.Foro" />-->
+        <!-- Foro -->
+        <activity
+            android:name="Foro.Foro"
+            android:exported="true" />
+
         <activity android:name="Foro.CrearTema" />
         <activity android:name="Foro.ResponderTema" />
         <activity android:name="Foro.VisualizarTema" />
 
+        <!-- Pedido -->
+        <activity
+            android:name="pedido_hilos.PedidoHilos"
+            android:exported="true" />
+
+        <!-- Gráfico Pedidos -->
+        <activity
+            android:name="grafico_pedido.GraficoPedido"
+            android:exported="true" />
     </application>
 
 </manifest>

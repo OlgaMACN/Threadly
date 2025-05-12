@@ -15,5 +15,6 @@
     <color name="morado_claro">#AB6077</color>
     <color name="morado_palo">#8F3F57</color>
     <color name="colorSplash">#EBDFE3</color>
+    <color name="filaResaltadaBusqueda">#BDB0B1</color>
 
 </resources>

@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import grafico_pedido.GraficoPedido
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -30,9 +29,6 @@ class PedidoHilos : AppCompatActivity() {
 
     private lateinit var adaptadorPedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
-
-    /* llamada a la función para usar el toolbar */
-    Toolbar.funcionToolbar(this)
 
     /* recibe las madejas actualizadas para el grafico */
     private val launcher = registerForActivityResult(
@@ -57,17 +53,20 @@ class PedidoHilos : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
 
+        /* llamada a la función para usar el toolbar */
+        Toolbar.funcionToolbar(this)
+
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
 
         /* callback: pasa la función de del gráfico directamente al adaptador, es decir, la tabla */
-        adaptadorPedido = AdaptadorPedido(listaGraficos) { position ->
-            val grafico = listaGraficos[position]
-            val intent = Intent(this, GraficoPedido::class.java).apply {
-                putExtra("countTela", grafico.countTela)
-                putExtra("graficoIndex", position)
-            }
-            launcher.launch(intent)
-        }
+        /* adaptadorPedido = AdaptadorPedido(listaGraficos) { position ->
+             val grafico = listaGraficos[position]
+             val intent = Intent(this, GraficoPedido::class.java).apply {
+                 putExtra("countTela", grafico.countTela)
+                 putExtra("graficoIndex", position)
+             }
+             launcher.launch(intent)
+         }*/
         tablaPedido.layoutManager = LinearLayoutManager(this)
         tablaPedido.adapter = adaptadorPedido
 
@@ -81,10 +80,6 @@ class PedidoHilos : AppCompatActivity() {
         btnDescargarPedido.setOnClickListener { descargarCSV() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
         buscadorGrafico()
-    }
-
-    private fun AdaptadorPedido(graficos: MutableList<Grafico>, onLongClick: (Int) -> Unit): AdaptadorPedido {
-
     }
 
     @SuppressLint("SetTextI18n")

@@ -53,7 +53,7 @@ class StockPersonal : AppCompatActivity() {
     /* acción del buscador */
     private fun buscadorHilo() {
         val editTextBuscar = findViewById<EditText>(R.id.edTxt_buscadorHilo)
-        val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
+        val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaStock)
         val tablaStock = findViewById<RecyclerView>(R.id.tabla_stock)
         val txtNoResultados = findViewById<TextView>(R.id.txtVw_sinResultados)
 
@@ -65,25 +65,26 @@ class StockPersonal : AppCompatActivity() {
 
             if (coincidencia != null) {
                 val resultados = listOf(coincidencia)
-                adaptadorStock.actualizarHilo(coincidencia)
+                /* si encuentra el hilo lo resaltará en la tabla */
+                adaptadorStock.resaltarHilo(coincidencia.hiloId)
+                adaptadorStock.actualizarLista(listaStock)
                 tablaStock.visibility = View.VISIBLE
                 txtNoResultados.visibility = View.GONE
 
                 val index = listaStock.indexOf(coincidencia)
                 tablaStock.scrollToPosition(index)
-                adaptadorStock.actualizarLista(listaStock)
 
             } else {
-                /* si no hay resultados */
                 tablaStock.visibility = View.GONE
                 txtNoResultados.visibility = View.VISIBLE
             }
         }
 
-        /* volver a mostrar tabla si se borra la búsqueda */
+        /* si se borra la búsqueda la tabla vuelve a aparecer */
         editTextBuscar.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
+                    adaptadorStock.resaltarHilo(null)
                     adaptadorStock.actualizarLista(listaStock)
                     tablaStock.visibility = View.VISIBLE
                     txtNoResultados.visibility = View.GONE
@@ -124,8 +125,15 @@ class StockPersonal : AppCompatActivity() {
 
         btnGuardar.setOnClickListener {
             val hilo = inputHilo.text.toString().uppercase().trim()
-            val madejas = inputMadejas.text.toString().toIntOrNull()
+            val madejasString = inputMadejas.text.toString().trim()
 
+            if (hilo.isEmpty() || madejasString.isEmpty()) {
+                Toast.makeText(this, "Ningún campo puede estar vacío", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            val madejas =
+                madejasString.toIntOrNull() /* convierto a entero para poder validar datos numéricos */
             if (hilo.isEmpty() || madejas == null || madejas < 0) {
                 Toast.makeText(
                     this,
@@ -143,6 +151,7 @@ class StockPersonal : AppCompatActivity() {
 
             listaStock.add(HiloStock(hilo, madejas))
             adaptadorStock.notifyItemInserted(listaStock.size - 1)
+            adaptadorStock.actualizarLista(listaStock)
             /* una vez insertado el hilo, se cierra el dialog*/
             dialog.dismiss()
         }

@@ -42,6 +42,6 @@ fun funcionToolbar(activity: Activity) {
     btn_pedido.setOnClickListener() {
         activity.startActivity(Intent(activity, PedidoHilos::class.java))
     }
-    /* al hacerlo con activity, como función reutilizable, es más eficiente. Hay que llamarlo en cada
-    * actividad, como he hecho en stock personal... */
+    /* al hacerlo con activity, como función reutilizable, en vez de una clase
+     es más eficiente. Hay que llamarlo en cada actividad, como he hecho en stock personal... */
 }
