@@ -1,4 +1,4 @@
-package default.threadly
+package default.Tests
 
 import org.junit.Test
 

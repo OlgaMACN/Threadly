@@ -36,8 +36,8 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:hint="@string/buscarHiloConsulta"
-        android:textAlignment="center"
         android:inputType="number"
+        android:textAlignment="center"
         android:textColorHint="@color/morado_palo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -68,11 +68,37 @@
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/img_lupa" />
 
+    <!-- Cabecera fija para que no se mueva al hacer scroll -->
+
+    <include
+        android:id="@+id/cabecera_tabla_stock"
+        layout="@layout/stock_tabla_filas_cabecera"
+        android:layout_width="395dp"
+        android:layout_height="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_buscarHiloConsulta"
+        app:layout_constraintVertical_bias="0.16000003" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tabla_catalogo"
+        android:layout_width="395dp"
+        android:layout_height="350dp"
+        android:layout_marginTop="135dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_buscarHiloConsulta"
+        app:layout_constraintVertical_bias="0.0" />
+
     <Button
         android:id="@+id/btn_agregarHiloConsulta"
-        android:layout_width="214dp"
-        android:layout_height="78dp"
-        android:layout_marginStart="56dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="557dp"
         android:layout_marginBottom="108dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
@@ -82,13 +108,16 @@
         app:layout_constraintEnd_toStartOf="@+id/btn_modificarHiloConsulta"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/btn_modificarHiloConsulta"
-        android:layout_width="214dp"
-        android:layout_height="78dp"
-        android:layout_marginEnd="57dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="557dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="108dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
@@ -97,7 +126,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn_agregarHiloConsulta" />
+        app:layout_constraintStart_toEndOf="@+id/btn_agregarHiloConsulta"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <include
         android:id="@+id/reutil_toolbar"

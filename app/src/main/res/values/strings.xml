@@ -102,18 +102,22 @@
     <string name="introducirNumMadejasEliminarStk">Nº de madejas a eliminar</string>
     <string name="eliminarMadejaStk">Eliminar Madeja</string>
 
-    <!-- Pantalla Consultar Hilos -->
+    <!-- Pantalla Catalogo Hilos -->
     <string name="ConsultarHilosEncabezado">CONSULTAR HILOS</string>
     <string name="buscarHiloConsulta">Buscar hilo...</string>
-    <string name="NumHiloConsulta">Nº Hilo</string>
-    <string name="nombreHiloConsulta">Nombre</string>
+    <!-- tabla stock cabecera (stock_tabla_filas_cabecera) -->
+    <string name="NumHiloConsulta">Nº HILO</string>
+    <string name="nombreHiloConsulta">NOMBRE</string>
+    <!-- tabla stock filas (stock_tabla_filas_contenido) -->
+    <string name="numHiloCat">Hilo</string>
+    <string name="nombreHiloCat">Nombre</string>
     <string name="boton_agregarHiloConsulta">Añadir hilo</string>
     <string name="boton_ModificarHiloConsulta">Modificar hilo</string>
-    <!-- Dialog Añadir Hilo (consultar_dialog_agregar_hilo) -->
+    <!-- Dialog Añadir Hilo (catalogo_dialog_agregar_hilo) -->
     <string name="agregarHiloConsulta">AÑADIR HILO</string>
     <string name="agregarNumHilo">Introduce un número...</string>
     <string name="agregarNombreHilo">Introduce un nombre...</string>
-    <!-- Dialog Modificar Hilo (consultar_dialog_modificar_hilo)-->
+    <!-- Dialog Modificar Hilo (catalogo_dialog_modificar_hilo)-->
     <string name="modificarHiloConsulta">MODIFICAR HILO</string>
     <string name="introducirNumHilo">Introduce número de hilo...</string>
     <string name="marcarCampos">Marca los campos que deseas modificar :</string>

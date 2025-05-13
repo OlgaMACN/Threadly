@@ -1,6 +1,5 @@
 package CatalogoHilos
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -12,7 +11,7 @@ class CatalogoHilos : AppCompatActivity () {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.consultar_aa_hilos)
+        setContentView(R.layout.catalogo_aa_hilos)
 
         //declaramos elementos de esta pantalla
         //lupa no tendría que ser un imageButton???????
@@ -27,15 +26,11 @@ class CatalogoHilos : AppCompatActivity () {
         //configuracion boton agregar hilo
         btn_AgregarHilo.setOnClickListener() {
 
-            val intentAgregarHilo = Intent(this, AgregarHilo::class.java)
-            startActivity(intentAgregarHilo)
         }
 
         //configuracion boton modificar hilo
         btn_ModificarHilo.setOnClickListener() {
 
-            val intentModificarHilo = Intent (this, ModificarHilo::class.java)
-            startActivity(intentModificarHilo)
         }
 
 
