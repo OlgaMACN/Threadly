@@ -53,7 +53,7 @@ class PedidoHilos : AppCompatActivity() {
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
         btnDescargarPedido.setOnClickListener { descargarPedido() }
-        btnRealizarPedido.setOnClickListener{realizarPedido()}
+        btnRealizarPedido.setOnClickListener { realizarPedido() }
 
         /* funciones en continua ejecución durante la pantalla */
         buscadorGrafico()
@@ -206,15 +206,16 @@ class PedidoHilos : AppCompatActivity() {
 
     /* descargar pedido */ //TODO queda probarlo cuando grafico_pedido funcione bien
     private fun descargarPedido() {
+        if (!solicitarPermisoAlmacenamiento()) return
+
         if (listaGraficos.isEmpty()) {
             Toast.makeText(this, "No hay gráficos en el pedido para exportar.", Toast.LENGTH_SHORT)
                 .show()
             return
         }
 
-        /* mapa para acumular madejas por hilo */
+        /* mapa para acumular las madejas por cada hilo */
         val madejasPorHilo = mutableMapOf<String, Int>()
-
         for (grafico in listaGraficos) {
             for (hilo in grafico.listaHilos) {
                 val totalAnterior = madejasPorHilo[hilo.hilo] ?: 0
@@ -222,13 +223,14 @@ class PedidoHilos : AppCompatActivity() {
             }
         }
 
-        /* fecha para el nombre del archivo*/
+        /* conseguir la fecha para el título del fichero */
         val timestamp =
             java.text.SimpleDateFormat("dd-MM-yyyy_HH-mm", java.util.Locale.getDefault())
                 .format(java.util.Date())
         val fileName = "Pedido_$timestamp.csv"
-        /* con getExternalFilesDir no se requieren permisos especiales para almacenar datos */
-        val file = java.io.File(getExternalFilesDir(null), fileName)
+        val downloadsDir =
+            android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS)
+        val file = java.io.File(downloadsDir, fileName)
 
         try {
             file.printWriter().use { out ->
@@ -238,13 +240,41 @@ class PedidoHilos : AppCompatActivity() {
                 }
             }
 
-            Toast.makeText(this, "Pedido descargado en: ${file.absolutePath}", Toast.LENGTH_LONG)
-                .show()
+            Toast.makeText(this, "Pedido guardado en Descargas :D", Toast.LENGTH_LONG).show()
+
         } catch (e: Exception) {
-            Toast.makeText(this, "Error al descargar el pedido: ${e.message}", Toast.LENGTH_LONG)
+            Toast.makeText(this, "Error al guardar el pedido: ${e.message}", Toast.LENGTH_LONG)
                 .show()
         }
     }
+
+
+    private fun solicitarPermisoAlmacenamiento(): Boolean { /* para poder descargar el archivo en el teléfono */
+        val permiso = android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        if (checkSelfPermission(permiso) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(permiso), 100)
+            return false
+        }
+        return true
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 100 && grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            descargarPedido()
+        } else {
+            Toast.makeText(
+                this,
+                "No nos has dado permiso para guardar el archivo :(.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
 
     /* realizar pedido */
     @SuppressLint("MissingInflatedId")
