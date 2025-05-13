@@ -1,33 +1,24 @@
 package pedido_hilos
 
-import android.annotation.SuppressLint
-import android.app.Dialog
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class PedidoHilos : AppCompatActivity() {
 
     private lateinit var adaptadorPedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,22 +27,30 @@ class PedidoHilos : AppCompatActivity() {
         /* llamada a la función para usar el toolbar */
         Toolbar.funcionToolbar(this)
 
+        /* inicializar el adaptador */
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
         tablaPedido.layoutManager = LinearLayoutManager(this)
-        tablaPedido.adapter = adaptadorPedido
 
-        /* declaración de botones */
+        /* inicializo el adaptador */
+        val recyclerView = findViewById<RecyclerView>(R.id.tabla_pedido)
+        adaptadorPedido = AdaptadorPedido(listaGraficos,
+            onItemClick = { /* manejar click si quieres */ },
+            onLongClick = { /* manejar long click si quieres */ }
+        )
+        recyclerView.adapter = adaptadorPedido
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        /* declarar componentes*/
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
-        val btnDescargarPedido = findViewById<Button>(R.id.btn_descargarPedido)
-        val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
-        btnDescargarPedido.setOnClickListener { descargarCSV() }
-        btnRealizarPedido.setOnClickListener { realizarPedido() }
+
         buscadorGrafico()
+
     }
 
+    /* buscar un gráfico dentro del pedido */
     private fun buscadorGrafico() {
         val buscarPedido = findViewById<EditText>(R.id.edTxt_buscadorPedido)
         val btnLupaPedido = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
@@ -61,18 +60,18 @@ class PedidoHilos : AppCompatActivity() {
         txtNoResultadosPedido.visibility = View.GONE
 
         btnLupaPedido.setOnClickListener {
-            val texto = buscarPedido.text.toString().trim().uppercase()
-            val coincidencia = listaGraficos.find { it.nombre.uppercase() == texto }
+            val graficoBuscado = buscarPedido.text.toString().trim().uppercase()
+            val coincidencia = listaGraficos.find { it.nombre.uppercase() == graficoBuscado }
 
             if (coincidencia != null) {
-                /* si encuentra el hilo lo resaltará en la tabla */
                 adaptadorPedido.resaltarGrafico(coincidencia.nombre)
-                adaptadorPedido.actualizarLista(listaGraficos)
                 tablaPedido.visibility = View.VISIBLE
                 txtNoResultadosPedido.visibility = View.GONE
 
                 val index = listaGraficos.indexOf(coincidencia)
-                tablaPedido.scrollToPosition(index)
+                tablaPedido.post {
+                    tablaPedido.scrollToPosition(index)
+                }
             } else {
                 tablaPedido.visibility = View.GONE
                 txtNoResultadosPedido.visibility = View.VISIBLE
@@ -94,132 +93,53 @@ class PedidoHilos : AppCompatActivity() {
         })
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun actualizarTotalMadejas() {
-        val total = listaGraficos.sumOf { it.madejas }
-        findViewById<TextView>(R.id.txtVw_madejasTotalPedido).text = "Total: $total"
-    }
+    /* agregar un gráfico al pedido */
+    private fun dialogAgregarGrafico() {
+        val dialogView = layoutInflater.inflate(R.layout.pedido_dialog_agregar_grafico, null)
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
 
-    @SuppressLint("SetTextI18n") /* estas anotaciones surgen de ignorar las advertencias de lint para usar los recursos */
-    fun dialogAgregarGrafico() {
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.pedido_dialog_agregar_grafico)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        dialog.setCancelable(false)
-
-        val nombreGrafico = dialog.findViewById<EditText>(R.id.edTxt_pedirNombreGrafico)
-        val countTela = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
-        val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarGrafico)
-        val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog_agregarGrafico)
+        val nombreInput = dialogView.findViewById<EditText>(R.id.edTxt_pedirNombreGrafico)
+        val countTelaInput = dialogView.findViewById<EditText>(R.id.edTxt_pedirCountTela)
+        val btnGuardar = dialogView.findViewById<Button>(R.id.btn_guardarGrafico)
+        val btnCancelar =
+            dialogView.findViewById<Button>(R.id.btn_volver_pedido_dialog_agregarGrafico)
 
         btnGuardar.setOnClickListener {
-            val nombre = nombreGrafico.text.toString().trim()
-            val countStr = countTela.text.toString().trim()
-            val count = countStr.toIntOrNull()
+            val nombre = nombreInput.text.toString().trim()
+            val countTela = countTelaInput.text.toString().toIntOrNull()
 
-            if (nombre.isBlank() || countStr.isBlank()) {
-                Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
-            } else if (count == null) {
-                Toast.makeText(this, "El count debe ser numérico", Toast.LENGTH_SHORT).show()
-            } else {
-                val nuevoGrafico =
-                    Grafico(nombre, count, madejas = 0) /* placeholder, el valor se sabe luego */
-                listaGraficos.add(nuevoGrafico)
-                adaptadorPedido.notifyItemInserted(listaGraficos.size - 1)
-                actualizarTotalMadejas()
-                dialog.dismiss()
+            if (nombre.isEmpty() || countTela == null) {
+                Toast.makeText(
+                    this,
+                    "Por favor completa todos los campos correctamente.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
             }
-        }
-        btnVolver.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-    }
 
-    @SuppressLint("SetTextI18n")
-    fun dialogEliminarGrafico(index: Int) {
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.pedido_dialog_eliminar_grafico)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        dialog.setCancelable(false)
+            /* verificar si ya existe un gráfico con ese nombre */
+            if (listaGraficos.any { it.nombre.equals(nombre, ignoreCase = true) }) {
+                Toast.makeText(this, "Ya existe un gráfico con ese nombre", Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
+            }
 
-        val txtNombre = dialog.findViewById<TextView>(R.id.txtVw_nombreGrafico)
-        val btnEliminar = dialog.findViewById<Button>(R.id.btn_eliminarGrafico)
-        val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog_eliminarGrafico)
+            val nuevoGrafico = Grafico(nombre, countTela)
+            listaGraficos.add(nuevoGrafico)
+            listaGraficos.sortBy { it.nombre.lowercase() } /* para mostrar la tabla por orden alfabético */
+            adaptadorPedido.actualizarLista(listaGraficos)
 
-        txtNombre.text = listaGraficos[index].nombre
-
-        btnEliminar.setOnClickListener {
-            listaGraficos.removeAt(index)
-            adaptadorPedido.notifyItemRemoved(index)
-            actualizarTotalMadejas()
             dialog.dismiss()
         }
 
-        btnVolver.setOnClickListener {
+        btnCancelar.setOnClickListener {
             dialog.dismiss()
         }
 
         dialog.show()
     }
 
-    private fun descargarCSV() {
-        val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        val fileName = "Pedido_$date.csv"
-        val file = File(getExternalFilesDir(null), fileName)
-
-        val contenido = StringBuilder()
-        contenido.append("Nombre,Count Tela\n")
-        listaGraficos.forEach {
-            contenido.append("${it.nombre},${it.countTela}\n")
-        }
-        val totalMadejas = listaGraficos.sumOf { it.madejas }
-        contenido.append("\nTotal Madejas,$totalMadejas")
-
-        file.writeText(contenido.toString())
-
-        Toast.makeText(this, "Archivo guardado: $fileName", Toast.LENGTH_LONG).show()
-    }
-
-    private fun realizarPedido() {
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.pedido_dialog_escoger_tienda)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-
-        dialog.findViewById<Button>(R.id.btn_amazon).setOnClickListener {
-            abrirEnlace("https://www.amazon.es")
-            dialog.dismiss()
-        }
-
-        dialog.findViewById<Button>(R.id.btn_aliexpress).setOnClickListener {
-            abrirEnlace("https://www.aliexpress.com")
-            dialog.dismiss()
-        }
-
-        dialog.findViewById<Button>(R.id.btn_temu).setOnClickListener {
-            abrirEnlace("https://www.temu.com")
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
-
-    /* esta funcion es complementaria a realizar pedido, para abrir el enlace que el usuario escoja */
-    private fun abrirEnlace(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        intent.addCategory(Intent.CATEGORY_BROWSABLE)
-        startActivity(intent)
-    }
 }

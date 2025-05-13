@@ -4,5 +4,5 @@ package pedido_hilos
 data class Grafico(
     val nombre: String,
     val countTela: Int,
-    val madejas: Int = 0
+    var madejas: Int = 0
 )

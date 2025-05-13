@@ -12,8 +12,9 @@ class AdaptadorPedido(
     private var graficos: MutableList<Grafico>,
     private val onItemClick: (Int) -> Unit,
     private val onLongClick: (Int) -> Unit = {},
-    private var graficoResaltado: String? = null // <- nuevo
 ) : RecyclerView.Adapter<AdaptadorPedido.PedidoViewHolder>() {
+
+    private var graficoResaltado: String? = null
 
     inner class PedidoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtNombre: TextView = view.findViewById(R.id.txtVw_columnaNombreGrafico)

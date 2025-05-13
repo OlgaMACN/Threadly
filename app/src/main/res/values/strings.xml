@@ -144,7 +144,7 @@
     <!-- Dialog Añadir Gráfico (pedido_dialog_agregar_grafico) -->
     <string name="cabeceraDialogAgregarGrafico">AÑADIR GRÁFICO AL PEDIDO</string>
     <string name="pedirNombreGrafico">Nombre del gráfico</string>
-    <string name="pedirCountTela">Count de la tela (en número)</string>
+    <string name="pedirCountTela">Count Tela \n (14/ 16/ 18/ 20/ 25)</string>
     <string name="guardarGrafico">Guardar</string>
     <!-- Dialog Eliminar Gráfico (pedido_dialog_eliminar_grafico) -->
     <string name="cabeceraDialogEliminarGrafico">ELIMINAR GRÁFICO DEL PEDIDO</string>
