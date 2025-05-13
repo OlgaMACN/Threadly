@@ -7,12 +7,14 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
+import toolbar.funcionToolbar
 
 class CatalogoHilos : AppCompatActivity () {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.consultar_aa_hilos)
+        funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
         //declaramos elementos de esta pantalla
         //lupa no tendría que ser un imageButton???????

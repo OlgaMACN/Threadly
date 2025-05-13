@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
+import toolbar.funcionToolbar
 
 
 class PantallaPrincipal : AppCompatActivity() {
@@ -12,9 +13,8 @@ class PantallaPrincipal : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pantalla_aa_inicio)
+        funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
-        /* llamada a la función para usar el toolbar */
-        toolbar.funcionToolbar(this) // TODO de @olga he añadido esto para poder probar el toolbar, ruego me perdone
 
 
         //navegación a pantalla de datos personales a través de botón 'configuración'

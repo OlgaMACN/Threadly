@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import grafico_pedido.GraficoPedido
+import toolbar.funcionToolbar
 
 class PedidoHilos : AppCompatActivity() {
 
@@ -26,24 +28,24 @@ class PedidoHilos : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
+        funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
-        /* llamada a la función para usar el toolbar */
-        toolbar.funcionToolbar(this)
 
-        /* inicializar el adaptador */
+        /* inicializar el adaptador y configurar el recycler view */
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
         tablaPedido.layoutManager = LinearLayoutManager(this)
 
-        /* inicializo el adaptador */
-        val recyclerView = findViewById<RecyclerView>(R.id.tabla_pedido)
-        adaptadorPedido = AdaptadorPedido(listaGraficos,
-            onItemClick = { /* manejar click si quieres */ },
-            onLongClick = { index ->
-                dialogoEliminarGrafico(index) /* no hace falta declarar un botón aparte, ya se elimina el gráfico manteniendo pulsado */
-            }
-        )
-        recyclerView.adapter = adaptadorPedido
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        /* inicializo el adaptador manejando los clics sobre la tabla */
+        adaptadorPedido = AdaptadorPedido(listaGraficos, onItemClick = { graficoSeleccionado ->
+            // Este es el código que maneja el clic en un elemento de la lista
+            val intent = Intent(this, GraficoPedido::class.java)
+            intent.putExtra("NOMBRE_GRAFICO", graficoSeleccionado.nombre)
+            startActivity(intent)
+        }, onLongClick = { index ->
+            dialogoEliminarGrafico(index)
+        })
+        /* asignación del adaptador */
+        tablaPedido.adapter = adaptadorPedido
 
         /* declarar componentes*/
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
