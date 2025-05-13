@@ -35,7 +35,9 @@ class PedidoHilos : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.tabla_pedido)
         adaptadorPedido = AdaptadorPedido(listaGraficos,
             onItemClick = { /* manejar click si quieres */ },
-            onLongClick = { /* manejar long click si quieres */ }
+            onLongClick = { index ->
+                dialogoEliminarGrafico(index) /* no hace falta declarar un botón aparte, ya se elimina el gráfico manteniendo pulsado */
+            }
         )
         recyclerView.adapter = adaptadorPedido
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -46,7 +48,10 @@ class PedidoHilos : AppCompatActivity() {
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
 
+
+        /* funciones en continua ejecución durante la pantalla */
         buscadorGrafico()
+        actualizarTotalMadejas()
 
     }
 
@@ -83,6 +88,7 @@ class PedidoHilos : AppCompatActivity() {
                 if (s.isNullOrEmpty()) {
                     adaptadorPedido.resaltarGrafico(null)
                     adaptadorPedido.actualizarLista(listaGraficos)
+                    actualizarTotalMadejas()
                     tablaPedido.visibility = View.VISIBLE
                     txtNoResultadosPedido.visibility = View.GONE
                 }
@@ -91,6 +97,13 @@ class PedidoHilos : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+    }
+
+    /* sumar el total de madejas del pedido */
+    private fun actualizarTotalMadejas() {
+        val txtTotal = findViewById<TextView>(R.id.txtVw_madejasTotalPedido)
+        val total = adaptadorPedido.obtenerTotalMadejas()
+        txtTotal.text = "Total madejas: $total"
     }
 
     /* agregar un gráfico al pedido */
@@ -120,6 +133,18 @@ class PedidoHilos : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            /* verificar que el count de tela esté entre los permitidos */
+            val countsPermitidos = listOf(14, 16, 18, 20, 25)
+            if (countTela !in countsPermitidos) {
+                Toast.makeText(
+                    this,
+                    "El count de tela debe ser 14, 16, 18, 20 o 25.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                countTelaInput.text.clear()  /* borra el campo para que lo escriba otra vez */
+                return@setOnClickListener
+            }
+
             /* verificar si ya existe un gráfico con ese nombre */
             if (listaGraficos.any { it.nombre.equals(nombre, ignoreCase = true) }) {
                 Toast.makeText(this, "Ya existe un gráfico con ese nombre", Toast.LENGTH_SHORT)
@@ -131,11 +156,43 @@ class PedidoHilos : AppCompatActivity() {
             listaGraficos.add(nuevoGrafico)
             listaGraficos.sortBy { it.nombre.lowercase() } /* para mostrar la tabla por orden alfabético */
             adaptadorPedido.actualizarLista(listaGraficos)
-
+            actualizarTotalMadejas()
             dialog.dismiss()
         }
 
         btnCancelar.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    /* eliminar un gráfico del pedido */
+    private fun dialogoEliminarGrafico(index: Int) {
+        val grafico = listaGraficos[index]
+        val dialogView = layoutInflater.inflate(R.layout.pedido_dialog_eliminar_grafico, null)
+
+        val txtNombreGrafico = dialogView.findViewById<TextView>(R.id.txtVw_nombreGrafico)
+        val btnEliminar = dialogView.findViewById<Button>(R.id.btn_eliminarGrafico)
+        val btnVolver =
+            dialogView.findViewById<Button>(R.id.btn_volver_pedido_dialog_eliminarGrafico)
+
+        /* para visualizar el nombre del gráfico en el dialog */
+        txtNombreGrafico.text = grafico.nombre
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        btnEliminar.setOnClickListener {
+            listaGraficos.removeAt(index)
+            adaptadorPedido.actualizarLista(listaGraficos)
+            actualizarTotalMadejas()
+            dialog.dismiss()
+        }
+
+        btnVolver.setOnClickListener {
             dialog.dismiss()
         }
 
