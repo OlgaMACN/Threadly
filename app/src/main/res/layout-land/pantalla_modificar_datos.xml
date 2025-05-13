@@ -71,7 +71,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageView7"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/avatar2" />
+        app:srcCompat="@drawable/img_avatar2" />
 
     <ImageView
         android:id="@+id/imgVw_avatar2"
@@ -87,7 +87,7 @@
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toEndOf="@+id/txtVw_contenidoCambioNombre"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/avatar4" />
+        app:srcCompat="@drawable/img_avatar4" />
 
     <ImageView
         android:id="@+id/imgVw_avatar3"
@@ -101,7 +101,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar4"
-        app:srcCompat="@drawable/usuario_avatar" />
+        app:srcCompat="@drawable/img_usuario_avatar" />
 
     <ImageView
         android:id="@+id/imgVw_avatar4"
@@ -114,7 +114,7 @@
         app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar3"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar2"
-        app:srcCompat="@drawable/hombre_avatar" />
+        app:srcCompat="@drawable/img_hombre_avatar" />
 
     <ImageView
         android:id="@+id/imgVw_avatar5"
@@ -129,7 +129,7 @@
         app:layout_constraintStart_toEndOf="@+id/txtVw_contenidoCambioNombre"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/avatar3" />
+        app:srcCompat="@drawable/img_avatar3" />
 
     <ImageView
         android:id="@+id/imageView7"
@@ -142,7 +142,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar5"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/avatar_ejemplo" />
+        app:srcCompat="@drawable/img_avatar_ejemplo" />
 
     <TextView
         android:id="@+id/txtVw_cambiarNombre"

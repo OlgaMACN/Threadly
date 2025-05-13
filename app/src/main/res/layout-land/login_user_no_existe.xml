@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/horizontal_login_no_existe">
+    android:background="@drawable/img_horizontal_login_no_existe">
 
     <TextView
         android:id="@+id/txtVw_bienvenidaNewUser"
@@ -97,6 +97,6 @@
         app:layout_constraintHorizontal_bias="0.86"
         app:layout_constraintStart_toStartOf="@id/edTxt_ingresarConstrasenaNewUser"
         app:layout_constraintTop_toTopOf="@id/edTxt_ingresarConstrasenaNewUser"
-        app:srcCompat="@drawable/eye_closed"
+        app:srcCompat="@drawable/img_eye_closed"
         app:tint="@color/Cabeceras_y_Toolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

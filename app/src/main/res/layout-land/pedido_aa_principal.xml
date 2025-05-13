@@ -41,7 +41,7 @@
         app:layout_constraintVertical_bias="0.07" />
 
     <ImageView
-        android:id="@+id/imgVw_lupaPedido"
+        android:id="@+id/imgBtn_lupaPedido"
         android:layout_width="38dp"
         android:layout_height="43dp"
         app:layout_constraintBottom_toBottomOf="@id/edTxt_buscadorPedido"

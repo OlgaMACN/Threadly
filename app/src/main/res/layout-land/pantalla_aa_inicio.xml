@@ -37,7 +37,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.002"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/avatar_ejemplo" />
+        app:srcCompat="@drawable/img_avatar_ejemplo" />
 
     <TextView
         android:id="@+id/txtvw_saludo"
@@ -180,10 +180,10 @@
         android:layout_marginTop="276dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="70dp"
-        android:background="@drawable/boton_redondo"
+        android:background="@drawable/reutilizable_boton_redondo"
         android:padding="6dp"
         android:scaleType="centerInside"
-        android:src="@drawable/configuraciones"
+        android:src="@drawable/img_configuraciones"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

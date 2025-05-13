@@ -36,7 +36,22 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
-        android:id="@+id/edTxt_introducirNumMadejasEliminarStk"
+        android:id="@+id/edTxt_introducirNumHiloMadejasEliminarStk"
+        android:layout_width="0dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/reutilizable_campo_texto_redondeado"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:hint="@string/edTxt_introducirNumHiloMadejasEliminarStk"
+        android:inputType="number"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_textoEliminarMadejaStk"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/edTxt_edTxt_introducirNumMadejasEliminarStk"
         android:layout_width="0dp"
         android:layout_height="62dp"
         android:layout_marginTop="24dp"
@@ -46,7 +61,7 @@
         android:hint="@string/introducirNumMadejasEliminarStk"
         android:inputType="number"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_textoEliminarMadejaStk"
+        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirNumHiloMadejasEliminarStk"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -58,7 +73,7 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/madejasActualesStk"
         android:textSize="25sp"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirNumMadejasEliminarStk"
+        app:layout_constraintTop_toBottomOf="@id/edTxt_edTxt_introducirNumMadejasEliminarStk"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

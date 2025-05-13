@@ -5,9 +5,11 @@ import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,52 +20,78 @@ import com.threadly.R
 class StockPersonal : AppCompatActivity() {
 
     private lateinit var tablaStock: RecyclerView
-    private lateinit var adaptador: AdaptadorStock
+    private lateinit var adaptadorStock: AdaptadorStock
     private val listaStock = mutableListOf<HiloStock>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.stock_aa_principal)
 
+        /* llamada a la función para usar el toolbar */
+        toolbar.funcionToolbar(this)
+
         tablaStock = findViewById(R.id.tabla_stock)
-        adaptador = AdaptadorStock(listaStock, ::dialogEliminarHilo)
+        /* callback: pasa la función de eliminar hilo directamente al adaptador, es decir, la tabla */
+        adaptadorStock = AdaptadorStock(listaStock, ::dialogEliminarHilo)
         /* elementos de la tabla en vertical gracias al LinearLayoutManager */
         tablaStock.layoutManager = LinearLayoutManager(this)
-        tablaStock.adapter = adaptador
-
-        /* TODO centrar los datos de las columnas */
+        tablaStock.adapter = adaptadorStock
 
         /* declaracion botones */
         val btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloStk)
         val btnAgregarMadeja = findViewById<Button>(R.id.btn_agregarMadejaStk)
         val btnEliminarMadeja = findViewById<Button>(R.id.btn_eliminarMadejaStk)
-        val buscador = findViewById<EditText>(R.id.edTxt_buscadorPedido)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarHilo.setOnClickListener { dialogAgregarHilo() }
         btnAgregarMadeja.setOnClickListener { dialogAgregarMadeja() }
         btnEliminarMadeja.setOnClickListener { dialogEliminarMadeja() }
 
-        /* acción del buscador */
-        buscador.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s.toString()
-                val match =
-                    listaStock.find { item -> item.hiloId.contains(query, ignoreCase = true) }
-                if (match != null) {
-                    val index = listaStock.indexOf(match)
-                    tablaStock.scrollToPosition(index)
-                } else if (query.isNotEmpty()) {
-                    Toast.makeText(
-                        this@StockPersonal,
-                        "No cuentas con ese hilo en tu stock personal",
-                        Toast.LENGTH_SHORT
-                    ).show()
+        buscadorHilo()
+    }
+
+    /* acción del buscador */
+    private fun buscadorHilo() {
+        val editTextBuscar = findViewById<EditText>(R.id.edTxt_buscadorHilo)
+        val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaStock)
+        val tablaStock = findViewById<RecyclerView>(R.id.tabla_stock)
+        val txtNoResultados = findViewById<TextView>(R.id.txtVw_sinResultados)
+
+        txtNoResultados.visibility = View.GONE
+
+        btnLupa.setOnClickListener {
+            val texto = editTextBuscar.text.toString().trim().uppercase()
+            val coincidencia = listaStock.find { it.hiloId == texto }
+
+            if (coincidencia != null) {
+                val resultados = listOf(coincidencia)
+                /* si encuentra el hilo lo resaltará en la tabla */
+                adaptadorStock.resaltarHilo(coincidencia.hiloId)
+                adaptadorStock.actualizarLista(listaStock)
+                tablaStock.visibility = View.VISIBLE
+                txtNoResultados.visibility = View.GONE
+
+                val index = listaStock.indexOf(coincidencia)
+                tablaStock.scrollToPosition(index)
+            } else {
+                tablaStock.visibility = View.GONE
+                txtNoResultados.visibility = View.VISIBLE
+            }
+        }
+
+        /* si se borra la búsqueda la tabla vuelve a aparecer */
+        editTextBuscar.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) {
+                    adaptadorStock.resaltarHilo(null)
+                    adaptadorStock.actualizarLista(listaStock)
+                    tablaStock.visibility = View.VISIBLE
+                    txtNoResultados.visibility = View.GONE
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
@@ -85,20 +113,32 @@ class StockPersonal : AppCompatActivity() {
 
         /* variables para este dialog */
         val inputHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
-        val inputMadejas = dialog.findViewById<EditText>(R.id.edTxt_introducirMadeja_dialog_addHilo)
+        val inputMadejas =
+            dialog.findViewById<EditText>(R.id.edTxt_introducirMadeja_dialog_addHilo)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_agregarHilo)
         val btnGuardar = dialog.findViewById<Button>(R.id.btn_botonAgregarHiloStk)
 
         btnVolver.setOnClickListener {
-            dialog.dismiss() // se cierra el dialog
+            dialog.dismiss() /* se cierra el dialog */
         }
 
         btnGuardar.setOnClickListener {
             val hilo = inputHilo.text.toString().uppercase().trim()
-            val madejas = inputMadejas.text.toString().toIntOrNull()
+            val madejasString = inputMadejas.text.toString().trim()
 
+            if (hilo.isEmpty() || madejasString.isEmpty()) {
+                Toast.makeText(this, "Ningún campo puede estar vacío", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            val madejas =
+                madejasString.toIntOrNull() /* convierto a entero para poder validar datos numéricos */
             if (hilo.isEmpty() || madejas == null || madejas < 0) {
-                Toast.makeText(this, "Solo números enteros positivos o letras", Toast.LENGTH_LONG)
+                Toast.makeText(
+                    this,
+                    "Solo números enteros positivos o letras",
+                    Toast.LENGTH_LONG
+                )
                     .show()
                 return@setOnClickListener
             }
@@ -109,7 +149,8 @@ class StockPersonal : AppCompatActivity() {
             }
 
             listaStock.add(HiloStock(hilo, madejas))
-            adaptador.notifyItemInserted(listaStock.size - 1)
+            adaptadorStock.notifyItemInserted(listaStock.size - 1)
+            adaptadorStock.actualizarLista(listaStock)
             /* una vez insertado el hilo, se cierra el dialog*/
             dialog.dismiss()
         }
@@ -155,7 +196,14 @@ class StockPersonal : AppCompatActivity() {
                 }
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+            }
+
             override fun afterTextChanged(s: Editable?) {}
         })
 
@@ -171,7 +219,7 @@ class StockPersonal : AppCompatActivity() {
             val item = listaStock.find { it.hiloId == hilo }
             if (item != null) {
                 item.madejas += cantidad
-                adaptador.notifyItemChanged(listaStock.indexOf(item))
+                adaptadorStock.actualizarHilo(item)
                 dialog.dismiss()
             }
         }
@@ -193,18 +241,21 @@ class StockPersonal : AppCompatActivity() {
         )
         dialog.setCancelable(false)
 
-        val inputHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirNumMadejasEliminarStk)
+        val idHilo =
+            dialog.findViewById<EditText>(R.id.edTxt_introducirNumHiloMadejasEliminarStk)
+        val cantidadEliminar =
+            dialog.findViewById<EditText>(R.id.edTxt_edTxt_introducirNumMadejasEliminarStk)
         val txtMadejasActuales = dialog.findViewById<TextView>(R.id.txtVw_madejasActualesStk)
         val btnEliminar = dialog.findViewById<Button>(R.id.btn_eliminarMadejaConfirmarStk)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_eliminarMadeja)
 
         var hiloEncontrado: HiloStock? = null
 
-        inputHilo.addTextChangedListener(object : TextWatcher {
+        idHilo.addTextChangedListener(object : TextWatcher {
             @SuppressLint("SetTextI18n")
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val hilo = s.toString().uppercase().trim()
-                hiloEncontrado = listaStock.find { it.hiloId == hilo }
+                val hiloId = s.toString().uppercase().trim()
+                hiloEncontrado = listaStock.find { it.hiloId == hiloId }
 
                 if (hiloEncontrado != null) {
                     txtMadejasActuales.text = "Madejas actuales: ${hiloEncontrado!!.madejas}"
@@ -220,7 +271,7 @@ class StockPersonal : AppCompatActivity() {
         })
 
         btnEliminar.setOnClickListener {
-            val cantidadStr = inputHilo.text.toString().trim()
+            val cantidadStr = cantidadEliminar.text.toString().trim()
             val cantidad = cantidadStr.toIntOrNull()
 
             if (cantidad == null || cantidad <= 0) {
@@ -228,9 +279,10 @@ class StockPersonal : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            hiloEncontrado?.let { hilo ->
-                hilo.madejas = maxOf(0, hilo.madejas - cantidad)
-                adaptador.notifyItemChanged(listaStock.indexOf(hilo))
+            if (hiloEncontrado != null) {
+                val index = listaStock.indexOf(hiloEncontrado)
+                hiloEncontrado!!.madejas = maxOf(0, hiloEncontrado!!.madejas - cantidad)
+                adaptadorStock.actualizarHilo(hiloEncontrado!!)
                 dialog.dismiss()
             }
         }
@@ -265,7 +317,7 @@ class StockPersonal : AppCompatActivity() {
         btnEliminar.setOnClickListener {
             val hiloEliminado = listaStock[posicion].hiloId
             listaStock.removeAt(posicion)
-            adaptador.notifyItemRemoved(posicion)
+            adaptadorStock.notifyItemRemoved(posicion)
 
             Toast.makeText(this, "Hilo '$hiloEliminado' eliminado", Toast.LENGTH_SHORT).show()
             dialog.dismiss()

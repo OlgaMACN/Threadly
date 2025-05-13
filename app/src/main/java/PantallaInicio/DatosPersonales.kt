@@ -1,11 +1,12 @@
 package PantallaInicio
 
-import Login.LoginUserExiste
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
+import login.LoginUserExiste
 
 class DatosPersonales : AppCompatActivity () {
 

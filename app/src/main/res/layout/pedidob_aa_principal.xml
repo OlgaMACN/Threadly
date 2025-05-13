@@ -50,6 +50,22 @@
         app:layout_constraintTop_toTopOf="@id/edTxt_buscadorGrafico"
         app:srcCompat="@drawable/img_lupa" />
 
+    <!-- Para poder enseñar el resultado de la búsqueda -->
+    <TextView
+        android:id="@+id/txtVw_sinResultadosGrafico"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/no_hay_resultadosGrafico"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorGrafico"
+        app:layout_constraintVertical_bias="0.05"
+        />
     <TextView
         android:id="@+id/txtVw_totalMadejasGraficoIndividual"
         android:layout_width="wrap_content"
@@ -61,7 +77,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.16"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorGrafico"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_sinResultadosGrafico"
         app:layout_constraintVertical_bias="0.060" />
 
     <TextView
@@ -75,13 +91,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.52"
         app:layout_constraintStart_toEndOf="@id/txtVw_totalMadejasGraficoIndividual"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorGrafico"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_sinResultadosGrafico"
         app:layout_constraintVertical_bias="0.060" />
 
     <!-- Cabecera fija para que no se mueva al hacer scroll -->
     <include
         android:id="@+id/cabecera_tabla_grafico"
-        layout="@layout/stock_tabla_filas_cabecera"
+        layout="@layout/pedidob_tabla_filas_cabecera_grafico"
         android:layout_width="395dp"
         android:layout_height="25dp"
         app:layout_constraintBottom_toTopOf="@id/tabla_grafico"

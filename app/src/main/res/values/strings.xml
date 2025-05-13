@@ -67,6 +67,7 @@
     <string name="agregarHiloStk">Añadir Hilo</string>
     <string name="botonAgregarMadejaStk">Añadir Madeja</string>
     <string name="botonEliminarMadejaStk">Eliminar Madeja</string>
+    <string name="no_hay_resultados">No tienes ese hilo en tu stock :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
     <!-- tabla stock cabecera (stock_tabla_filas_cabecera) -->
     <string name="numeroHiloStk">HILO</string>
     <string name="numeroMadejasStk">MADEJAS</string>
@@ -97,6 +98,7 @@
     <!-- Dialog Eliminar Madejas (stock_dialog_eliminar_madeja) -->
     <string name="cabeceraEliminarMadejaStk">ELIMINAR MADEJAS</string>
     <string name="textoEliminarMadejaInfoStk">Número de madejas a eliminar para el hilo: </string>
+    <string name="edTxt_introducirNumHiloMadejasEliminarStk">Nº del hilo</string>
     <string name="introducirNumMadejasEliminarStk">Nº de madejas a eliminar</string>
     <string name="eliminarMadejaStk">Eliminar Madeja</string>
 
@@ -121,12 +123,18 @@
     <string name="introducirNumHiloModificar">Introduce un número...</string>
     <string name="introducirNombreHiloModificar">Introduce un nombre...</string>
 
-    <!-- Pedido Hilos (pedidob_aa_principal) -->
+    <!-- Pedido Hilos (pedido_aa_principal) -->
     <string name="cabeceraPedido">PEDIDO HILOS</string>
+    <string name="resultado_nombre">Resultado: Nombre</string>
     <string name="madejasTotalPedido">Total Madejas: </string>
+    <string name="no_hay_resultadosPedido">No tienes ese gráfico en tu pedido :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
     <string name="agregarGraficoPedido">Añadir Gráfico</string>
     <string name="descargarPedido">Descargar Pedido</string>
     <string name="realizarPedido">Realizar Pedido</string>
+    <string name="textoElegirTienda">Escoge una tienda para realizar tu pedido</string>
+    <string name="textoAmazon">Amazon</string>
+    <string name="textoAliExpress">AliExpress</string>
+    <string name="textoTemu">Temu</string>
     <!-- tabla pedidos cabecera (pedido_tabla_filas_cabecera) -->
     <string name="columnaNombreGrafico">NOMBRE</string>
     <string name="columnaMadejasPedido">MADEJAS</string>
@@ -136,15 +144,17 @@
     <!-- Dialog Añadir Gráfico (pedido_dialog_agregar_grafico) -->
     <string name="cabeceraDialogAgregarGrafico">AÑADIR GRÁFICO AL PEDIDO</string>
     <string name="pedirNombreGrafico">Nombre del gráfico</string>
-    <string name="pedirCountTela">Count de la tela (en número)</string>
+    <string name="pedirCountTela">Count Tela \n (14/ 16/ 18/ 20/ 25)</string>
     <string name="guardarGrafico">Guardar</string>
     <!-- Dialog Eliminar Gráfico (pedido_dialog_eliminar_grafico) -->
     <string name="cabeceraDialogEliminarGrafico">ELIMINAR GRÁFICO DEL PEDIDO</string>
     <string name="mensajeEliminar">¿Seguro que quieres eliminar este gráfico del pedido actual?</string>
     <string name="nombreGrafico">Nombre</string>
     <string name="eliminarGrafico">Eliminar</string>
+
     <!-- Gráfico Individual (pedidob_aa_principal)  -->
     <string name="cabeceraGrafico">NOMBRE GRÁFICO</string>
+    <string name="no_hay_resultadosGrafico">No tienes ese hilo registrado para este gráfico :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
     <string name="totalMadejasGraficoIndividual">Total Madejas: </string>
     <string name="stockHiloActual">Stock: </string>
     <string name="agregarHiloGraficoIndividual">Añadir Hilo</string>
@@ -183,5 +193,7 @@
     <string name="textoInfo_dialog_deleteHilo">¿Seguro que quieres borrar el hilo del gráfico?</string>
     <string name="textoInfo_secundario_dialog_deleteHilo">Se eliminará de este gráfico y por tanto del pedido</string>
     <string name="guardarHilo_dialog_deleteHilo">Borrar</string>
+
+    <!-- Content Descriptions -->
 
 </resources>

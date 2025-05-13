@@ -1,5 +1,6 @@
 package login
 
+import PantallaInicio.PantallaPrincipal
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -27,11 +28,11 @@ class LoginUserExiste : AppCompatActivity() {
             contrasenaVisible = !contrasenaVisible
             if (contrasenaVisible) {
                 contrasena.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                botonOjo.setImageResource(R.drawable.eye_open)
+                botonOjo.setImageResource(R.drawable.img_eye_open)
             } else {
                 contrasena.inputType =
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                botonOjo.setImageResource(R.drawable.eye_closed)
+                botonOjo.setImageResource(R.drawable.img_eye_closed)
             }
             contrasena.setSelection(contrasena.text.length) // para poner el cursor de escritura al final
         }
@@ -53,9 +54,10 @@ class LoginUserExiste : AppCompatActivity() {
                 usuario.text.clear()
                 contrasena.text.clear()
             } else {
-                /* en caso de tener cuenta, redirigir a la pantalla de inicio */
-                // TODO redirigir a pantalla de Sandra
-                //startActivity(Intent(this, Sandra::class.java))
+                /* TODO en caso de tener cuenta, redirigir a la pantalla de inicio sino toast de que no existe el usuario */
+
+
+                startActivity(Intent(this, PantallaPrincipal::class.java))
             }
         }
         /* en caso de no tenerla, redirigir a pantalla de LoginUserNoExiste mediante el textView */
