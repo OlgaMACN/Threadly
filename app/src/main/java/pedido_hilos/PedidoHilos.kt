@@ -28,7 +28,7 @@ class PedidoHilos : AppCompatActivity() {
         setContentView(R.layout.pedido_aa_principal)
 
         /* llamada a la función para usar el toolbar */
-        Toolbar.funcionToolbar(this)
+        toolbar.funcionToolbar(this)
 
         /* inicializar el adaptador */
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
@@ -204,35 +204,43 @@ class PedidoHilos : AppCompatActivity() {
         dialog.show()
     }
 
-    /* descargar pedido */ //TODO queda probarlo cuando grafico_pedido funcione bien
+
+    /* TODO descargarPedido da error, tengo que arreglarlo */
+    /* descargar pedido */
     private fun descargarPedido() {
         if (!solicitarPermisoAlmacenamiento()) return
 
         if (listaGraficos.isEmpty()) {
-            Toast.makeText(this, "No hay gráficos en el pedido para exportar.", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(this, "No hay pedido que guardar.", Toast.LENGTH_SHORT).show()
             return
         }
 
-        /* mapa para acumular las madejas por cada hilo */
+        /* mapa para guardar las madejas con cada hilo */
         val madejasPorHilo = mutableMapOf<String, Int>()
         for (grafico in listaGraficos) {
             for (hilo in grafico.listaHilos) {
-                val totalAnterior = madejasPorHilo[hilo.hilo] ?: 0
+                val totalAnterior =
+                    madejasPorHilo[hilo.hilo]
+                        ?: 0 /* si aún no hay madejas, será cero, para evitar crasheos */
                 madejasPorHilo[hilo.hilo] = totalAnterior + hilo.madejas
             }
         }
 
-        /* conseguir la fecha para el título del fichero */
+        /* conseguir la fecha y la hora para el título del archivo */
         val timestamp =
             java.text.SimpleDateFormat("dd-MM-yyyy_HH-mm", java.util.Locale.getDefault())
                 .format(java.util.Date())
         val fileName = "Pedido_$timestamp.csv"
-        val downloadsDir =
-            android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS)
-        val file = java.io.File(downloadsDir, fileName)
+
+        /* ruta del almacenamiento externo raíz del dispositivo */
+        val downloadsDir = android.os.Environment.getExternalStorageDirectory()
+        val file = java.io.File(
+            downloadsDir,
+            "Download/$fileName"
+        ) /* guarda el fichero en el directorio */
 
         try {
+            file.parentFile?.mkdirs() /* control para que no crashee si el directorio no existe */
             file.printWriter().use { out ->
                 out.println("Hilo,Madejas")
                 madejasPorHilo.forEach { (identificador, madejas) ->
@@ -242,12 +250,17 @@ class PedidoHilos : AppCompatActivity() {
 
             Toast.makeText(this, "Pedido guardado en Descargas :D", Toast.LENGTH_LONG).show()
 
+            /* indexar el archivo, evita errores de acceso */
+            val uri = Uri.fromFile(file)
+            val scanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+            scanIntent.data = uri
+            sendBroadcast(scanIntent)
+
         } catch (e: Exception) {
             Toast.makeText(this, "Error al guardar el pedido: ${e.message}", Toast.LENGTH_LONG)
                 .show()
         }
     }
-
 
     private fun solicitarPermisoAlmacenamiento(): Boolean { /* para poder descargar el archivo en el teléfono */
         val permiso = android.Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -258,10 +271,10 @@ class PedidoHilos : AppCompatActivity() {
         return true
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+    override fun onRequestPermissionsResult( /* sugerido por el ide para evitar problemas de permisos al acceder a las descargas */
+                                             requestCode: Int,
+                                             permissions: Array<out String>,
+                                             grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 100 && grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
@@ -274,7 +287,6 @@ class PedidoHilos : AppCompatActivity() {
             ).show()
         }
     }
-
 
     /* realizar pedido */
     @SuppressLint("MissingInflatedId")

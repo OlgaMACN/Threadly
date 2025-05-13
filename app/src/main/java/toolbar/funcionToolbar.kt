@@ -1,4 +1,4 @@
-package Toolbar
+package toolbar
 
 import CatalogoHilos.CatalogoHilos
 import Foro.Foro

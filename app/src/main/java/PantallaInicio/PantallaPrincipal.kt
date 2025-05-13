@@ -14,7 +14,7 @@ class PantallaPrincipal : AppCompatActivity() {
         setContentView(R.layout.pantalla_aa_inicio)
 
         /* llamada a la función para usar el toolbar */
-        Toolbar.funcionToolbar(this) // TODO de @olga he añadido esto para poder probar el toolbar, ruego me perdone
+        toolbar.funcionToolbar(this) // TODO de @olga he añadido esto para poder probar el toolbar, ruego me perdone
 
 
         //navegación a pantalla de datos personales a través de botón 'configuración'

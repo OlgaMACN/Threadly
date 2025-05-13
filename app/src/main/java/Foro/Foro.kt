@@ -13,7 +13,7 @@ class Foro : AppCompatActivity () {
         setContentView(R.layout.comunidad_aa_foro)
 
         /* llamada a la función para usar el toolbar */
-        Toolbar.funcionToolbar(this) // TODO de @olga he añadido esto para poder probar el toolbar, ruego me perdone
+        toolbar.funcionToolbar(this) // TODO de @olga he añadido esto para poder probar el toolbar, ruego me perdone
 
         //TODO CONFIGURAR VISTA DE TEMAS Y PODER PULSAR UNO PARA VISUALIZARLO CON SUS RESPUESTAS
 

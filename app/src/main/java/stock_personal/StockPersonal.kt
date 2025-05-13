@@ -28,7 +28,7 @@ class StockPersonal : AppCompatActivity() {
         setContentView(R.layout.stock_aa_principal)
 
         /* llamada a la función para usar el toolbar */
-        Toolbar.funcionToolbar(this)
+        toolbar.funcionToolbar(this)
 
         tablaStock = findViewById(R.id.tabla_stock)
         /* callback: pasa la función de eliminar hilo directamente al adaptador, es decir, la tabla */
