@@ -86,7 +86,7 @@
 
     <!-- Botón volver -->
     <Button
-        android:id="@+id/btn_volver_pedido_dialog_eliminarGrafico"
+        android:id="@+id/btn_volver_pedido_dialog"
         android:layout_width="150dp"
         android:layout_height="47dp"
         android:layout_marginTop="16dp"

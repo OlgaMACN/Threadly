@@ -1,5 +1,8 @@
 package pedido_hilos
 
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -44,15 +47,17 @@ class PedidoHilos : AppCompatActivity() {
 
         /* declarar componentes*/
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
+        val btnDescargarPedido = findViewById<Button>(R.id.btn_descargarPedido)
+        val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
-
+        btnDescargarPedido.setOnClickListener { descargarPedido() }
+        btnRealizarPedido.setOnClickListener{realizarPedido()}
 
         /* funciones en continua ejecución durante la pantalla */
         buscadorGrafico()
         actualizarTotalMadejas()
-
     }
 
     /* buscar un gráfico dentro del pedido */
@@ -175,7 +180,7 @@ class PedidoHilos : AppCompatActivity() {
         val txtNombreGrafico = dialogView.findViewById<TextView>(R.id.txtVw_nombreGrafico)
         val btnEliminar = dialogView.findViewById<Button>(R.id.btn_eliminarGrafico)
         val btnVolver =
-            dialogView.findViewById<Button>(R.id.btn_volver_pedido_dialog_eliminarGrafico)
+            dialogView.findViewById<Button>(R.id.btn_volver_pedido_dialog)
 
         /* para visualizar el nombre del gráfico en el dialog */
         txtNombreGrafico.text = grafico.nombre
@@ -197,6 +202,101 @@ class PedidoHilos : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+    /* descargar pedido */ //TODO queda probarlo cuando grafico_pedido funcione bien
+    private fun descargarPedido() {
+        if (listaGraficos.isEmpty()) {
+            Toast.makeText(this, "No hay gráficos en el pedido para exportar.", Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
+
+        /* mapa para acumular madejas por hilo */
+        val madejasPorHilo = mutableMapOf<String, Int>()
+
+        for (grafico in listaGraficos) {
+            for (hilo in grafico.listaHilos) {
+                val totalAnterior = madejasPorHilo[hilo.hilo] ?: 0
+                madejasPorHilo[hilo.hilo] = totalAnterior + hilo.madejas
+            }
+        }
+
+        /* fecha para el nombre del archivo*/
+        val timestamp =
+            java.text.SimpleDateFormat("dd-MM-yyyy_HH-mm", java.util.Locale.getDefault())
+                .format(java.util.Date())
+        val fileName = "Pedido_$timestamp.csv"
+        /* con getExternalFilesDir no se requieren permisos especiales para almacenar datos */
+        val file = java.io.File(getExternalFilesDir(null), fileName)
+
+        try {
+            file.printWriter().use { out ->
+                out.println("Hilo,Madejas")
+                madejasPorHilo.forEach { (identificador, madejas) ->
+                    out.println("$identificador,$madejas")
+                }
+            }
+
+            Toast.makeText(this, "Pedido descargado en: ${file.absolutePath}", Toast.LENGTH_LONG)
+                .show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al descargar el pedido: ${e.message}", Toast.LENGTH_LONG)
+                .show()
+        }
+    }
+
+    /* realizar pedido */
+    @SuppressLint("MissingInflatedId")
+    private fun realizarPedido() {
+        val dialogView = layoutInflater.inflate(R.layout.pedido_dialog_realizar_pedido, null)
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        /* declaración de botones*/
+        val btnAmazon = dialogView.findViewById<ImageButton>(R.id.btn_amazon)
+        val btnAliExpress = dialogView.findViewById<ImageButton>(R.id.btn_aliexpress)
+        val btnTemu = dialogView.findViewById<ImageButton>(R.id.btn_temu)
+        val btnVolver =
+            dialogView.findViewById<Button>(R.id.btn_volver_pedido_dialog)
+
+        btnAmazon.setOnClickListener {
+            abrirTienda("com.amazon.mShop.android.shopping", "https://www.amazon.es/")
+            dialog.dismiss()
+        }
+
+        btnAliExpress.setOnClickListener {
+            abrirTienda("com.alibaba.aliexpresshd", "https://www.aliexpress.com/")
+            dialog.dismiss()
+        }
+
+        btnTemu.setOnClickListener {
+            abrirTienda("com.einnovation.temu", "https://www.temu.com/")
+            dialog.dismiss()
+        }
+
+        btnVolver.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    /* función auxiliar para abrir la aplicación o la web de cada tienda */
+    private fun abrirTienda(paquete: String, urlWeb: String) {
+        try {
+            val intent = packageManager.getLaunchIntentForPackage(paquete)
+            if (intent != null) {
+                startActivity(intent)
+            } else {
+                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(urlWeb))
+                startActivity(webIntent)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al redirigir a la tienda.", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }
