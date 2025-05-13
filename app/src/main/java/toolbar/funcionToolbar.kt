@@ -40,7 +40,6 @@ fun funcionToolbar(activity: Activity) {
         }
     }
 
-
     /* configuración botón inicio */
     btn_inicio.setOnClickListener {
         clicSeguro {
