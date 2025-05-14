@@ -15,7 +15,7 @@
         android:layout_height="0dp"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
-        android:src="@drawable/img_splash_fondo"
+        android:src="@drawable/img_splash_horizontal"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

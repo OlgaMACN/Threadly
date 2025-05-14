@@ -23,7 +23,7 @@ class LoginUserExiste : AppCompatActivity() {
 
         /* para habilitar el efecto de abrir y cerrar el ojo */
         var contrasenaVisible =
-            false // la constraseña empieza estando oculta, hasta que el user haga clic en el ojo
+            false /* la constraseña empieza estando oculta, hasta que el user haga clic en el ojo */
         botonOjo.setOnClickListener {
             contrasenaVisible = !contrasenaVisible
             if (contrasenaVisible) {
@@ -34,7 +34,7 @@ class LoginUserExiste : AppCompatActivity() {
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                 botonOjo.setImageResource(R.drawable.img_eye_closed)
             }
-            contrasena.setSelection(contrasena.text.length) // para poner el cursor de escritura al final
+            contrasena.setSelection(contrasena.text.length) /* para poner el cursor de escritura al final */
         }
 
         /* acción de ingresar a la aplicación, validando los datos */
@@ -54,10 +54,7 @@ class LoginUserExiste : AppCompatActivity() {
                 usuario.text.clear()
                 contrasena.text.clear()
             } else {
-                /* TODO en caso de tener cuenta, redirigir a la pantalla de inicio sino toast de que no existe el usuario */
-
-
-                startActivity(Intent(this, PantallaPrincipal::class.java))
+                 startActivity(Intent(this, PantallaPrincipal::class.java))
             }
         }
         /* en caso de no tenerla, redirigir a pantalla de LoginUserNoExiste mediante el textView */
