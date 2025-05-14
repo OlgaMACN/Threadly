@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import toolbar.funcionToolbar
+import utiles.funcionToolbar
 
 class GraficoPedido : AppCompatActivity() {
 

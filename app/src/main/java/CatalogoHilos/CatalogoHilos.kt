@@ -7,7 +7,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
-import toolbar.funcionToolbar
+import utiles.funcionToolbar
 
 class CatalogoHilos : AppCompatActivity () {
 

@@ -2,6 +2,7 @@ package stock_personal
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -9,6 +10,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -20,6 +22,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import ui_utils.ajustarDialog
+import utiles.funcionToolbar
 
 class StockPersonal : AppCompatActivity() {
 
@@ -32,7 +36,7 @@ class StockPersonal : AppCompatActivity() {
         setContentView(R.layout.stock_aa_principal)
 
         /* llamada a la función para usar el toolbar */
-        toolbar.funcionToolbar(this)
+        funcionToolbar(this)
 
         tablaStock = findViewById(R.id.tabla_stock)
         /* callback: pasa la función de eliminar hilo directamente al adaptador, es decir, la tabla */
@@ -51,6 +55,7 @@ class StockPersonal : AppCompatActivity() {
         btnAgregarMadeja.setOnClickListener { dialogAgregarMadeja() }
         btnEliminarMadeja.setOnClickListener { dialogEliminarMadeja() }
 
+        /* métodos en llamada continua */
         buscadorHilo()
     }
 
@@ -107,11 +112,8 @@ class StockPersonal : AppCompatActivity() {
         /* se oscurece el fondo y queda súper chulo */
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        /* ancho y alto para configurar el tamaño independientemente del layout */
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        /* llamada al metodo que centra el dialog en pantalla */
+        ajustarDialog(dialog)
 
         /* con setCancelable se consigue que no se cierre el dialogo si el user clica fuera de él */
         dialog.setCancelable(false)
@@ -169,10 +171,9 @@ class StockPersonal : AppCompatActivity() {
         dialog.setContentView(R.layout.stock_dialog_agregar_madeja)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        /* llamada al metodo que centra el dialog en pantalla */
+        ajustarDialog(dialog)
+
         dialog.setCancelable(false)
 
         val inputHilo = dialog.findViewById<EditText>(R.id.edTxt_agregarMadejasStk_hilo)
@@ -242,10 +243,10 @@ class StockPersonal : AppCompatActivity() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_eliminar_madeja)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+
+        /* llamada al metodo que centra el dialog en pantalla */
+        ajustarDialog(dialog)
+
         dialog.setCancelable(false)
 
         val idHilo =
@@ -301,16 +302,16 @@ class StockPersonal : AppCompatActivity() {
         dialog.show()
     }
 
-    /* eliminarr un hilo del stock personall manteniendo pulsada la fila */
+    /* eliminar un hilo del stock personall manteniendo pulsada la fila */
     private fun dialogEliminarHilo(posicion: Int) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_eliminar_hilo)
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+
+        /* llamada al metodo que centra el dialog en pantalla */
+        ajustarDialog(dialog)
+
         dialog.setCancelable(false)
 
         /* variables del dialog */

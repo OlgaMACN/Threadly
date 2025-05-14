@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
-import toolbar.funcionToolbar
+import utiles.funcionToolbar
 
 class Foro : AppCompatActivity () {
 

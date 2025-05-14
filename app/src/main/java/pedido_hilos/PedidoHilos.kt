@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import grafico_pedido.GraficoPedido
-import toolbar.funcionToolbar
+import utiles.funcionToolbar
 
 class PedidoHilos : AppCompatActivity() {
 
