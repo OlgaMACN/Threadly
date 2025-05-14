@@ -54,7 +54,10 @@ class LoginUserExiste : AppCompatActivity() {
                 usuario.text.clear()
                 contrasena.text.clear()
             } else {
-                 startActivity(Intent(this, PantallaPrincipal::class.java))
+                /* TODO en caso de tener cuenta, redirigir a la pantalla de inicio sino toast de que no existe el usuario */
+
+
+                startActivity(Intent(this, PantallaPrincipal::class.java))
             }
         }
         /* en caso de no tenerla, redirigir a pantalla de LoginUserNoExiste mediante el textView */
