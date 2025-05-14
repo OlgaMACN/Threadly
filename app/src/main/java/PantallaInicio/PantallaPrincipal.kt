@@ -3,6 +3,7 @@ package PantallaInicio
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
 import utiles.funcionToolbar
@@ -14,6 +15,12 @@ class PantallaPrincipal : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pantalla_aa_inicio)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
+
+        // TODO estas tres lineas son solo para pruebas de sesiones en memoria, borrar cuando haya persistencia
+        val nombreUsuario = intent.getStringExtra("nombre_usuario")
+        val textoBienvenida = findViewById<TextView>(R.id.txtVw_nombreUsuario)
+        textoBienvenida.text = "Bienvenido/a, $nombreUsuario"
+
 
 
 

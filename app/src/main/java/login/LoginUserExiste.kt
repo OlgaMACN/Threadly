@@ -54,10 +54,18 @@ class LoginUserExiste : AppCompatActivity() {
                 usuario.text.clear()
                 contrasena.text.clear()
             } else {
-                /* TODO en caso de tener cuenta, redirigir a la pantalla de inicio sino toast de que no existe el usuario */
+                /* TODO descomentar esta parte con la persistencia
+
+                startActivity(Intent(this, PantallaPrincipal::class.java))*/
+
+                // TODO estas tres lineas son solo para pruebas de sesiones en memoria, borrar cuando haya persistencia
+                val intent = Intent(this, PantallaPrincipal::class.java)
+                intent.putExtra("nombre_usuario", userEntradaLogin)
+                startActivity(intent)
 
 
-                startActivity(Intent(this, PantallaPrincipal::class.java))
+
+
             }
         }
         /* en caso de no tenerla, redirigir a pantalla de LoginUserNoExiste mediante el textView */
