@@ -328,7 +328,7 @@ class StockPersonal : AppCompatActivity() {
         /* obtener el texto original con el marcador "%s", mismo que en @strings */
         val textoOriginal = getString(R.string.confirmarEliminarHiloStk)
 
-        /* reemplazar el marcador "%s" con el hiloEliminado */
+        /* se reemplaza el marcador "%s" con el hiloEliminado */
         val textoConHilo = textoOriginal.replace("%s", hiloEliminado)
 
         /* spannableString a partir del texto con el hilo */
