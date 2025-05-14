@@ -8,7 +8,7 @@
     android:paddingHorizontal="16dp">
 
     <TextView
-        android:id="@+id/txtVw_numHiloCatalogo"
+        android:id="@+id/txtVw_numHiloConsulta"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -19,7 +19,7 @@
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/txtVw_nombreHiloCatalogo"
+        android:id="@+id/txtVw_nombreHiloConsulta"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

@@ -35,6 +35,7 @@ class DatosPersonales : AppCompatActivity () {
 
             val intentCerrarSesion = Intent(this, LoginUserExiste::class.java)
             startActivity(intentCerrarSesion)
+            finish() // TODO CON DOBLE CLICK HACIA ATRÁS SE VUELVE A PANTALLA PRINCIPAL !!!!
         }
 
         //caso 3. Eliminar Cuenta

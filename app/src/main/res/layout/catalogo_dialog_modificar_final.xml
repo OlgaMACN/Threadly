@@ -73,7 +73,7 @@
         tools:layout_editor_absoluteY="255dp">
 
         <Button
-            android:id="@+id/guardar_modificarHilo"
+            android:id="@+id/btn_guardarModificarHilo"
             android:layout_width="0dp"
             android:layout_height="47dp"
             android:layout_weight="1"
@@ -89,7 +89,7 @@
             android:layout_height="0dp" />
 
         <Button
-            android:id="@+id/volver_modificarHiloFinal"
+            android:id="@+id/btn_volverModificarHiloFinal"
             android:layout_width="0dp"
             android:layout_height="47dp"
             android:layout_weight="1"

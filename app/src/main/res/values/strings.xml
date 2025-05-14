@@ -38,14 +38,14 @@
     <string name="bienvenidaNewUser">¡Te damos la bienvenida a Threadly!</string>
     <string name="agradecerRegistro">Gracias por confiar en nosotras</string>
 
-    <!-- Pantalla de Inicio -->
+    <!-- Pantalla de Inicio (pantalla_aa_inicio)-->
     <string name="principal_threadly">THREADLY</string>
     <string name="saludo">Hola,</string>
     <string name="mensaje_Stock">Stock Actual de Madejas</string>
     <string name="mensaje_grafico">Último Gráfico añadido</string>
     <string name="mensaje_tip">Tip del día</string>
 
-    <!-- Pantalla Datos Personales -->
+    <!-- Pantalla Datos Personales (pantalla_datos_personales) -->
     <string name="datosPersonales">Datos Personales</string>
     <string name="nombreUsuario">Nombre de Usuario : </string>
     <string name="fotoPerfil">Foto de Perfil :</string>
@@ -53,9 +53,13 @@
     <string name="botonModificar">Modificar Datos</string>
     <string name="botonCerrarSesion">Cerrar Sesión</string>
     <string name="botonEliminar">Eliminar Cuenta</string>
+    <!-- Dialog Eliminar Cuenta de Usuario (pantalla_dialog_eliminar_cuenta) -->
+    <string name="cabeceraEliminarCuenta">ELIMINAR CUENTA</string>
+    <string name="mensajeConfirmacionEliminar">¿De verdad quieres eliminar tu cuenta de Threadly?</string>
+    <string name="btnArrepentimiento">¡No, me he arrepentido!</string>
+    <string name="btnEliminarCuenta">Sí...Hasta pronto</string>
 
-
-    <!-- Pantalla Datos Personales -->
+    <!-- Pantalla Datos Personales (pantalla_modificar_datos) -->
     <string name="modificarDatos">Modificar Datos</string>
     <string name="escogerImagen">Escoge una imagen :</string>
     <string name="cambiarNombre">Cambiar nombre de usuario :</string>
@@ -126,6 +130,12 @@
     <string name="botonSiguiente">Siguiente</string>
     <string name="introducirNumHiloModificar">Introduce un número...</string>
     <string name="introducirNombreHiloModificar">Introduce un nombre...</string>
+    <!-- Dialog Eliminar Hilo (catalogo_dialog_eliminar_hilo)-->
+    <string name="eliminarHiloCabeceraCat">ELIMINAR HILO</string>
+    <string name="mensajeEliminarHiloCat">¿Seguro que quieres borrar el hilo del catálogo?</string>
+    <string name="botonVolverEliminarCat">Volver</string>
+    <string name="botonEliminarHiloCat">Sí, eliminar</string>
+
 
     <!-- Pedido Hilos (pedido_aa_principal) -->
     <string name="cabeceraPedido">PEDIDO HILOS</string>
