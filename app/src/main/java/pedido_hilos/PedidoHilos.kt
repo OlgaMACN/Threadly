@@ -1,5 +1,6 @@
 package pedido_hilos
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
@@ -24,6 +25,8 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada pedido */
 
 class PedidoHilos : AppCompatActivity() {
 
@@ -155,11 +158,10 @@ class PedidoHilos : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val nuevoGrafico = Grafico(nombre, countTela)
-            listaGraficos.add(nuevoGrafico)
-            listaGraficos.sortBy { it.nombre.lowercase() } /* para mostrar la tabla por orden alfabético */
-            adaptadorPedido.actualizarLista(listaGraficos)
-            actualizarTotalMadejas()
+            /* trae el gráfico formado de GraficoPedido.kt */
+            val intent = Intent(this, GraficoPedido::class.java)
+            intent.putExtra("nombreGrafico", nombre)
+            startActivityForResult(intent, REQUEST_CODE_GRAFICO_PEDIDO)
             dialog.dismiss()
         }
 
@@ -169,6 +171,22 @@ class PedidoHilos : AppCompatActivity() {
 
         dialog.show()
     }
+
+    /* función necesaria para identificar cada gráfico y agrupar sus datos */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_GRAFICO_PEDIDO && resultCode == Activity.RESULT_OK) {
+            val grafico = data?.getSerializableExtra("grafico") as? Grafico
+            if (grafico != null) {
+                listaGraficos.add(grafico)
+                listaGraficos.sortBy { it.nombre.lowercase() }
+                adaptadorPedido.actualizarLista(listaGraficos)
+                actualizarTotalMadejas()
+            }
+        }
+    }
+
 
     /* eliminar un gráfico del pedido */
     private fun dialogoEliminarGrafico(index: Int) {
@@ -224,7 +242,7 @@ class PedidoHilos : AppCompatActivity() {
 
         for (grafico in listaGraficos) {
             for (hilo in grafico.listaHilos) {
-                val hiloNumero = hilo.numero
+                val hiloNumero = hilo.hilo
                 val madejas = hilo.madejas
 
                 madejasPorHilo[hiloNumero] = madejasPorHilo.getOrDefault(hiloNumero, 0) + madejas

@@ -30,7 +30,7 @@ class GraficoPedido : AppCompatActivity() {
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
         /* pasar el nombre del gráfico para ponerlo como cabecera del layout */
-        val nombreGrafico = intent.getStringExtra("NOMBRE_GRAFICO")
+        val nombreGrafico = intent.getStringExtra("nombreGrafico")
         val cabecera: TextView = findViewById(R.id.txtVw_cabeceraGrafico)
         cabecera.text = nombreGrafico ?: "Gráfico"
 
