@@ -12,7 +12,7 @@ fun calcularMadejas(puntadas: Int, countTela: Int): Int {
     }
 
     /* fórmula para calcular las madejas a partir del count de la tela y el número de puntadas */
-    val longitudUtilMadeja = 2.66
+    val longitudMedia = 2.66
     val totalLongitud = puntadas * longitudPorPuntada
-    return kotlin.math.ceil(totalLongitud / longitudUtilMadeja).toInt()
+    return kotlin.math.ceil(totalLongitud / longitudMedia).toInt()
 }

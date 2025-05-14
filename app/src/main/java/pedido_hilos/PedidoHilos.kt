@@ -174,7 +174,7 @@ class PedidoHilos : AppCompatActivity() {
     private fun dialogoEliminarGrafico(index: Int) {
         val grafico = listaGraficos[index]
         val dialog = Dialog(this)
-        dialog.setContentView((R.layout.pedido_dialog_eliminar_grafico))
+        dialog.setContentView(R.layout.pedido_dialog_eliminar_grafico)
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
