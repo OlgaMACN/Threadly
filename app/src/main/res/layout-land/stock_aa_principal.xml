@@ -86,7 +86,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabla_stock"
         android:layout_width="395dp"
-        android:layout_height="155dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.10"

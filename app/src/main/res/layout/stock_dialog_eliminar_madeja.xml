@@ -44,7 +44,7 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:hint="@string/edTxt_introducirNumHiloMadejasEliminarStk"
-        android:inputType="number"
+        android:inputType="text"
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@id/txtVw_textoEliminarMadejaStk"
         app:layout_constraintStart_toStartOf="parent"

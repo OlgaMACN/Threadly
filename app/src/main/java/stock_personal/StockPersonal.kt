@@ -2,9 +2,13 @@ package stock_personal
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -95,6 +99,7 @@ class StockPersonal : AppCompatActivity() {
         })
     }
 
+    /* agregar hilo al stock personal */
     private fun dialogAgregarHilo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_agregar_hilo)
@@ -158,6 +163,7 @@ class StockPersonal : AppCompatActivity() {
         dialog.show()
     }
 
+    /* agregar madeja al stock personal */
     private fun dialogAgregarMadeja() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_agregar_madeja)
@@ -231,6 +237,7 @@ class StockPersonal : AppCompatActivity() {
         dialog.show()
     }
 
+    /* eliminar madeja del stock personal */
     private fun dialogEliminarMadeja() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_eliminar_madeja)
@@ -294,7 +301,7 @@ class StockPersonal : AppCompatActivity() {
         dialog.show()
     }
 
-    /* para borrar un hilo manteniendo pulsada la fila */
+    /* eliminarr un hilo del stock personall manteniendo pulsada la fila */
     private fun dialogEliminarHilo(posicion: Int) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_eliminar_hilo)
@@ -309,13 +316,41 @@ class StockPersonal : AppCompatActivity() {
         /* variables del dialog */
         val btnEliminar = dialog.findViewById<Button>(R.id.btn_botonEliminarHiloStk)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_eliminarHilo)
+        val hiloABorrar = dialog.findViewById<TextView>(R.id.txtVw_confirmarEliminarHiloStk)
 
         btnVolver.setOnClickListener {
             dialog.dismiss()
         }
 
+        /* para poder señalar el hilo que se va a borrar hay que capturarlo */
+        val hiloEliminado = listaStock[posicion].hiloId
+
+        /* obtener el texto original con el marcador "%s", mismo que en @strings */
+        val textoOriginal = getString(R.string.confirmarEliminarHiloStk)
+
+        /* reemplazar el marcador "%s" con el hiloEliminado */
+        val textoConHilo = textoOriginal.replace("%s", hiloEliminado)
+
+        /* spannableString a partir del texto con el hilo */
+        val spannable = SpannableString(textoConHilo)
+
+        /*** encontrar la posición del hilo concreto dentro del texto */
+        val start = textoConHilo.indexOf(hiloEliminado)
+        val end = start + hiloEliminado.length
+
+        /* y ponerlo en rojo */
+        if (start != -1) {
+            spannable.setSpan(
+                ForegroundColorSpan(Color.RED),
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        hiloABorrar.text = spannable
+
         btnEliminar.setOnClickListener {
-            val hiloEliminado = listaStock[posicion].hiloId
             listaStock.removeAt(posicion)
             adaptadorStock.notifyItemRemoved(posicion)
 
@@ -325,5 +360,6 @@ class StockPersonal : AppCompatActivity() {
 
         dialog.show()
     }
+
 }
 
