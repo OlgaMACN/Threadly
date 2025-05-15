@@ -35,8 +35,6 @@ class CatalogoHilos : AppCompatActivity() {
         setContentView(R.layout.catalogo_aa_hilos)
 
 
-
-
         /* llamada a la función para usar el toolbar */
         toolbar.funcionToolbar(this)
 

@@ -1,7 +1,6 @@
 package PantallaInicio
 
 import android.content.Intent
-import android.media.Image
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -9,7 +8,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
 
-class ModificarDatos : AppCompatActivity () {
+class ModificarDatos : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +31,7 @@ class ModificarDatos : AppCompatActivity () {
 
             val inputNombreNuevo = findViewById<EditText>(R.id.txtVw_contenidoCambioNombre)
 
-           //TODO al escoger una imagen, ¿dialog de si quiere hacer el cambio con Aceptar o Volver y despues guardar cambios?
+            //TODO al escoger una imagen, ¿dialog de si quiere hacer el cambio con Aceptar o Volver y despues guardar cambios?
             //TODO ¿con el nombre otro dialog para verificar cambio?
 
 
