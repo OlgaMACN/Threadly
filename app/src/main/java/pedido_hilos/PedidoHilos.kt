@@ -168,7 +168,6 @@ class PedidoHilos : AppCompatActivity() {
         btnCancelar.setOnClickListener {
             dialog.dismiss()
         }
-
         dialog.show()
     }
 
@@ -186,7 +185,6 @@ class PedidoHilos : AppCompatActivity() {
             }
         }
     }
-
 
     /* eliminar un gráfico del pedido */
     private fun dialogoEliminarGrafico(index: Int) {

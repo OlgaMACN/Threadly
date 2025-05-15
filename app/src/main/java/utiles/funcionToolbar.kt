@@ -20,7 +20,6 @@ fun funcionToolbar(activity: Activity) {
     val btn_foro = activity.findViewById<ImageButton>(R.id.botonForo)
     val btn_pedido = activity.findViewById<ImageButton>(R.id.botonPedido)
 
-
     /* si el usuario acaba de hacer clic se bloquea para no crashear */
     fun clicSeguro(interval: Long = 1000L, block: () -> Unit) {
         val currentTime = System.currentTimeMillis()
@@ -74,7 +73,4 @@ fun funcionToolbar(activity: Activity) {
             siNoEsActivityActual(PedidoHilos::class.java)
         }
     }
-
-    /* al hacerlo con activity, como función reutilizable, en vez de una clase
-     es más eficiente. Hay que llamarlo en cada actividad, como he hecho en stock personal... */
 }
