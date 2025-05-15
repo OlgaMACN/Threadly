@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondoPantallas">
+    android:background="@drawable/pantallarosavertical">
 
 
     <TextView
         android:id="@+id/txtVw_consultarHilosEncabezado"
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:layout_marginBottom="666dp"
         android:background="@drawable/reutilizable_cabecera"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
@@ -24,208 +23,192 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.008" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/txtVw_modificarDatos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="33dp"
-        android:layout_marginEnd="214dp"
-        android:layout_marginBottom="708dp"
         android:fontFamily="@font/catchy_mager"
-        android:gravity="start"
         android:text="@string/modificarDatos"
         android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/lineaRectaModificar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.444"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.19"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/lineaRectaModificar"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/linea_recta"
+        app:tint="@color/morado_palo"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_modificarDatos"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_escogerImagen"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="141dp" />
 
     <TextView
         android:id="@+id/txtVw_escogerImagen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="33dp"
-        android:layout_marginTop="37dp"
-        android:layout_marginEnd="206dp"
-        android:layout_marginBottom="547dp"
         android:fontFamily="@font/catchy_mager"
-        android:gravity="start"
         android:text="@string/escogerImagen"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.19"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtVw_modificarDatos"
+        app:layout_constraintTop_toBottomOf="@+id/lineaRectaModificar"
         app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/imgVw_avatar1"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginStart="34dp"
-        android:layout_marginTop="33dp"
-        android:layout_marginBottom="444dp"
+        android:scaleType="centerCrop"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar4"
         app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar2"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.15"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.713"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_escogerImagen"
         app:srcCompat="@drawable/img_avatar2" />
 
     <ImageView
         android:id="@+id/imgVw_avatar2"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginTop="33dp"
-        android:layout_marginBottom="444dp"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar5"
         app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar3"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.71"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_escogerImagen"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/img_avatar4" />
 
     <ImageView
         android:id="@+id/imgVw_avatar3"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginTop="152dp"
-        android:layout_marginEnd="34dp"
-        android:layout_marginBottom="443dp"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar6"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar2"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.521"
-        app:srcCompat="@drawable/img_usuario_avatar" />
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_escogerImagen"
+        app:srcCompat="@drawable/img_usuario_avatar"
+        tools:layout_editor_absoluteX="260dp"
+        tools:layout_editor_absoluteY="249dp" />
 
     <ImageView
         android:id="@+id/imgVw_avatar4"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginStart="67dp"
-        android:layout_marginTop="33dp"
-        android:layout_marginEnd="274dp"
-        android:layout_marginBottom="341dp"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.222"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_cambiarNombre"
+        app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar1"
-        app:layout_constraintVertical_bias="0.022"
-        app:srcCompat="@drawable/img_hombre_avatar" />
+        app:srcCompat="@drawable/img_hombre_avatar"
+        tools:layout_editor_absoluteX="63dp"
+        tools:layout_editor_absoluteY="355dp" />
 
     <ImageView
         android:id="@+id/imgVw_avatar5"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginStart="33dp"
-        android:layout_marginTop="33dp"
-        android:layout_marginEnd="33dp"
-        android:layout_marginBottom="341dp"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_cambiarNombre"
         app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar6"
-        app:layout_constraintHorizontal_bias="0.384"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar4"
         app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar2"
-        app:layout_constraintVertical_bias="0.034"
-        app:srcCompat="@drawable/img_avatar3" />
+        app:srcCompat="@drawable/img_avatar3"
+        tools:layout_editor_absoluteX="164dp"
+        tools:layout_editor_absoluteY="355dp" />
 
     <ImageView
         android:id="@+id/imgVw_avatar6"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginTop="33dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginBottom="341dp"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/txtVw_cambiarNombre"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgVw_avatar5"
         app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar3"
-        app:layout_constraintVertical_bias="0.034"
-        app:srcCompat="@drawable/img_avatar_ejemplo" />
+        app:srcCompat="@drawable/img_avatar_ejemplo"
+        tools:layout_editor_absoluteX="263dp"
+        tools:layout_editor_absoluteY="355dp" />
 
 
     <TextView
         android:id="@+id/txtVw_cambiarNombre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="33dp"
-        android:layout_marginEnd="132dp"
-        android:layout_marginBottom="360dp"
         android:fontFamily="@font/catchy_mager"
         android:gravity="start"
         android:text="@string/cambiarNombre"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/editxtVw_contenidoCambioNombre"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.533"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.19"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar5" />
 
     <EditText
-        android:id="@+id/txtVw_contenidoCambioNombre"
-        android:layout_width="273dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="69dp"
-        android:layout_marginEnd="69dp"
-        android:layout_marginBottom="272dp"
+        android:id="@+id/editxtVw_contenidoCambioNombre"
+        android:layout_width="290dp"
+        android:layout_height="40dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
-        android:gravity="center"
         android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
         android:hint="@string/nuevoNombre"
         android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_GuardarCambios"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.333"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btn_GuardarCambios"
-        android:layout_width="174dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="118dp"
-        android:layout_marginTop="43dp"
-        android:layout_marginEnd="119dp"
-        android:backgroundTint="@color/morado_palo"
-        android:fontFamily="@font/catchy_mager"
-        android:text="@string/botonGuardarCambios"
-        app:layout_constraintBottom_toTopOf="@+id/btn_VolverModificarDatos"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtVw_contenidoCambioNombre" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cambiarNombre" />
 
     <Button
         android:id="@+id/btn_VolverModificarDatos"
         android:layout_width="174dp"
         android:layout_height="48dp"
-        android:layout_marginStart="118dp"
-        android:layout_marginEnd="119dp"
-        android:layout_marginBottom="77dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/volver_modificarDatos"
-        app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toBottomOf="@+id/btn_GuardarCambios"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="109dp"
+        tools:layout_editor_absoluteY="279dp" />
+
+    <Button
+        android:id="@+id/btn_GuardarCambios"
+        android:layout_width="174dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/morado_palo"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/botonGuardarCambios"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_GuardarCambios" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editxtVw_contenidoCambioNombre"
+        app:layout_constraintBottom_toTopOf="@+id/btn_VolverModificarDatos"
+        tools:layout_editor_absoluteX="109dp"
+        tools:layout_editor_absoluteY="617dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

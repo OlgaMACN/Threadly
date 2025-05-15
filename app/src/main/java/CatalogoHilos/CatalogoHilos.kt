@@ -33,7 +33,7 @@ class CatalogoHilos : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.consultar_aa_hilos)
+        setContentView(R.layout.catalogo_aa_hilos)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
         setContentView(R.layout.catalogo_aa_hilos)
 

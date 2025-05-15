@@ -4,13 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondoPantallas">
+    android:background="@drawable/pantallarosavertical">
 
     <TextView
         android:id="@+id/txtVw_datosPersonalesEncabezado"
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:layout_marginBottom="786dp"
         android:background="@drawable/reutilizable_cabecera"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
@@ -20,149 +19,149 @@
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/txtVw_datosPersonales"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="22dp"
-        android:layout_marginEnd="163dp"
-        android:layout_marginBottom="731dp"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/datosPersonales"
         android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_nombre"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtVw_datosPersonalesEncabezado" />
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_datosPersonalesEncabezado"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/lineaRecta"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/linea_recta"
+        app:tint="@color/morado_palo"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_datosPersonales"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_nombre"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="141dp" />
 
     <TextView
         android:id="@+id/txtVw_nombre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="128dp"
-        android:layout_marginBottom="628dp"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/nombreUsuario"
         android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_contenidoNombre"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_datosPersonales" />
 
     <TextView
         android:id="@+id/txtVw_contenidoNombre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="257dp"
-        android:layout_marginBottom="592dp"
         android:fontFamily="@font/catchy_mager"
         android:text="TextView"
         android:textColor="@color/morado_palo"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/txtVw_fotoPerfil"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_nombre" />
 
     <TextView
         android:id="@+id/txtVw_fotoPerfil"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="194dp"
-        android:layout_marginBottom="532dp"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/fotoPerfil"
         android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/imgVw_fotoPerfil"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_contenidoNombre" />
 
     <ImageView
         android:id="@+id/imgVw_fotoPerfil"
         android:layout_width="99dp"
         android:layout_height="94dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="244dp"
-        android:layout_marginBottom="416dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btn_ModificarDatos"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.20"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_fotoPerfil"
         app:srcCompat="@drawable/img_avatar_ejemplo" />
 
     <Button
         android:id="@+id/btn_ModificarDatos"
         android:layout_width="180dp"
         android:layout_height="51dp"
-        android:layout_marginStart="110dp"
-        android:layout_marginTop="500dp"
-        android:layout_marginEnd="103dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/botonModificar"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/btn_CerrarSesion"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toBottomOf="@+id/imgVw_fotoPerfil"
+        tools:layout_editor_absoluteY="712dp" />
 
     <Button
         android:id="@+id/btn_CerrarSesion"
         android:layout_width="180dp"
         android:layout_height="51dp"
-        android:layout_marginStart="110dp"
-        android:layout_marginEnd="103dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/botonCerrarSesion"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_EliminarCuenta"
+        app:layout_constraintBottom_toTopOf="@id/btn_EliminarCuenta"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_ModificarDatos" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_ModificarDatos"
+        tools:layout_editor_absoluteX="110dp"
+        tools:layout_editor_absoluteY="763dp" />
 
     <Button
         android:id="@+id/btn_EliminarCuenta"
         android:layout_width="180dp"
         android:layout_height="51dp"
-        android:layout_marginStart="110dp"
-        android:layout_marginEnd="103dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/botonEliminar"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/btn_VolverDatosPersonales"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_CerrarSesion" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_CerrarSesion"
+        tools:layout_editor_absoluteX="110dp"
+        tools:layout_editor_absoluteY="814dp" />
 
     <Button
         android:id="@+id/btn_VolverDatosPersonales"
         android:layout_width="180dp"
         android:layout_height="51dp"
-        android:layout_marginStart="110dp"
-        android:layout_marginEnd="103dp"
-        android:layout_marginBottom="100dp"
         android:backgroundTint="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/volver_datosPersonales"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_EliminarCuenta" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_EliminarCuenta"
+        tools:layout_editor_absoluteX="110dp"
+        tools:layout_editor_absoluteY="865dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

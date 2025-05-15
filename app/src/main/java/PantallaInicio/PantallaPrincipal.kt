@@ -22,8 +22,6 @@ class PantallaPrincipal : AppCompatActivity() {
         textoBienvenida.text = "Bienvenido/a, $nombreUsuario"
 
 
-
-
         //navegación a pantalla de datos personales a través de botón 'configuración'
         val configuracion = findViewById<ImageButton>(R.id.imgBtn_configuracion)
 
