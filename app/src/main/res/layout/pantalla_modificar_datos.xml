@@ -18,7 +18,7 @@
         android:text="@string/principal_threadly"
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="30dp"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -139,7 +139,7 @@
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView7"
+        app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar6"
         app:layout_constraintHorizontal_bias="0.384"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar4"
         app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar2"
@@ -147,7 +147,7 @@
         app:srcCompat="@drawable/img_avatar3" />
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/imgVw_avatar6"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginTop="33dp"
@@ -178,15 +178,16 @@
         app:layout_constraintHorizontal_bias="0.533"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
+    <EditText
         android:id="@+id/txtVw_contenidoCambioNombre"
         android:layout_width="273dp"
-        android:layout_height="43dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="69dp"
         android:layout_marginEnd="69dp"
         android:layout_marginBottom="272dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:gravity="center"
+        android:fontFamily="@font/catchy_mager"
         android:hint="@string/nuevoNombre"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
