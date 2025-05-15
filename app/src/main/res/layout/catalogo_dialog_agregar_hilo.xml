@@ -12,6 +12,7 @@
         android:id="@+id/txtVw_agregarHiloConsulta"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:layout_marginBottom="24dp"
         android:background="@drawable/reutilizable_cabecera"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
@@ -19,6 +20,7 @@
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/edTxt_agregarNumHilo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,7 +29,7 @@
         android:id="@+id/edTxt_agregarNumHilo"
         android:layout_width="350dp"
         android:layout_height="55dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginBottom="11dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
@@ -35,6 +37,7 @@
         android:inputType="number"
         android:textAlignment="center"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/editTxt_agregarNombreHilo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_agregarHiloConsulta" />
@@ -53,17 +56,20 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edTxt_agregarNumHilo" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="411dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
         android:gravity="center"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="255dp">
+        app:layout_constraintTop_toBottomOf="@+id/editTxt_agregarNombreHilo">
 
         <Button
             android:id="@+id/btn_guardarAgregarHilo"

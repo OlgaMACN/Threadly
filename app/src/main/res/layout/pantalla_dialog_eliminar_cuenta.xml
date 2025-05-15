@@ -12,6 +12,7 @@
         android:id="@+id/txtVw_cabeceraEliminarCuenta"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:layout_marginBottom="24dp"
         android:background="@drawable/reutilizable_cabecera"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
@@ -19,32 +20,59 @@
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/txtVw_mensajeConfirmacionEliminar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginBottom="13dp"
         android:fontFamily="@font/catchy_mager"
-        android:text="@string/mensajeConfirmacionEliminar"
-        android:textSize="20sp"
         android:gravity="center"
+        android:text="@string/mensajeConfirmacionEliminar"
         android:textAlignment="center"
         android:textColor="@color/black"
-        tools:layout_editor_absoluteX="-3dp"
-        tools:layout_editor_absoluteY="80dp" />
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/icono_EliminarCuenta"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_cabeceraEliminarCuenta" />
+
+    <ImageView
+        android:id="@+id/icono_EliminarCuenta"
+        android:layout_width="86dp"
+        android:layout_height="88dp"
+        android:layout_marginStart="156dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="156dp"
+        android:layout_marginBottom="22dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_mensajeConfirmacionEliminar"
+        app:srcCompat="@drawable/eliminar_cuenta_icono" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="411dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         android:gravity="center"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="255dp">
+        app:layout_constraintTop_toBottomOf="@+id/icono_EliminarCuenta">
 
         <Button
             android:id="@+id/btn_Arrepentimiento"
@@ -63,7 +91,7 @@
             android:layout_height="0dp" />
 
         <Button
-            android:id="@+id/btn_EliminarCuenta"
+            android:id="@+id/btn_EliminarCuentaThreadly"
             android:layout_width="0dp"
             android:layout_height="75dp"
             android:layout_weight="1"
@@ -74,13 +102,5 @@
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="86dp"
-        android:layout_height="88dp"
-        app:srcCompat="@drawable/eliminar_cuenta_icono"
-        tools:layout_editor_absoluteX="160dp"
-        tools:layout_editor_absoluteY="145dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

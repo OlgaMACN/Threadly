@@ -190,8 +190,8 @@ class CatalogoHilos : AppCompatActivity() {
         dialog.setCancelable(false)
 
         val inputNumHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirNumHilo)
-        checkBoxHilo = dialog.findViewById<CheckBox>(R.id.ckBx_numHiloModificar)
-        checkBoxNombre = dialog.findViewById<CheckBox>(R.id.ckB_nombreHiloModificar)
+        checkBoxHilo = dialog.findViewById(R.id.ckBx_numHiloModificar)
+        checkBoxNombre = dialog.findViewById(R.id.ckB_nombreHiloModificar)
 
         val btnSiguiente = dialog.findViewById<Button>(R.id.btn_botonSiguienteModificar)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volverModificarHilo)
@@ -216,6 +216,8 @@ class CatalogoHilos : AppCompatActivity() {
 
             dialog.dismiss()
         }
+
+        dialog.show()
 
     }
 
@@ -270,6 +272,8 @@ class CatalogoHilos : AppCompatActivity() {
 
             dialog.dismiss()
         }
+
+        dialog.show()
 
     }
 

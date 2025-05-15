@@ -12,6 +12,7 @@
         android:id="@+id/txtVw_modificarHiloConsultaFinal"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:layout_marginBottom="24dp"
         android:background="@drawable/reutilizable_cabecera"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
@@ -19,6 +20,7 @@
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/edTxt_introducirNumHiloModificar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +30,6 @@
         android:layout_width="350dp"
         android:layout_height="55dp"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="36dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
@@ -37,6 +38,7 @@
         android:inputType="number"
         android:textAlignment="center"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/editTxt_introducirNombreHiloModificar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_modificarHiloConsultaFinal" />
@@ -46,9 +48,8 @@
         android:layout_width="350dp"
         android:layout_height="55dp"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="13dp"
         android:layout_marginEnd="36dp"
-        android:layout_marginBottom="52dp"
+        android:layout_marginBottom="80dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
@@ -66,11 +67,14 @@
         android:id="@+id/linearLayout"
         android:layout_width="411dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="24dp"
         android:gravity="center"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="255dp">
+        app:layout_constraintTop_toBottomOf="@+id/editTxt_introducirNombreHiloModificar">
 
         <Button
             android:id="@+id/btn_guardarModificarHilo"
