@@ -33,7 +33,7 @@
         android:inputType="text"
         android:paddingEnd="8dp"
         android:textAlignment="center"
-        android:textSize="15sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

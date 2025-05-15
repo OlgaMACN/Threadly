@@ -42,8 +42,8 @@ class LoginUserNoExiste : AppCompatActivity() {
             val usuarioEntrada = usuario.text.toString().trim()
             val constrasenaEntrada = contrasena.text.toString().trim()
 
-            /* ni vacío ni mayor a 20 caracteres */
-            if (usuarioEntrada.isEmpty() || constrasenaEntrada.isEmpty() || usuarioEntrada.length > 20 || constrasenaEntrada.length > 20) {
+            /* ni vacío, ni menor a 8 caracteres, ni mayor a 20 */
+            if (usuarioEntrada.isEmpty() || constrasenaEntrada.isEmpty()) {
                 Toast.makeText(
                     this,
                     "Por favor, rellena los campos",
@@ -51,9 +51,25 @@ class LoginUserNoExiste : AppCompatActivity() {
                 ).show()
                 usuario.text.clear()
                 contrasena.text.clear()
+            } else if (usuarioEntrada.length > 20 || constrasenaEntrada.length > 20) {
+                Toast.makeText(
+                    this,
+                    "Los campos no pueden tener más de 20 caracteres",
+                    Toast.LENGTH_SHORT
+                ).show()
+                usuario.text.clear()
+                contrasena.text.clear()
+            } else if (constrasenaEntrada.length < 8) {
+                Toast.makeText(
+                    this,
+                    "Mínimo contraseña: 8 caracteres",
+                    Toast.LENGTH_SHORT
+                ).show()
+                contrasena.text.clear()
             } else {
                 startActivity(Intent(this, PantallaPrincipal::class.java))
             }
+
         }
     }
 }

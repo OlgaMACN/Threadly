@@ -11,8 +11,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import pedido_hilos.Grafico
 import ui_utils.ajustarDialog
 import utiles.calcularMadejas
 import utiles.funcionToolbar
@@ -29,14 +31,30 @@ class GraficoPedido : AppCompatActivity() {
         setContentView(R.layout.pedidob_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
+        /* inicializar el adaptador y configurar el recycler view */
+        val recyclerView = findViewById<RecyclerView>(R.id.tabla_grafico)
+        adaptadorGrafico = AdaptadorGrafico(
+            listaHilosGrafico,
+            onClickHilo = { hilo ->
+                Toast.makeText(this, "Hilo: $hilo", Toast.LENGTH_SHORT).show()
+            }
+        )
+        recyclerView.adapter = adaptadorGrafico
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+
         /* pasar el nombre del gráfico para ponerlo como cabecera del layout */
-        val nombreGrafico = intent.getStringExtra("nombreGrafico")
-        val cabecera: TextView = findViewById(R.id.txtVw_cabeceraGrafico)
-        cabecera.text = nombreGrafico ?: "Gráfico"
+        val grafico = intent.getSerializableExtra("grafico") as? Grafico
+        grafico?.let {
+            val cabecera = findViewById<TextView>(R.id.txtVw_cabeceraGrafico)
+            cabecera.text = it.nombre
+        }
 
         /* declaración de componentes */
-        var buscador = findViewById<EditText>(R.id.edTxt_buscadorGrafico)
+        var btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloGraficoIndividual)
 
+        /* cuando se pulsan se llevan a cabo sus acciones */
+        btnAgregarHilo.setOnClickListener { dialogAgregarHiloGrafico() }
         /* inicio de las funciones en constante uso */
         buscadorHilo()
 
@@ -116,11 +134,10 @@ class GraficoPedido : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val puntadas = stringPuntadas.toIntOrNull()
-            val countTela = stringCountTela.toIntOrNull()
+            val puntadasInt = stringPuntadas.toIntOrNull()
+            val countTelaInt = stringCountTela.toIntOrNull()
 
-
-            if (puntadas == null || puntadas <= 0) {
+            if (puntadasInt == null || puntadasInt <= 0) {
                 Toast.makeText(this, "Introduce un número de puntadas válido.", Toast.LENGTH_SHORT)
                     .show()
                 puntadasGrafico.text.clear()
@@ -129,7 +146,7 @@ class GraficoPedido : AppCompatActivity() {
 
             /* sólo counts permitidos */
             val countsPermitidos = listOf(14, 16, 18, 20, 25)
-            if (countTela !in countsPermitidos || countTela == null) {
+            if (countTelaInt == null || countTelaInt !in countsPermitidos) {
                 Toast.makeText(
                     this,
                     "El count de tela debe ser 14, 16, 18, 20 o 25.",
@@ -139,13 +156,15 @@ class GraficoPedido : AppCompatActivity() {
             }
 
             /* calcular madejas */
-            val madejas = calcularMadejas(puntadas, countTela)
+            val madejas = calcularMadejas(puntadasInt, countTelaInt)
 
             /* crear y añadir el hilo a la tabla */
-            val nuevoHilo = HiloGrafico(nombreHilo, puntadas, madejas)
+            val nuevoHilo = HiloGrafico(nombreHilo, madejas)
             listaHilosGrafico.add(nuevoHilo)
 
             val listaOrdenada = ordenarHilos(listaHilosGrafico)
+            listaHilosGrafico.clear()
+            listaHilosGrafico.addAll(listaOrdenada)
             adaptadorGrafico.actualizarLista(listaOrdenada)
 
             dialog.dismiss()
@@ -154,6 +173,7 @@ class GraficoPedido : AppCompatActivity() {
         btnVolver.setOnClickListener {
             dialog.dismiss()
         }
+        dialog.show()
     }
 
 

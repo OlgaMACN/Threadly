@@ -38,16 +38,14 @@ class PedidoHilos : AppCompatActivity() {
         setContentView(R.layout.pedido_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
-
         /* inicializar el adaptador y configurar el recycler view */
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
         tablaPedido.layoutManager = LinearLayoutManager(this)
 
         /* inicializo el adaptador manejando los clics sobre la tabla */
         adaptadorPedido = AdaptadorPedido(listaGraficos, onItemClick = { graficoSeleccionado ->
-            // Este es el código que maneja el clic en un elemento de la lista
             val intent = Intent(this, GraficoPedido::class.java)
-            intent.putExtra("NOMBRE_GRAFICO", graficoSeleccionado.nombre)
+            intent.putExtra("grafico", graficoSeleccionado)
             startActivity(intent)
         }, onLongClick = { index ->
             dialogoEliminarGrafico(index)
@@ -158,32 +156,22 @@ class PedidoHilos : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            /* trae el gráfico formado de GraficoPedido.kt */
-            val intent = Intent(this, GraficoPedido::class.java)
-            intent.putExtra("nombreGrafico", nombre)
-            startActivityForResult(intent, REQUEST_CODE_GRAFICO_PEDIDO)
+            /* el usuario creará un nuevo gráfico con madejas a cero, hasta que lo edite */
+            val nuevoGrafico = Grafico(
+                nombre = nombre,
+                listaHilos = mutableListOf()
+            )
+
+            listaGraficos.add(nuevoGrafico)
+            listaGraficos.sortBy { it.nombre.lowercase() }
+            adaptadorPedido.actualizarLista(listaGraficos)
+            actualizarTotalMadejas()
             dialog.dismiss()
         }
-
         btnCancelar.setOnClickListener {
             dialog.dismiss()
         }
         dialog.show()
-    }
-
-    /* función necesaria para identificar cada gráfico y agrupar sus datos */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_CODE_GRAFICO_PEDIDO && resultCode == Activity.RESULT_OK) {
-            val grafico = data?.getSerializableExtra("grafico") as? Grafico
-            if (grafico != null) {
-                listaGraficos.add(grafico)
-                listaGraficos.sortBy { it.nombre.lowercase() }
-                adaptadorPedido.actualizarLista(listaGraficos)
-                actualizarTotalMadejas()
-            }
-        }
     }
 
     /* eliminar un gráfico del pedido */

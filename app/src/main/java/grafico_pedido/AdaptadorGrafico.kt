@@ -16,7 +16,6 @@ class AdaptadorGrafico(
 
     inner class HiloViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtHilo: TextView = view.findViewById(R.id.txtVw_columnaHiloGrafico)
-        val txtPuntadas: TextView = view.findViewById(R.id.txtVw_columnaPuntadasGrafico)
         val txtMadejas: TextView = view.findViewById(R.id.txtVw_columnaMadejasGrafico)
         val filaLayout: View = view
     }
@@ -32,7 +31,6 @@ class AdaptadorGrafico(
     override fun onBindViewHolder(holder: HiloViewHolder, position: Int) {
         val hilo = hilos[position]
         holder.txtHilo.text = hilo.hilo
-        holder.txtPuntadas.text = hilo.puntadas.toString()
         holder.txtMadejas.text = hilo.madejas.toString()
 
         if (hilo.hilo == hiloResaltado) {
