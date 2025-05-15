@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 
 class AdaptadorGrafico(
-    private var hilos: MutableList<HiloGrafico>,
+    private val hilos: MutableList<HiloGrafico>,
     private val onClickHilo: (String) -> Unit,
     private var hiloResaltado: String? = null
 ) : RecyclerView.Adapter<AdaptadorGrafico.HiloViewHolder>() {
@@ -46,7 +46,8 @@ class AdaptadorGrafico(
 
     @SuppressLint("NotifyDataSetChanged")
     fun actualizarLista(nuevaLista: List<HiloGrafico>) {
-        hilos = nuevaLista.toMutableList()
+        hilos.clear()
+        hilos.addAll(nuevaLista)
         notifyDataSetChanged()
     }
 

@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -24,31 +25,32 @@ class GraficoPedido : AppCompatActivity() {
 
 
     private lateinit var adaptadorGrafico: AdaptadorGrafico
-    private val listaHilosGrafico = mutableListOf<HiloGrafico>()
+    private var grafico: Grafico? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedidob_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
-        /* inicializar el adaptador y configurar el recycler view */
+        grafico = intent.getSerializableExtra("grafico") as? Grafico
+        if (grafico == null) {
+            Log.e("GraficoPedido", "El gráfico recibido es nulo.")
+            Toast.makeText(this, "Error: gráfico no recibido", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
+        val cabecera = findViewById<TextView>(R.id.txtVw_cabeceraGrafico)
+        cabecera.text = grafico?.nombre
+
+        // 3. Configurar RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.tabla_grafico)
         adaptadorGrafico = AdaptadorGrafico(
-            listaHilosGrafico,
-            onClickHilo = { hilo ->
-                Toast.makeText(this, "Hilo: $hilo", Toast.LENGTH_SHORT).show()
-            }
+            grafico!!.listaHilos.toMutableList(),
+            onClickHilo = { hilo -> Toast.makeText(this, "Hilo: $hilo", Toast.LENGTH_SHORT).show() }
         )
         recyclerView.adapter = adaptadorGrafico
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-
-        /* pasar el nombre del gráfico para ponerlo como cabecera del layout */
-        val grafico = intent.getSerializableExtra("grafico") as? Grafico
-        grafico?.let {
-            val cabecera = findViewById<TextView>(R.id.txtVw_cabeceraGrafico)
-            cabecera.text = it.nombre
-        }
 
         /* declaración de componentes */
         var btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloGraficoIndividual)
@@ -70,16 +72,18 @@ class GraficoPedido : AppCompatActivity() {
 
         btnLupaGrafico.setOnClickListener {
             val texto = buscarGrafico.text.toString().trim().uppercase()
-            val coincidencia = listaHilosGrafico.find { it.hilo.uppercase() == texto }
+            val listaActual = grafico?.listaHilos ?: mutableListOf()
+            val coincidencia = grafico?.listaHilos?.find { it.hilo.uppercase() == texto }
+
 
             if (coincidencia != null) {
                 /* si encuentra el hilo lo resaltará en la tabla */
                 adaptadorGrafico.resaltarHilo(coincidencia.hilo)
-                adaptadorGrafico.actualizarLista(listaHilosGrafico)
+                adaptadorGrafico.actualizarLista(listaActual)
                 tablaGrafico.visibility = View.VISIBLE
                 txtNoResultadosGrafico.visibility = View.GONE
 
-                val index = listaHilosGrafico.indexOf(coincidencia)
+                val index = listaActual.indexOf(coincidencia)
                 tablaGrafico.scrollToPosition(index)
             } else {
                 tablaGrafico.visibility = View.GONE
@@ -91,8 +95,9 @@ class GraficoPedido : AppCompatActivity() {
         buscarGrafico.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
+                    val listaActual = grafico?.listaHilos ?: mutableListOf()
                     adaptadorGrafico.resaltarHilo(null)
-                    adaptadorGrafico.actualizarLista(listaHilosGrafico)
+                    adaptadorGrafico.actualizarLista(listaActual)
                     tablaGrafico.visibility = View.VISIBLE
                     txtNoResultadosGrafico.visibility = View.GONE
                 }
@@ -123,51 +128,78 @@ class GraficoPedido : AppCompatActivity() {
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
 
         btnGuardar.setOnClickListener {
-            val nombreHilo = hiloGrafico.text.toString().trim().uppercase()
-            val stringPuntadas = puntadasGrafico.text.toString().trim()
-            val stringCountTela = countTela.text.toString().trim()
+            try {
+                val nombreHilo = hiloGrafico.text.toString().trim().uppercase()
+                val stringPuntadas = puntadasGrafico.text.toString().trim()
+                val stringCountTela = countTela.text.toString().trim()
 
-            /* comprobar que los campos estén rellenos */
-            if (nombreHilo.isEmpty() || stringPuntadas.isEmpty() || stringCountTela.isEmpty()) {
-                Toast.makeText(this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT)
-                    .show()
-                return@setOnClickListener
+                /* comprobar que los campos estén rellenos */
+                if (nombreHilo.isEmpty() || stringPuntadas.isEmpty() || stringCountTela.isEmpty()) {
+                    Toast.makeText(
+                        this,
+                        "Por favor, completa todos los campos.",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                    return@setOnClickListener
+                }
+
+                val puntadasInt = try {
+                    stringPuntadas.toInt()
+                } catch (e: NumberFormatException) {
+                    null
+                }
+                val countTelaInt = try {
+                    stringCountTela.toInt()
+                } catch (e: NumberFormatException) {
+                    null
+                }
+
+                if (puntadasInt == null || puntadasInt <= 0) {
+                    Toast.makeText(
+                        this,
+                        "Introduce un número de puntadas válido.",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                    puntadasGrafico.text.clear()
+                    return@setOnClickListener
+                }
+
+                /* sólo counts permitidos */
+                val countsPermitidos = listOf(14, 16, 18, 20, 25)
+                if (countTelaInt == null || countTelaInt !in countsPermitidos) {
+                    Toast.makeText(
+                        this,
+                        "El count de tela debe ser 14, 16, 18, 20 o 25.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
+
+                /* calcular madejas */
+                val madejas = try {
+                    calcularMadejas(puntadasInt, countTelaInt)
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Error al calcular madejas", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                /* crear y añadir el hilo a la tabla */
+                val nuevoHilo = HiloGrafico(nombreHilo, madejas)
+
+                grafico?.listaHilos?.add(nuevoHilo)
+
+                val listaOrdenada = ordenarHilos(grafico?.listaHilos ?: emptyList())
+                grafico?.listaHilos?.clear()
+                grafico?.listaHilos?.addAll(listaOrdenada)
+                adaptadorGrafico.actualizarLista(listaOrdenada)
+
+                dialog.dismiss()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(this, "Error inesperado: ${e.message}", Toast.LENGTH_LONG).show()
             }
-
-            val puntadasInt = stringPuntadas.toIntOrNull()
-            val countTelaInt = stringCountTela.toIntOrNull()
-
-            if (puntadasInt == null || puntadasInt <= 0) {
-                Toast.makeText(this, "Introduce un número de puntadas válido.", Toast.LENGTH_SHORT)
-                    .show()
-                puntadasGrafico.text.clear()
-                return@setOnClickListener
-            }
-
-            /* sólo counts permitidos */
-            val countsPermitidos = listOf(14, 16, 18, 20, 25)
-            if (countTelaInt == null || countTelaInt !in countsPermitidos) {
-                Toast.makeText(
-                    this,
-                    "El count de tela debe ser 14, 16, 18, 20 o 25.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                return@setOnClickListener
-            }
-
-            /* calcular madejas */
-            val madejas = calcularMadejas(puntadasInt, countTelaInt)
-
-            /* crear y añadir el hilo a la tabla */
-            val nuevoHilo = HiloGrafico(nombreHilo, madejas)
-            listaHilosGrafico.add(nuevoHilo)
-
-            val listaOrdenada = ordenarHilos(listaHilosGrafico)
-            listaHilosGrafico.clear()
-            listaHilosGrafico.addAll(listaOrdenada)
-            adaptadorGrafico.actualizarLista(listaOrdenada)
-
-            dialog.dismiss()
         }
 
         btnVolver.setOnClickListener {
@@ -175,7 +207,5 @@ class GraficoPedido : AppCompatActivity() {
         }
         dialog.show()
     }
-
-
 }
 

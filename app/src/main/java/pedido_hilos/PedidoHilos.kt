@@ -1,6 +1,5 @@
 package pedido_hilos
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
@@ -20,11 +19,6 @@ import com.threadly.R
 import grafico_pedido.GraficoPedido
 import ui_utils.ajustarDialog
 import utiles.funcionToolbar
-import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada pedido */
 
@@ -60,7 +54,7 @@ class PedidoHilos : AppCompatActivity() {
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
-        btnDescargarPedido.setOnClickListener { descargarPedido() }
+        // btnDescargarPedido.setOnClickListener { descargarPedido() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
 
         /* funciones en continua ejecución durante la pantalla */
@@ -209,49 +203,8 @@ class PedidoHilos : AppCompatActivity() {
         dialog.show()
     }
 
-    /* TODO descargarPedido no descarga nada, tengo que arreglarlo */
     /* descargar pedido */
-    private fun descargarPedido() {
-        /* antes de descargar nada, se comprueba que el contenido de la lista no esté vacío */
-        if (listaGraficos.isEmpty()) {
-            Toast.makeText(this, "No hay gráficos para descargar.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        /* fecha y hora para el nombre del archivo */
-        val formatter = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.getDefault())
-        val timestamp = formatter.format(Date())
-        val fileName = "Pedido_$timestamp.csv"
-        val file = File(getExternalFilesDir(null), fileName)
 
-        /* mapa para agrupar las madejas por hilo */
-        val madejasPorHilo = mutableMapOf<String, Int>()
-
-        for (grafico in listaGraficos) {
-            for (hilo in grafico.listaHilos) {
-                val hiloNumero = hilo.hilo
-                val madejas = hilo.madejas
-
-                madejasPorHilo[hiloNumero] = madejasPorHilo.getOrDefault(hiloNumero, 0) + madejas
-            }
-        }
-
-        /* construir el fichero a partir de los hilos y las madejas */
-        val contenido = StringBuilder()
-        contenido.append("Hilo,Madejas\n")
-        for ((hilo, totalMadejas) in madejasPorHilo) {
-            contenido.append("$hilo,$totalMadejas\n")
-        }
-
-        /* escribir el archivo e informar de su descarga */
-        try {
-            file.writeText(contenido.toString())
-            Toast.makeText(this, "Archivo guardado: $fileName", Toast.LENGTH_LONG).show()
-        } catch (e: IOException) {
-            Toast.makeText(this, "Error al guardar el archivo: ${e.message}", Toast.LENGTH_LONG)
-                .show()
-        }
-
-    }
 
     /* realizar pedido */
     private fun realizarPedido() {
