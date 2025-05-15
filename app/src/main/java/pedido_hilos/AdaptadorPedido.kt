@@ -10,7 +10,7 @@ import com.threadly.R
 
 class AdaptadorPedido(
     private var graficos: MutableList<Grafico>,
-    private val onItemClick: (Int) -> Unit,
+    private val onItemClick: (Grafico) -> Unit,
     private val onLongClick: (Int) -> Unit = {},
 ) : RecyclerView.Adapter<AdaptadorPedido.PedidoViewHolder>() {
 
@@ -24,7 +24,7 @@ class AdaptadorPedido(
             view.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onItemClick(position)
+                    onItemClick(graficos[position])
                 }
             }
 

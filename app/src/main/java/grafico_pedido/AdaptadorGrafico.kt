@@ -49,7 +49,6 @@ class AdaptadorGrafico(
     @SuppressLint("NotifyDataSetChanged")
     fun actualizarLista(nuevaLista: List<HiloGrafico>) {
         hilos = nuevaLista.toMutableList()
-        // TODO cambiar para que sea más eficiente pero de momento tira
         notifyDataSetChanged()
     }
 

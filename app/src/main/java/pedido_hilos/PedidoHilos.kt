@@ -1,6 +1,7 @@
 package pedido_hilos
 
-import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,11 +13,20 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import grafico_pedido.GraficoPedido
+import ui_utils.ajustarDialog
+import utiles.funcionToolbar
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada pedido */
 
 class PedidoHilos : AppCompatActivity() {
 
@@ -26,24 +36,24 @@ class PedidoHilos : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
+        funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
-        /* llamada a la función para usar el toolbar */
-        toolbar.funcionToolbar(this)
 
-        /* inicializar el adaptador */
+        /* inicializar el adaptador y configurar el recycler view */
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
         tablaPedido.layoutManager = LinearLayoutManager(this)
 
-        /* inicializo el adaptador */
-        val recyclerView = findViewById<RecyclerView>(R.id.tabla_pedido)
-        adaptadorPedido = AdaptadorPedido(listaGraficos,
-            onItemClick = { /* manejar click si quieres */ },
-            onLongClick = { index ->
-                dialogoEliminarGrafico(index) /* no hace falta declarar un botón aparte, ya se elimina el gráfico manteniendo pulsado */
-            }
-        )
-        recyclerView.adapter = adaptadorPedido
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        /* inicializo el adaptador manejando los clics sobre la tabla */
+        adaptadorPedido = AdaptadorPedido(listaGraficos, onItemClick = { graficoSeleccionado ->
+            // Este es el código que maneja el clic en un elemento de la lista
+            val intent = Intent(this, GraficoPedido::class.java)
+            intent.putExtra("NOMBRE_GRAFICO", graficoSeleccionado.nombre)
+            startActivity(intent)
+        }, onLongClick = { index ->
+            dialogoEliminarGrafico(index)
+        })
+        /* asignación del adaptador */
+        tablaPedido.adapter = adaptadorPedido
 
         /* declarar componentes*/
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
@@ -113,40 +123,31 @@ class PedidoHilos : AppCompatActivity() {
 
     /* agregar un gráfico al pedido */
     private fun dialogAgregarGrafico() {
-        val dialogView = layoutInflater.inflate(R.layout.pedido_dialog_agregar_grafico, null)
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setCancelable(false)
-            .create()
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.pedido_dialog_agregar_grafico)
 
-        val nombreInput = dialogView.findViewById<EditText>(R.id.edTxt_pedirNombreGrafico)
-        val countTelaInput = dialogView.findViewById<EditText>(R.id.edTxt_pedirCountTela)
-        val btnGuardar = dialogView.findViewById<Button>(R.id.btn_guardarGrafico)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        /* llamada al metodo que centra el dialog en pantalla */
+        ajustarDialog(dialog)
+
+        dialog.setCancelable(false)
+
+        /* variables del dialog */
+        val nombreInput = dialog.findViewById<EditText>(R.id.edTxt_pedirNombreGrafico)
+        val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarGrafico)
         val btnCancelar =
-            dialogView.findViewById<Button>(R.id.btn_volver_pedido_dialog_agregarGrafico)
+            dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog_agregarGrafico)
 
         btnGuardar.setOnClickListener {
             val nombre = nombreInput.text.toString().trim()
-            val countTela = countTelaInput.text.toString().toIntOrNull()
 
-            if (nombre.isEmpty() || countTela == null) {
+            if (nombre.isEmpty()) {
                 Toast.makeText(
                     this,
-                    "Por favor completa todos los campos correctamente.",
+                    "Por favor, introduce un nombre.",
                     Toast.LENGTH_SHORT
                 ).show()
-                return@setOnClickListener
-            }
-
-            /* verificar que el count de tela esté entre los permitidos */
-            val countsPermitidos = listOf(14, 16, 18, 20, 25)
-            if (countTela !in countsPermitidos) {
-                Toast.makeText(
-                    this,
-                    "El count de tela debe ser 14, 16, 18, 20 o 25.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                countTelaInput.text.clear()  /* borra el campo para que lo escriba otra vez */
                 return@setOnClickListener
             }
 
@@ -157,11 +158,10 @@ class PedidoHilos : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val nuevoGrafico = Grafico(nombre, countTela)
-            listaGraficos.add(nuevoGrafico)
-            listaGraficos.sortBy { it.nombre.lowercase() } /* para mostrar la tabla por orden alfabético */
-            adaptadorPedido.actualizarLista(listaGraficos)
-            actualizarTotalMadejas()
+            /* trae el gráfico formado de GraficoPedido.kt */
+            val intent = Intent(this, GraficoPedido::class.java)
+            intent.putExtra("nombreGrafico", nombre)
+            startActivityForResult(intent, REQUEST_CODE_GRAFICO_PEDIDO)
             dialog.dismiss()
         }
 
@@ -172,23 +172,43 @@ class PedidoHilos : AppCompatActivity() {
         dialog.show()
     }
 
+    /* función necesaria para identificar cada gráfico y agrupar sus datos */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_GRAFICO_PEDIDO && resultCode == Activity.RESULT_OK) {
+            val grafico = data?.getSerializableExtra("grafico") as? Grafico
+            if (grafico != null) {
+                listaGraficos.add(grafico)
+                listaGraficos.sortBy { it.nombre.lowercase() }
+                adaptadorPedido.actualizarLista(listaGraficos)
+                actualizarTotalMadejas()
+            }
+        }
+    }
+
+
     /* eliminar un gráfico del pedido */
     private fun dialogoEliminarGrafico(index: Int) {
         val grafico = listaGraficos[index]
-        val dialogView = layoutInflater.inflate(R.layout.pedido_dialog_eliminar_grafico, null)
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.pedido_dialog_eliminar_grafico)
 
-        val txtNombreGrafico = dialogView.findViewById<TextView>(R.id.txtVw_nombreGrafico)
-        val btnEliminar = dialogView.findViewById<Button>(R.id.btn_eliminarGrafico)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        /* llamada al metodo que centra el dialog en pantalla */
+        ajustarDialog(dialog)
+
+        dialog.setCancelable(false)
+
+        /* variables del dialog */
+        val txtNombreGrafico = dialog.findViewById<TextView>(R.id.txtVw_nombreGrafico)
+        val btnEliminar = dialog.findViewById<Button>(R.id.btn_eliminarGrafico)
         val btnVolver =
-            dialogView.findViewById<Button>(R.id.btn_volver_pedido_dialog)
+            dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog)
 
         /* para visualizar el nombre del gráfico en el dialog */
         txtNombreGrafico.text = grafico.nombre
-
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setCancelable(false)
-            .create()
 
         btnEliminar.setOnClickListener {
             listaGraficos.removeAt(index)
@@ -200,109 +220,71 @@ class PedidoHilos : AppCompatActivity() {
         btnVolver.setOnClickListener {
             dialog.dismiss()
         }
-
         dialog.show()
     }
 
-
-    /* TODO descargarPedido da error, tengo que arreglarlo */
+    /* TODO descargarPedido no descarga nada, tengo que arreglarlo */
     /* descargar pedido */
     private fun descargarPedido() {
-        if (!solicitarPermisoAlmacenamiento()) return
-
+        /* antes de descargar nada, se comprueba que el contenido de la lista no esté vacío */
         if (listaGraficos.isEmpty()) {
-            Toast.makeText(this, "No hay pedido que guardar.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "No hay gráficos para descargar.", Toast.LENGTH_SHORT).show()
             return
         }
+        /* fecha y hora para el nombre del archivo */
+        val formatter = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.getDefault())
+        val timestamp = formatter.format(Date())
+        val fileName = "Pedido_$timestamp.csv"
+        val file = File(getExternalFilesDir(null), fileName)
 
-        /* mapa para guardar las madejas con cada hilo */
+        /* mapa para agrupar las madejas por hilo */
         val madejasPorHilo = mutableMapOf<String, Int>()
+
         for (grafico in listaGraficos) {
             for (hilo in grafico.listaHilos) {
-                val totalAnterior =
-                    madejasPorHilo[hilo.hilo]
-                        ?: 0 /* si aún no hay madejas, será cero, para evitar crasheos */
-                madejasPorHilo[hilo.hilo] = totalAnterior + hilo.madejas
+                val hiloNumero = hilo.hilo
+                val madejas = hilo.madejas
+
+                madejasPorHilo[hiloNumero] = madejasPorHilo.getOrDefault(hiloNumero, 0) + madejas
             }
         }
 
-        /* conseguir la fecha y la hora para el título del archivo */
-        val timestamp =
-            java.text.SimpleDateFormat("dd-MM-yyyy_HH-mm", java.util.Locale.getDefault())
-                .format(java.util.Date())
-        val fileName = "Pedido_$timestamp.csv"
+        /* construir el fichero a partir de los hilos y las madejas */
+        val contenido = StringBuilder()
+        contenido.append("Hilo,Madejas\n")
+        for ((hilo, totalMadejas) in madejasPorHilo) {
+            contenido.append("$hilo,$totalMadejas\n")
+        }
 
-        /* ruta del almacenamiento externo raíz del dispositivo */
-        val downloadsDir = android.os.Environment.getExternalStorageDirectory()
-        val file = java.io.File(
-            downloadsDir,
-            "Download/$fileName"
-        ) /* guarda el fichero en el directorio */
-
+        /* escribir el archivo e informar de su descarga */
         try {
-            file.parentFile?.mkdirs() /* control para que no crashee si el directorio no existe */
-            file.printWriter().use { out ->
-                out.println("Hilo,Madejas")
-                madejasPorHilo.forEach { (identificador, madejas) ->
-                    out.println("$identificador,$madejas")
-                }
-            }
-
-            Toast.makeText(this, "Pedido guardado en Descargas :D", Toast.LENGTH_LONG).show()
-
-            /* indexar el archivo, evita errores de acceso */
-            val uri = Uri.fromFile(file)
-            val scanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-            scanIntent.data = uri
-            sendBroadcast(scanIntent)
-
-        } catch (e: Exception) {
-            Toast.makeText(this, "Error al guardar el pedido: ${e.message}", Toast.LENGTH_LONG)
+            file.writeText(contenido.toString())
+            Toast.makeText(this, "Archivo guardado: $fileName", Toast.LENGTH_LONG).show()
+        } catch (e: IOException) {
+            Toast.makeText(this, "Error al guardar el archivo: ${e.message}", Toast.LENGTH_LONG)
                 .show()
         }
-    }
 
-    private fun solicitarPermisoAlmacenamiento(): Boolean { /* para poder descargar el archivo en el teléfono */
-        val permiso = android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-        if (checkSelfPermission(permiso) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(permiso), 100)
-            return false
-        }
-        return true
-    }
-
-    override fun onRequestPermissionsResult( /* sugerido por el ide para evitar problemas de permisos al acceder a las descargas */
-                                             requestCode: Int,
-                                             permissions: Array<out String>,
-                                             grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 100 && grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            descargarPedido()
-        } else {
-            Toast.makeText(
-                this,
-                "No nos has dado permiso para guardar el archivo :(.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
     }
 
     /* realizar pedido */
-    @SuppressLint("MissingInflatedId")
     private fun realizarPedido() {
-        val dialogView = layoutInflater.inflate(R.layout.pedido_dialog_realizar_pedido, null)
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setCancelable(true)
-            .create()
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.pedido_dialog_realizar_pedido)
 
-        /* declaración de botones*/
-        val btnAmazon = dialogView.findViewById<ImageButton>(R.id.btn_amazon)
-        val btnAliExpress = dialogView.findViewById<ImageButton>(R.id.btn_aliexpress)
-        val btnTemu = dialogView.findViewById<ImageButton>(R.id.btn_temu)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        /* llamada al metodo que centra el dialog en pantalla */
+        ajustarDialog(dialog)
+
+        dialog.setCancelable(false)
+
+        /* variables del dialog */
+        val btnAmazon = dialog.findViewById<ImageButton>(R.id.btn_amazon)
+        val btnAliExpress = dialog.findViewById<ImageButton>(R.id.btn_aliexpress)
+        val btnTemu = dialog.findViewById<ImageButton>(R.id.btn_temu)
         val btnVolver =
-            dialogView.findViewById<Button>(R.id.btn_volver_pedido_dialog)
+            dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog)
 
         btnAmazon.setOnClickListener {
             abrirTienda("com.amazon.mShop.android.shopping", "https://www.amazon.es/")
@@ -340,5 +322,4 @@ class PedidoHilos : AppCompatActivity() {
             Toast.makeText(this, "Error al redirigir a la tienda.", Toast.LENGTH_SHORT).show()
         }
     }
-
 }

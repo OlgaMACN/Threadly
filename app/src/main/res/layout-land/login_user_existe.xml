@@ -36,10 +36,10 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.20"
+        app:layout_constraintHorizontal_bias="0.262"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_bienvenidaUser"
-        app:layout_constraintVertical_bias="0.100" />
+        app:layout_constraintVertical_bias="0.1" />
 
     <EditText
         android:id="@+id/edTxt_ingresarConstrasenaUser"
@@ -62,7 +62,7 @@
 
     <TextView
         android:id="@+id/txtVw_crearCuenta"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/crearCuenta"
@@ -74,7 +74,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/edTxt_ingresarConstrasenaUser"
-        app:layout_constraintVertical_bias="0.10" />
+        app:layout_constraintVertical_bias="0.086" />
 
     <Button
         android:id="@+id/btn_ingresarThreadly"
@@ -88,12 +88,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_crearCuenta"
-        app:layout_constraintVertical_bias="0.15" />
+        app:layout_constraintVertical_bias="0.159" />
 
     <ImageView
         android:id="@+id/img_logoThreadly"
-        android:layout_width="wrap_content"
-        android:layout_height="125dp"
+        android:layout_width="464dp"
+        android:layout_height="87dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="parent"

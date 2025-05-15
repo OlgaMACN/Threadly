@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import utiles.funcionToolbar
 
 class CatalogoHilos : AppCompatActivity() {
 
@@ -32,13 +33,9 @@ class CatalogoHilos : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.consultar_aa_hilos)
+        funcionToolbar(this) /* llamada a la función para usar el toolbar */
         setContentView(R.layout.catalogo_aa_hilos)
-
-
-
-
-        /* llamada a la función para usar el toolbar */
-        toolbar.funcionToolbar(this)
 
         tablaCatalogo = findViewById(R.id.tabla_catalogo)
 

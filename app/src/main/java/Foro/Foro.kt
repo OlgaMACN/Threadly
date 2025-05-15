@@ -5,15 +5,15 @@ import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
+import utiles.funcionToolbar
 
 class Foro : AppCompatActivity () {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.comunidad_aa_foro)
+        funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
-        /* llamada a la función para usar el toolbar */
-        toolbar.funcionToolbar(this) // TODO de @olga he añadido esto para poder probar el toolbar, ruego me perdone
 
         //TODO CONFIGURAR VISTA DE TEMAS Y PODER PULSAR UNO PARA VISUALIZARLO CON SUS RESPUESTAS
 

@@ -91,7 +91,7 @@
     <string name="volverStockAlerta">No, me he equivocado</string>
     <!--Dialog Eliminar Hilo (stock_dialog_eliminar_hilo) -->
     <string name="cabeceraDialogEliminarHiloStk">ELIMINAR HILO</string>
-    <string name="confirmarEliminarHiloStk">¿Seguro que quieres borrar el hilo de tu stock personal?</string>
+    <string name="confirmarEliminarHiloStk">¿Seguro que quieres eliminar el hilo "%s" de tu stock?</string>
     <string name="botonEliminarHiloStk">Sí, eliminar</string>
     <!-- Dialog Añadir Madejas (stock_dialog_agregar_madeja) -->
     <string name="cabeceraAgregarMadejaStk">AÑADIR MADEJAS</string>

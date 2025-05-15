@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="450dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/reutilizable_marco_dialog"
     android:elevation="10dp"
@@ -18,9 +18,9 @@
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textSize="25sp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtVw_textoEliminarMadejaStk"
@@ -31,9 +31,9 @@
         android:text="@string/textoEliminarMadejaInfoStk"
         android:textAlignment="center"
         android:textSize="25sp"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraEliminarMadejaStk"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraEliminarMadejaStk" />
 
     <EditText
         android:id="@+id/edTxt_introducirNumHiloMadejasEliminarStk"
@@ -44,11 +44,11 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:hint="@string/edTxt_introducirNumHiloMadejasEliminarStk"
-        android:inputType="number"
+        android:inputType="text"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_textoEliminarMadejaStk"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_textoEliminarMadejaStk" />
 
     <EditText
         android:id="@+id/edTxt_edTxt_introducirNumMadejasEliminarStk"
@@ -61,9 +61,9 @@
         android:hint="@string/introducirNumMadejasEliminarStk"
         android:inputType="number"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirNumHiloMadejasEliminarStk"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirNumHiloMadejasEliminarStk" />
 
     <TextView
         android:id="@+id/txtVw_madejasActualesStk"
@@ -73,9 +73,9 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/madejasActualesStk"
         android:textSize="25sp"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_edTxt_introducirNumMadejasEliminarStk"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/edTxt_edTxt_introducirNumMadejasEliminarStk" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -83,10 +83,10 @@
         android:layout_marginTop="32dp"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_madejasActualesStk"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_madejasActualesStk">
 
         <Button
             android:id="@+id/btn_volver_stock_dialog_eliminarMadeja"
@@ -96,8 +96,8 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/volver_stock"
-            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <Space
@@ -109,11 +109,11 @@
             android:layout_width="0dp"
             android:layout_height="47dp"
             android:layout_weight="1"
-            android:textSize="20sp"
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/eliminarMadejaStk"
             android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
 
