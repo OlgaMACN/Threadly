@@ -1,0 +1,4 @@
+package Foro
+
+class AdaptadorForo {
+}
