@@ -25,7 +25,10 @@ class GraficoPedido : AppCompatActivity() {
 
 
     private lateinit var adaptadorGrafico: AdaptadorGrafico
-    private var grafico: Grafico? = null
+    private var grafico: Grafico? = null /* traer el gráfico de la pantalla anterior */
+
+    /* para controlar si es la primera vez que se introduce o no */
+    private var countTelaGlobal: Int? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,15 +111,13 @@ class GraficoPedido : AppCompatActivity() {
         })
     }
 
+
     private fun dialogAgregarHiloGrafico() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pedidob_dialog_agregar_hilo)
-
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
         /* llamada al metodo que centra el dialog en pantalla */
         ajustarDialog(dialog)
-
         dialog.setCancelable(false)
 
         /* variables del dialog */
@@ -127,32 +128,44 @@ class GraficoPedido : AppCompatActivity() {
         val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
 
+        /* si el count ya se ha definido para este gráfico, no volverá a pedirlo */
+        if (countTelaGlobal != null) {
+            countTela.visibility = View.GONE
+        }
+
         btnGuardar.setOnClickListener {
             try {
                 val nombreHilo = hiloGrafico.text.toString().trim().uppercase()
                 val stringPuntadas = puntadasGrafico.text.toString().trim()
-                val stringCountTela = countTela.text.toString().trim()
-
                 /* comprobar que los campos estén rellenos */
-                if (nombreHilo.isEmpty() || stringPuntadas.isEmpty() || stringCountTela.isEmpty()) {
+                if (nombreHilo.isEmpty() || stringPuntadas.isEmpty() ||
+                    (countTelaGlobal == null && countTela.text.toString().trim().isEmpty())
+                ) {
                     Toast.makeText(
                         this,
                         "Por favor, completa todos los campos.",
                         Toast.LENGTH_SHORT
-                    )
-                        .show()
+                    ).show()
                     return@setOnClickListener
                 }
 
-                val puntadasInt = try {
-                    stringPuntadas.toInt()
-                } catch (e: NumberFormatException) {
-                    null
-                }
-                val countTelaInt = try {
-                    stringCountTela.toInt()
-                } catch (e: NumberFormatException) {
-                    null
+                val puntadasInt = stringPuntadas.toIntOrNull()
+                val countTelaInt: Int? = if (countTelaGlobal != null) {
+                    countTelaGlobal
+                } else {
+                    val input = countTela.text.toString().trim().toIntOrNull()
+                    /* sólo counts permitidos */
+                    if (input != null && input in listOf(14, 16, 18, 20, 25)) {
+                        countTelaGlobal = input  /* se guarda para el siguiente hilo */
+                        input
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "El count de tela debe ser 14, 16, 18, 20 o 25.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@setOnClickListener
+                    }
                 }
 
                 if (puntadasInt == null || puntadasInt <= 0) {
@@ -160,31 +173,15 @@ class GraficoPedido : AppCompatActivity() {
                         this,
                         "Introduce un número de puntadas válido.",
                         Toast.LENGTH_SHORT
-                    )
-                        .show()
+                    ).show()
                     puntadasGrafico.text.clear()
                     return@setOnClickListener
                 }
 
-                /* sólo counts permitidos */
-                val countsPermitidos = listOf(14, 16, 18, 20, 25)
-                if (countTelaInt == null || countTelaInt !in countsPermitidos) {
-                    Toast.makeText(
-                        this,
-                        "El count de tela debe ser 14, 16, 18, 20 o 25.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
-
-                /* calcular madejas */
-                val madejas = try {
-                    calcularMadejas(puntadasInt, countTelaInt)
-                } catch (e: Exception) {
-                    Toast.makeText(this, "Error al calcular madejas", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
+                val madejas = calcularMadejas(
+                    puntadasInt,
+                    countTelaInt!!
+                ) /* aserción no nunla, kotlin sabe */
                 /* crear y añadir el hilo a la tabla */
                 val nuevoHilo = HiloGrafico(nombreHilo, madejas)
 
@@ -198,14 +195,18 @@ class GraficoPedido : AppCompatActivity() {
                 dialog.dismiss()
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(this, "Error inesperado: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Error al añadir el hilo: ${e.message}", Toast.LENGTH_LONG)
+                    .show()
             }
         }
 
         btnVolver.setOnClickListener {
             dialog.dismiss()
         }
+
         dialog.show()
     }
+
 }
+
 
