@@ -42,7 +42,7 @@
         android:cursorVisible="false"
         android:background="@android:color/transparent"
         android:inputType="number"
-        android:hint=" "
+        android:hint="-"
         android:textColor="@color/black"
         android:textSize="20sp" />
 </LinearLayout>

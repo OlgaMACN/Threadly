@@ -80,7 +80,7 @@ class StockPersonal : AppCompatActivity() {
 
                 val index = listaStock.indexOf(coincidencia)
                 tablaStock.scrollToPosition(index)
-                editTextBuscar.text.clear() /* limpiar la búsqueda si se ha encontrado */
+
 
             } else {
                 tablaStock.visibility = View.GONE

@@ -15,7 +15,8 @@ class AdaptadorGrafico(
     private val hilos: MutableList<HiloGrafico>,
     private val onClickHilo: (HiloGrafico) -> Unit,
     private val onLongClickHilo: ((HiloGrafico) -> Unit)? = null,
-    private var hiloResaltado: String? = null
+    private var hiloResaltado: String? = null,
+    private val onTotalChanged: ((Int) -> Unit) /* para coger las madejas modificadas */
 ) : RecyclerView.Adapter<AdaptadorGrafico.HiloViewHolder>() {
 
     inner class HiloViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -53,8 +54,14 @@ class AdaptadorGrafico(
         /* se crea un textWatcher nuevo para la fila que se ha editado */
         holder.textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                val cantidad = s.toString().toIntOrNull()
+                val texto = s.toString()
+                val cantidad = when (texto) {
+                    "-" -> 0
+                    "" -> null
+                    else -> texto.toIntOrNull()
+                }
                 hilo.cantidadModificar = cantidad
+                onTotalChanged(calcularTotal())
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -77,7 +84,7 @@ class AdaptadorGrafico(
             onLongClickHilo?.invoke(hilos[position])
             true
         }
-
+        onTotalChanged(calcularTotal()) /* cada vez que se pinta la lista, se actualiza el cálculo */
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -85,6 +92,7 @@ class AdaptadorGrafico(
         hilos.clear()
         hilos.addAll(nuevaLista)
         notifyDataSetChanged()
+        onTotalChanged(calcularTotal())
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -92,4 +100,9 @@ class AdaptadorGrafico(
         hiloResaltado = hiloId
         notifyDataSetChanged()
     }
+
+    private fun calcularTotal(): Int {
+        return hilos.sumOf { it.cantidadModificar ?: it.madejas }
+    }
+
 }

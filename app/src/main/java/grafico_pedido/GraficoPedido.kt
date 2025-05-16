@@ -39,6 +39,9 @@ class GraficoPedido : AppCompatActivity() {
         setContentView(R.layout.pedidob_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
+        val txtTotal = findViewById<TextView>(R.id.txtVw_totalMadejasGraficoIndividual)
+
+        /* para poner como cabecera el nombre del gráfico */
         grafico = intent.getSerializableExtra("grafico") as? Grafico
         if (grafico == null) {
             Log.e("GraficoPedido", "El gráfico recibido es nulo.")
@@ -59,7 +62,11 @@ class GraficoPedido : AppCompatActivity() {
                 val stock = StockSingleton.obtenerMadejas(hilo.hilo.uppercase())?.toString() ?: "-"
                 txtVwStock.text = getString(R.string.stockHiloActual, stock)
             },
-            onLongClickHilo = ::dialogBorrarHilo  /* callback: eliminar directamente al adaptador */
+            onLongClickHilo = ::dialogBorrarHilo, /* callback: eliminar directamente al adaptador */
+            hiloResaltado = null,
+            onTotalChanged = { total ->
+                txtTotal.text = "Total Madejas: $total" /* total de madejas para el gráfico */
+            }
         )
 
         recyclerView.adapter = adaptadorGrafico
@@ -99,7 +106,6 @@ class GraficoPedido : AppCompatActivity() {
 
                 val index = listaActual.indexOf(coincidencia)
                 tablaGrafico.scrollToPosition(index)
-                buscarGrafico.text.clear() /* borra la búsqueda si lo encuentra */
 
             } else {
                 tablaGrafico.visibility = View.GONE
