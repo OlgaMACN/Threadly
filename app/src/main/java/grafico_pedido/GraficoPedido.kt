@@ -43,7 +43,7 @@ class GraficoPedido : AppCompatActivity() {
         val cabecera = findViewById<TextView>(R.id.txtVw_cabeceraGrafico)
         cabecera.text = grafico?.nombre
 
-        // 3. Configurar RecyclerView
+        /* inicialización del recycler view */
         val recyclerView = findViewById<RecyclerView>(R.id.tabla_grafico)
         adaptadorGrafico = AdaptadorGrafico(
             grafico!!.listaHilos.toMutableList(),

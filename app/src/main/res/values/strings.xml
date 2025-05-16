@@ -176,12 +176,12 @@
     <string name="columnaHiloGrafico">HILO</string>
     <string name="columnaPuntadasGrafico">PUNTADAS</string>
     <string name="columnaMadejasGrafico">MADEJAS</string>
-    <string name="columnaHilografico">PEDIR</string>
+    <string name="columnaHilografico">MODIFICAR</string>
     <!-- tabla gráfico contenido (pedidob_tabla_filas_contenido_grafico) -->
     <string name="textoHiloGrafico">Hilo</string>
     <string name="textoPuntadasGrafico">Puntadas</string>
     <string name="textoMadejasGrafico">Madejas</string>
-    <string name="textoHilografico">Pedir</string>
+    <string name="columnaModificarPedidoMadeja">Pedir</string>
 
     <!-- Comunidad Threadly/Foro (comunidad_aa_foro) -->
     <string name="cabeceraForo">COMUNIDAD THREADLY</string>

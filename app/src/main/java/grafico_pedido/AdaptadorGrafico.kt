@@ -15,8 +15,8 @@ class AdaptadorGrafico(
 ) : RecyclerView.Adapter<AdaptadorGrafico.HiloViewHolder>() {
 
     inner class HiloViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val txtHilo: TextView = view.findViewById(R.id.txtVw_columnaHiloGrafico)
-        val txtMadejas: TextView = view.findViewById(R.id.txtVw_columnaMadejasGrafico)
+        val txtHilo: TextView = view.findViewById(R.id.txtVw_textoHiloGrafico)
+        val txtMadejas: TextView = view.findViewById(R.id.txtVw_textoMadejasGrafico)
         val filaLayout: View = view
     }
 
