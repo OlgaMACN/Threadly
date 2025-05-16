@@ -1,7 +1,6 @@
 package utiles
 
 import CatalogoHilos.CatalogoHilos
-import Foro.Foro
 import PantallaInicio.PantallaPrincipal
 import android.app.Activity
 import android.content.Intent
@@ -17,8 +16,8 @@ fun funcionToolbar(activity: Activity) {
     val btn_inicio = activity.findViewById<ImageButton>(R.id.botonInicio)
     val btn_catalogo = activity.findViewById<ImageButton>(R.id.botonCatalogo)
     val btn_stock = activity.findViewById<ImageButton>(R.id.botonStock)
-    val btn_foro = activity.findViewById<ImageButton>(R.id.botonForo)
     val btn_pedido = activity.findViewById<ImageButton>(R.id.botonPedido)
+    val btn_almacen_pedidos = activity.findViewById<ImageButton>(R.id.botonAlmacenPedido)
 
     /* si el usuario acaba de hacer clic se bloquea para no crashear */
     fun clicSeguro(interval: Long = 1000L, block: () -> Unit) {
@@ -39,13 +38,6 @@ fun funcionToolbar(activity: Activity) {
         }
     }
 
-    /* configuración botón inicio */
-    btn_inicio.setOnClickListener {
-        clicSeguro {
-            siNoEsActivityActual(PantallaPrincipal::class.java)
-        }
-    }
-
     /* configuración botón catálogo */
     btn_catalogo.setOnClickListener {
         clicSeguro {
@@ -60,10 +52,11 @@ fun funcionToolbar(activity: Activity) {
         }
     }
 
-    /* configuración botón foro */
-    btn_foro.setOnClickListener {
+
+    /* configuración botón inicio */
+    btn_inicio.setOnClickListener {
         clicSeguro {
-            siNoEsActivityActual(Foro::class.java)
+            siNoEsActivityActual(PantallaPrincipal::class.java)
         }
     }
 
@@ -73,4 +66,12 @@ fun funcionToolbar(activity: Activity) {
             siNoEsActivityActual(PedidoHilos::class.java)
         }
     }
+
+    /* configuración botón almacén pedidos */
+    btn_pedido.setOnClickListener {
+        clicSeguro {
+            siNoEsActivityActual(PedidoHilos::class.java)
+        }
+    }
+
 }

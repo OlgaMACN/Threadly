@@ -74,20 +74,10 @@ class GraficoPedido : AppCompatActivity() {
 
         /* declaración de componentes */
         var btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloGraficoIndividual)
-        var btnVolver = findViewById<Button>(R.id.btn_volver_pedido_desde_grafico)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarHilo.setOnClickListener { dialogAgregarHiloGrafico() }
-        btnVolver.setOnClickListener {
-            val totalMadejas = findViewById<TextView>(R.id.txtVw_totalMadejasGraficoIndividual).text
-                .toString()
-                .replace(Regex("[^\\d.]"), "") /* para quitar el texto de 'Total Madejas: ' */
 
-            val returnIntent = intent
-            returnIntent.putExtra("totalMadejasGrafico", totalMadejas)
-            setResult(RESULT_OK, returnIntent)
-            finish()
-        }
         /* inicio de las funciones en constante uso */
         buscadorHilo()
     }
