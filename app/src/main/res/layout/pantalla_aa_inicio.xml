@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondoPantallas">
+    android:background="@drawable/pantallarosavertical">
 
 
     <TextView
@@ -27,13 +28,13 @@
         android:id="@+id/imgVw_imagenPerfil"
         android:layout_width="96dp"
         android:layout_height="97dp"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintBottom_toTopOf="@id/txtVw_mensaje_Stock"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.09"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_principal_threadly"
-        app:layout_constraintVertical_bias="0.05"
         app:srcCompat="@drawable/img_avatar_ejemplo" />
+
 
     <TextView
         android:id="@+id/txtvw_saludo"
@@ -42,13 +43,14 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="left"
         android:text="@string/saludo"
-        android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.50"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintStart_toEndOf="@+id/imgVw_imagenPerfil"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_principal_threadly"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.048"
+        app:layout_constraintVertical_chainStyle="spread" />
 
     <TextView
         android:id="@+id/txtVw_nombreUsuario"
@@ -57,13 +59,12 @@
         android:fontFamily="@font/catchy_mager"
         android:text="nombre"
         android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_mensaje_Stock"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.48"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtvw_saludo"
-        app:layout_constraintVertical_bias="0.02" />
-
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toEndOf="@+id/imgVw_imagenPerfil"
+        app:layout_constraintTop_toBottomOf="@+id/txtvw_saludo"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/txtVw_mensaje_Stock"
@@ -72,12 +73,12 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/mensaje_Stock"
         android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintBottom_toTopOf="@id/txtVw_contenidoStock"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.20"
+        app:layout_constraintHorizontal_bias="0.10"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_nombreUsuario"
-        app:layout_constraintVertical_bias="0.12" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/txtVw_contenidoStock"
@@ -92,11 +93,11 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintBottom_toTopOf="@id/txtVw_mensaje_grafico"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_mensaje_Stock"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.00" />
 
     <TextView
         android:id="@+id/txtVw_mensaje_grafico"
@@ -105,12 +106,12 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/mensaje_grafico"
         android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintBottom_toTopOf="@id/txtVw_contenidoGrafico"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.20"
+        app:layout_constraintHorizontal_bias="0.10"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_contenidoStock"
-        app:layout_constraintVertical_bias="0.10" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/txtVw_contenidoGrafico"
@@ -125,11 +126,11 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@+id/reutil_toolbar"
+        app:layout_constraintBottom_toTopOf="@+id/txtVw_mensaje_tip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_mensaje_grafico"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.00" />
 
     <TextView
         android:id="@+id/txtVw_mensaje_tip"
@@ -138,12 +139,12 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/mensaje_tip"
         android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintBottom_toTopOf="@id/txtVw_contenidoTip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.10"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_contenidoGrafico"
-        app:layout_constraintVertical_bias="0.18" />
+        app:layout_constraintVertical_bias="0.0" />
 
 
     <TextView
@@ -159,11 +160,11 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
+        app:layout_constraintBottom_toTopOf="@id/imgBtn_configuracion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtVw_mensaje_tip"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.00" />
 
     <ImageButton
         android:id="@+id/imgBtn_configuracion"

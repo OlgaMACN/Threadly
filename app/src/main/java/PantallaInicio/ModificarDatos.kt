@@ -30,7 +30,7 @@ class ModificarDatos : AppCompatActivity () {
             val avatarCinco = findViewById<ImageView>(R.id.imgVw_avatar5)
             val avatarSeis = findViewById<ImageView>(R.id.imgVw_avatar6)
 
-            val inputNombreNuevo = findViewById<EditText>(R.id.txtVw_contenidoCambioNombre)
+            val inputNombreNuevo = findViewById<EditText>(R.id.editTxtVw_contenidoCambioNombre)
 
            //TODO al escoger una imagen, ¿dialog de si quiere hacer el cambio con Aceptar o Volver y despues guardar cambios?
             //TODO ¿con el nombre otro dialog para verificar cambio?
