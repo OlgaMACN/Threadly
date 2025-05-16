@@ -31,7 +31,7 @@ class GraficoPedido : AppCompatActivity() {
     private lateinit var adaptadorGrafico: AdaptadorGrafico
     private var grafico: Grafico? = null /* traer el gráfico de la pantalla anterior */
 
-    /* para controlar si es la primera vez que se introduce o no */
+    /* para controlar si es la primera vez que se introduce, o no */
     private var countTelaGlobal: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
