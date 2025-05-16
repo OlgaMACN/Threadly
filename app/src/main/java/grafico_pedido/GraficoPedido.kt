@@ -269,6 +269,9 @@ class GraficoPedido : AppCompatActivity() {
         dialog.show()
     }
 
+    /* editar el número de madejas del pedido */
+
+
 }
 
 

@@ -4,7 +4,8 @@ import java.io.Serializable
 
 data class HiloGrafico(
     val hilo: String,
-    val madejas: Int
+    val madejas: Int,
+    var cantidadModificar: Int? = null
 ) : Serializable
 
 
