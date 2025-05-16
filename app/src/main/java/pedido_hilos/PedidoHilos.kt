@@ -20,7 +20,7 @@ import grafico_pedido.GraficoPedido
 import ui_utils.ajustarDialog
 import utiles.funcionToolbar
 
-private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada pedido */
+private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada gráfico */
 
 class PedidoHilos : AppCompatActivity() {
 
@@ -38,9 +38,12 @@ class PedidoHilos : AppCompatActivity() {
 
         /* inicializo el adaptador manejando los clics sobre la tabla */
         adaptadorPedido = AdaptadorPedido(listaGraficos, onItemClick = { graficoSeleccionado ->
-            val intent = Intent(this, GraficoPedido::class.java)
-            intent.putExtra("grafico", graficoSeleccionado)
-            startActivity(intent)
+            val position = listaGraficos.indexOf(graficoSeleccionado)
+            val intent = Intent(this, GraficoPedido::class.java).apply {
+                putExtra("grafico", graficoSeleccionado)
+                putExtra("position", position)
+            }
+            startActivityForResult(intent, REQUEST_CODE_GRAFICO_PEDIDO)
         }, onLongClick = { index ->
             dialogoEliminarGrafico(index)
         })
@@ -258,6 +261,23 @@ class PedidoHilos : AppCompatActivity() {
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Error al redirigir a la tienda.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /* recoger el dato del total de madejas */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_GRAFICO_PEDIDO && resultCode == RESULT_OK && data != null) {
+            val updatedGrafico = data.getSerializableExtra("grafico") as? Grafico ?: return
+            val position = data.getIntExtra("position", -1)
+            if (position in listaGraficos.indices) {
+                /* reemplaza el gráfico con su versión actualizada */
+                listaGraficos[position] = updatedGrafico
+                /* se notifica al adaptador */
+                adaptadorPedido.actualizarLista(listaGraficos)
+                /* y se actualiza */
+                actualizarTotalMadejas()
+            }
         }
     }
 }

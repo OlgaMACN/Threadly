@@ -1,6 +1,8 @@
 package grafico_pedido
 
+import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -74,10 +76,13 @@ class GraficoPedido : AppCompatActivity() {
 
         /* declaración de componentes */
         var btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloGraficoIndividual)
+        var btnVolver = findViewById<Button>(R.id.btn_volver_pedido_desde_grafico)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarHilo.setOnClickListener { dialogAgregarHiloGrafico() }
-
+        btnVolver.setOnClickListener {
+            devolverResultadoYSalir()
+        }
         /* inicio de las funciones en constante uso */
         buscadorHilo()
     }
@@ -276,6 +281,19 @@ class GraficoPedido : AppCompatActivity() {
     }
 
     /* volver a pedido_aa_principal mandando el número de madejas de cada gráfico */
+    private fun devolverResultadoYSalir() {
+        /* madejas de la lista hilos */
+        grafico?.madejas = grafico?.listaHilos?.sumOf { it.cantidadModificar ?: it.madejas } ?: 0
+        val resultIntent = Intent().apply {
+            putExtra("grafico", grafico)
+            putExtra("position", intent.getIntExtra("position", -1))
+        }
+        setResult(RESULT_OK, resultIntent)
+        finish()
+    }
+
+
+
 
 
 }
