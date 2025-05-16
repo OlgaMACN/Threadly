@@ -143,8 +143,8 @@
     <string name="madejasTotalPedido">Total Madejas: </string>
     <string name="no_hay_resultadosPedido">No tienes ese gráfico en tu pedido :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
     <string name="agregarGraficoPedido">Añadir Gráfico</string>
-    <string name="descargarPedido">Descargar Pedido</string>
-    <string name="realizarPedido">Realizar Pedido</string>
+    <string name="descargarPedido">Descargar</string>
+    <string name="realizarPedido">Tienda</string>
     <string name="textoElegirTienda">Escoge una tienda para realizar tu pedido</string>
     <string name="textoAmazon">Amazon</string>
     <string name="textoAliExpress">AliExpress</string>

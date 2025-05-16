@@ -10,10 +10,13 @@ import android.view.animation.AlphaAnimation
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.threadly.R
 
 class Splash : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        /* para forzar el modo claro */
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         /* ocultar la barra del título, más estético */
         supportActionBar?.hide()
@@ -40,6 +43,6 @@ class Splash : AppCompatActivity() {
                 startActivity(Intent(this@Splash, LoginUserExiste::class.java))
                 finish() // para que el usuario no pueda volver a esta pantalla
             }
-        }, 6000)
+        }, 5000)
     }
 }

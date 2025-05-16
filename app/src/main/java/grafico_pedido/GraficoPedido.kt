@@ -64,7 +64,7 @@ class GraficoPedido : AppCompatActivity() {
                 val stock = StockSingleton.obtenerMadejas(hilo.hilo.uppercase())?.toString() ?: "-"
                 txtVwStock.text = getString(R.string.stockHiloActual, stock)
             },
-            onLongClickHilo = ::dialogBorrarHilo, /* callback: eliminar directamente al adaptador */
+            onLongClickHilo = ::dialogBorrarHilo, /* callback: eliminar llama al adaptador */
             hiloResaltado = null,
             onTotalChanged = { total ->
                 txtTotal.text = "Total Madejas: $total" /* total de madejas para el gráfico */
