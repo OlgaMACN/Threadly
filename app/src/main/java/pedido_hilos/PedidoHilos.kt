@@ -205,7 +205,6 @@ class PedidoHilos : AppCompatActivity() {
 
     /* descargar pedido */
 
-
     /* realizar pedido */
     private fun realizarPedido() {
         val dialog = Dialog(this)

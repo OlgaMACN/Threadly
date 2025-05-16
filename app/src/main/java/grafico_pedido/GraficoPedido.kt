@@ -74,12 +74,22 @@ class GraficoPedido : AppCompatActivity() {
 
         /* declaración de componentes */
         var btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloGraficoIndividual)
+        var btnVolver = findViewById<Button>(R.id.btn_volver_pedido_desde_grafico)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarHilo.setOnClickListener { dialogAgregarHiloGrafico() }
+        btnVolver.setOnClickListener {
+            val totalMadejas = findViewById<TextView>(R.id.txtVw_totalMadejasGraficoIndividual).text
+                .toString()
+                .replace(Regex("[^\\d.]"), "") /* para quitar el texto de 'Total Madejas: ' */
+
+            val returnIntent = intent
+            returnIntent.putExtra("totalMadejasGrafico", totalMadejas)
+            setResult(RESULT_OK, returnIntent)
+            finish()
+        }
         /* inicio de las funciones en constante uso */
         buscadorHilo()
-
     }
 
     /* buscar un hilo en el gráfico */
@@ -275,7 +285,7 @@ class GraficoPedido : AppCompatActivity() {
         dialog.show()
     }
 
-    /* editar el número de madejas del pedido */
+    /* volver a pedido_aa_principal mandando el número de madejas de cada gráfico */
 
 
 }
