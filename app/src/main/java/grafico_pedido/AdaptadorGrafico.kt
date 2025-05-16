@@ -11,6 +11,7 @@ import com.threadly.R
 class AdaptadorGrafico(
     private val hilos: MutableList<HiloGrafico>,
     private val onClickHilo: (String) -> Unit,
+    private val onLongClickHilo: ((HiloGrafico) -> Unit)? = null,
     private var hiloResaltado: String? = null
 ) : RecyclerView.Adapter<AdaptadorGrafico.HiloViewHolder>() {
 
@@ -42,6 +43,11 @@ class AdaptadorGrafico(
         holder.txtHilo.setOnClickListener {
             onClickHilo(hilo.hilo)
         }
+        holder.itemView.setOnLongClickListener {
+            onLongClickHilo?.invoke(hilos[position])
+            true
+        }
+
     }
 
     @SuppressLint("NotifyDataSetChanged")

@@ -23,13 +23,11 @@ import utiles.ordenarHilos
 
 class GraficoPedido : AppCompatActivity() {
 
-
     private lateinit var adaptadorGrafico: AdaptadorGrafico
     private var grafico: Grafico? = null /* traer el gráfico de la pantalla anterior */
 
     /* para controlar si es la primera vez que se introduce o no */
     private var countTelaGlobal: Int? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,8 +48,13 @@ class GraficoPedido : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.tabla_grafico)
         adaptadorGrafico = AdaptadorGrafico(
             grafico!!.listaHilos.toMutableList(),
-            onClickHilo = { hilo -> Toast.makeText(this, "Hilo: $hilo", Toast.LENGTH_SHORT).show() }
+            onClickHilo = { hilo ->
+                Toast.makeText(this, "Hilo: $hilo", Toast.LENGTH_SHORT).show()
+
+            },
+            onLongClickHilo = ::dialogBorrarHilo  /* callback: eliminar directamente al adaptador */
         )
+
         recyclerView.adapter = adaptadorGrafico
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -65,6 +68,7 @@ class GraficoPedido : AppCompatActivity() {
 
     }
 
+    /* buscar un hilo en el gráfico */
     private fun buscadorHilo() {
         val buscarGrafico = findViewById<EditText>(R.id.edTxt_buscadorGrafico)
         val btnLupaGrafico = findViewById<ImageView>(R.id.imgVw_lupaGrafico)
@@ -111,7 +115,7 @@ class GraficoPedido : AppCompatActivity() {
         })
     }
 
-
+    /* agregar hilo al gráfico */
     private fun dialogAgregarHiloGrafico() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pedidob_dialog_agregar_hilo)
@@ -204,6 +208,32 @@ class GraficoPedido : AppCompatActivity() {
             dialog.dismiss()
         }
 
+        dialog.show()
+    }
+
+    /* borrar hilo del gráfico */
+    private fun dialogBorrarHilo(hilo: HiloGrafico) {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.pedidob_dialog_borrar_hilo)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        ajustarDialog(dialog)
+
+        val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_deleteHilo)
+        val btnConfirmar = dialog.findViewById<Button>(R.id.btn_guardarHilo_dialog_deleteHilo)
+
+        btnVolver.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnConfirmar.setOnClickListener {
+            /* se elimina de la lista y por tanto de la tabla */
+            grafico?.listaHilos?.remove(hilo)
+
+            /* y se actualiza para mantener los cambios */
+            val listaOrdenada = ordenarHilos(grafico?.listaHilos ?: emptyList())
+            adaptadorGrafico.actualizarLista(listaOrdenada)
+            dialog.dismiss()
+        }
         dialog.show()
     }
 
