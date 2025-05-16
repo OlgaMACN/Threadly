@@ -2,7 +2,6 @@ package stock_personal
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -10,9 +9,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -29,7 +26,8 @@ class StockPersonal : AppCompatActivity() {
 
     private lateinit var tablaStock: RecyclerView
     private lateinit var adaptadorStock: AdaptadorStock
-    private val listaStock = mutableListOf<HiloStock>()
+    private val listaStock =
+        StockSingleton.listaStock /* modificaciones guardadas en el singleton */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

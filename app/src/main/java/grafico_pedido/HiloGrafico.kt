@@ -6,3 +6,5 @@ data class HiloGrafico(
     val hilo: String,
     val madejas: Int
 ) : Serializable
+
+

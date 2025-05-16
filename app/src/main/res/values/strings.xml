@@ -170,7 +170,7 @@
     <string name="cabeceraGrafico">NOMBRE GRÁFICO</string>
     <string name="no_hay_resultadosGrafico">No tienes ese hilo registrado para este gráfico :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
     <string name="totalMadejasGraficoIndividual">Total Madejas: </string>
-    <string name="stockHiloActual">Stock: </string>
+    <string name="stockHiloActual">Stock: %1$s </string>
     <string name="agregarHiloGraficoIndividual">Añadir Hilo</string>
     <!-- tabla gráfico cabecera (pedidob_tabla_filas_cabecera_grafico) -->
     <string name="columnaHiloGrafico">HILO</string>

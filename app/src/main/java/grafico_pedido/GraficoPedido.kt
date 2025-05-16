@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import pedido_hilos.Grafico
+import stock_personal.StockSingleton
 import ui_utils.ajustarDialog
 import utiles.calcularMadejas
 import utiles.funcionToolbar
@@ -53,8 +54,10 @@ class GraficoPedido : AppCompatActivity() {
         adaptadorGrafico = AdaptadorGrafico(
             grafico!!.listaHilos.toMutableList(),
             onClickHilo = { hilo ->
-                Toast.makeText(this, "Hilo: $hilo", Toast.LENGTH_SHORT).show()
-
+                val txtVwStock = findViewById<TextView>(R.id.txtVw_stockHiloActual)
+                txtVwStock.text = "Stock: " /* para que no aparezca la expresión del @string */
+                val stock = StockSingleton.obtenerMadejas(hilo.hilo.uppercase())?.toString() ?: "-"
+                txtVwStock.text = getString(R.string.stockHiloActual, stock)
             },
             onLongClickHilo = ::dialogBorrarHilo  /* callback: eliminar directamente al adaptador */
         )
