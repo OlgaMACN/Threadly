@@ -18,7 +18,7 @@
         android:gravity="center"
         android:text="@string/textoHiloGrafico"
         android:textColor="@color/black"
-        android:textSize="15sp" />
+        android:textSize="20sp" />
 
 
     <TextView
@@ -30,7 +30,7 @@
         android:gravity="center"
         android:text="@string/textoMadejasGrafico"
         android:textColor="@color/black"
-        android:textSize="15sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/txtVw_columnaModificarPedidoMadeja"
@@ -41,5 +41,5 @@
         android:gravity="center"
         android:text="@string/columnaModificarPedidoMadeja"
         android:textColor="@color/black"
-        android:textSize="15sp" />
+        android:textSize="20sp" />
 </LinearLayout>

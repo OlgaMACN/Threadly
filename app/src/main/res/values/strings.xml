@@ -204,7 +204,7 @@
     <string name="guardarHilo_dialog_addHilo">Guardar</string>
     <!-- Dialog Borrar Hilo (pedidob_dialog_borrar_hilo) -->
     <string name="cabeceraGrafico_dialog_deleteHilo">BORRAR HILO</string>
-    <string name="textoInfo_dialog_deleteHilo">¿Seguro que quieres borrar el hilo del gráfico?</string>
+    <string name="textoInfo_dialog_deleteHilo">¿Estás seguro de que quieres eliminar el hilo "%s" del gráfico?</string>
     <string name="textoInfo_secundario_dialog_deleteHilo">Se eliminará de este gráfico y por tanto del pedido</string>
     <string name="guardarHilo_dialog_deleteHilo">Borrar</string>
 

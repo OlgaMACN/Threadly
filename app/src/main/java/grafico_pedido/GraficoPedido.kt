@@ -1,9 +1,13 @@
 package grafico_pedido
 
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -220,7 +224,30 @@ class GraficoPedido : AppCompatActivity() {
 
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_deleteHilo)
         val btnConfirmar = dialog.findViewById<Button>(R.id.btn_guardarHilo_dialog_deleteHilo)
+        val txtMensaje = dialog.findViewById<TextView>(R.id.txtVw_textoInfo_dialog_deleteHilo)
 
+        /* obtener texto original */
+        val textoOriginal = getString(R.string.textoInfo_dialog_deleteHilo)
+
+        /* reemplazarlo con el id del hilo */
+        val textoConHilo = textoOriginal.replace("%s", hilo.hilo)
+
+        /* teniendo el índice del hilo crear un spannable (aplica el estilo) */
+        val spannable = SpannableString(textoConHilo)
+        val start = textoConHilo.indexOf(hilo.hilo)
+        val end = start + hilo.hilo.length
+
+        if (start != -1) {
+            spannable.setSpan(
+                ForegroundColorSpan(Color.RED),
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        /* y se muestra en el dialog */
+        txtMensaje.text = spannable
         btnVolver.setOnClickListener {
             dialog.dismiss()
         }
