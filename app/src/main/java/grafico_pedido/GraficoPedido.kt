@@ -99,6 +99,8 @@ class GraficoPedido : AppCompatActivity() {
 
                 val index = listaActual.indexOf(coincidencia)
                 tablaGrafico.scrollToPosition(index)
+                buscarGrafico.text.clear() /* borra la búsqueda si lo encuentra */
+
             } else {
                 tablaGrafico.visibility = View.GONE
                 txtNoResultadosGrafico.visibility = View.VISIBLE
