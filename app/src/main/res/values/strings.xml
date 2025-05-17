@@ -208,6 +208,12 @@
     <string name="textoInfo_secundario_dialog_deleteHilo">Se eliminará de este gráfico y por tanto del pedido</string>
     <string name="guardarHilo_dialog_deleteHilo">Borrar</string>
 
+    <!-- Almacén pedidos (almacen_aa_pedidos) -->
+    <string name="cabeceraAlmacen">ALMACÉN PEDIDOS</string>
+    <string name="no_hay_resultadosAlmacen">No tienes ese pedido en tu almacén :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
+    <string name="columnaNombrePedido">NOMBRE</string>
+    <string name="contenidoNombrePedido">nombre</string>
+
     <!-- Content Descriptions -->
 
 </resources>

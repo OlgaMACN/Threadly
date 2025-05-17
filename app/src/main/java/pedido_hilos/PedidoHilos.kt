@@ -1,9 +1,13 @@
 package pedido_hilos
 
+import android.Manifest
 import android.app.Dialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -13,12 +17,20 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import grafico_pedido.GraficoPedido
 import ui_utils.ajustarDialog
+import utiles.ExportadorCSV
 import utiles.funcionToolbar
+import java.io.File
+import java.io.FileWriter
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada gráfico */
 
@@ -26,6 +38,14 @@ class PedidoHilos : AppCompatActivity() {
 
     private lateinit var adaptadorPedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
+
+    /* para descargar el pedido */
+    companion object {
+        private const val REQUEST_CODE_WRITE = 1001
+    }
+
+    private lateinit var btnDescargarPedido: Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,18 +72,78 @@ class PedidoHilos : AppCompatActivity() {
 
         /* declarar componentes*/
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
-        val btnDescargarPedido = findViewById<Button>(R.id.btn_descargarPedido)
+        btnDescargarPedido = findViewById(R.id.btn_descargarPedido)
         val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
-        // btnDescargarPedido.setOnClickListener { descargarPedido() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
 
+        /* descargar pedido: al pulsar se comprueban permisos y se exporta */
+        btnDescargarPedido.setOnClickListener {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
+                    /* se pide permiso al usuario */
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        REQUEST_CODE_WRITE
+                    )
+                } else {
+                    exportarPedidoComoCSV()
+                }
+            } else {
+                /* si la versión de android es +10 no hace falta pedir permiso */
+                exportarPedidoComoCSV()
+            }
+        }
         /* funciones en continua ejecución durante la pantalla */
         buscadorGrafico()
         actualizarTotalMadejas()
     }
+
+    /* ahora en función de si el usuario ha dado permiso para la descarga o no... */
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permisos: Array<out String>,
+        concederPermisos: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permisos, concederPermisos)
+        if (requestCode == REQUEST_CODE_WRITE &&
+            concederPermisos.isNotEmpty() &&
+            concederPermisos[0] == PackageManager.PERMISSION_GRANTED
+        ) {
+            exportarPedidoComoCSV() /* es descarga */
+        } else {
+            Toast.makeText(
+                this,
+                "Permiso denegado :(, no se puede guardar el pedido.", /* o se interrumpe */
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    /* método para guardar los hilos con sus madejas */
+    private fun exportarPedidoComoCSV() {
+        // Agrupar los hilos con suma de madejas
+        val hilosAgrupados = mutableMapOf<String, Int>()
+        for (grafico in listaGraficos) {
+            for (hiloGrafico in grafico.listaHilos) {
+                val nombre = hiloGrafico.hilo.trim()
+                val madejas = hiloGrafico.madejas
+                hilosAgrupados[nombre] = hilosAgrupados.getOrDefault(nombre, 0) + madejas
+            }
+        }
+
+        // Usar la utilidad
+        ExportadorCSV.exportarPedido(this, hilosAgrupados)
+    }
+
 
     /* buscar un gráfico dentro del pedido */
     private fun buscadorGrafico() {
@@ -205,8 +285,6 @@ class PedidoHilos : AppCompatActivity() {
         }
         dialog.show()
     }
-
-    /* descargar pedido */
 
     /* realizar pedido */
     private fun realizarPedido() {
