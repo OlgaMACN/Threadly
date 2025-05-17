@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -26,11 +25,6 @@ import grafico_pedido.GraficoPedido
 import ui_utils.ajustarDialog
 import utiles.ExportadorCSV
 import utiles.funcionToolbar
-import java.io.File
-import java.io.FileWriter
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada gráfico */
 

@@ -55,23 +55,11 @@
         <activity
             android:name="CatalogoHilos.CatalogoHilos"
             android:exported="true" />
-        <activity android:name="CatalogoHilos.AgregarHilo" />
-        <activity android:name="CatalogoHilos.ModificarHilo" />
-        <activity android:name="CatalogoHilos.ModificarHiloFinal" />
 
         <!-- Stock Personal -->
         <activity
             android:name="stock_personal.StockPersonal"
             android:exported="true" />
-
-        <!-- Foro -->
-        <activity
-            android:name="Foro.Foro"
-            android:exported="true" />
-
-        <activity android:name="Foro.CrearTema" />
-        <activity android:name="Foro.ResponderTema" />
-        <activity android:name="Foro.VisualizarTema" />
 
         <!-- Pedido -->
         <activity
@@ -81,6 +69,11 @@
         <!-- Gráfico Pedidos -->
         <activity
             android:name="grafico_pedido.GraficoPedido"
+            android:exported="true" />
+
+        <!-- Almacén Pedidos -->
+        <activity
+            android:name="almacen_pedidos.AlmacenPedidos"
             android:exported="true" />
     </application>
 
