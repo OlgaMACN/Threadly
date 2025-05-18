@@ -11,15 +11,16 @@
     <TextView
         android:id="@+id/txtVw_cabeceraDialogAgregarHiloStk"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:background="@drawable/reutilizable_borde_cabecera_dialog"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/cabeceraDialogAgregarHiloStk"
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="30sp"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

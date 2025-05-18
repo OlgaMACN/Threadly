@@ -35,7 +35,6 @@ class CatalogoHilos : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.catalogo_aa_hilos)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
-        setContentView(R.layout.catalogo_aa_hilos)
 
         tablaCatalogo = findViewById(R.id.tabla_catalogo)
 
