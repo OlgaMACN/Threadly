@@ -40,15 +40,15 @@
 
         <!-- Pantalla Inicio -->
         <activity
-            android:name="logica.PantallaInicio.PantallaPrincipal"
+            android:name="logica.pantalla_inicio.PantallaPrincipal"
             android:exported="true" />
 
         <activity
-            android:name="logica.PantallaInicio.DatosPersonales"
+            android:name="logica.pantalla_inicio.DatosPersonales"
             android:exported="true" />
 
         <activity
-            android:name="logica.PantallaInicio.ModificarDatos"
+            android:name="logica.pantalla_inicio.ModificarDatos"
             android:exported="true" />
 
         <!-- Catálogo -->

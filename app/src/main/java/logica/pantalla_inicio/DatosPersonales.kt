@@ -1,4 +1,4 @@
-package logica.PantallaInicio
+package logica.pantalla_inicio
 
 
 import android.app.Dialog

@@ -1,7 +1,7 @@
 package utiles
 
 import logica.CatalogoHilos.CatalogoHilos
-import logica.PantallaInicio.PantallaPrincipal
+import logica.pantalla_inicio.PantallaPrincipal
 import android.app.Activity
 import android.content.Intent
 import android.widget.ImageButton

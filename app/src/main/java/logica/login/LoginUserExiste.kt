@@ -1,6 +1,5 @@
 package logica.login
 
-import logica.PantallaInicio.PantallaPrincipal
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -11,6 +10,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import logica.pantalla_inicio.PantallaPrincipal
+import persistencia.bbdd.GestorBBDD
 
 class LoginUserExiste : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,35 +48,61 @@ class LoginUserExiste : AppCompatActivity() {
             val userEntradaLogin = usuario.text.toString().trim()
             val contrasenaEntradaLogin = contrasena.text.toString().trim()
 
+            // todo podría pulir los toast para que sean más concretos, ya para mejoras finales jeje
             /* ni vacío ni mayor a 20 caracteres */
             if (userEntradaLogin.isEmpty() || contrasenaEntradaLogin.isEmpty() || userEntradaLogin.length > 20 || contrasenaEntradaLogin.length > 20) {
                 Toast.makeText(
                     this,
-                    "Por favor, rellena los campos",
+                    "Por favor, rellena todos los campos",
                     Toast.LENGTH_SHORT
                 ).show()
                 /* al saltar el toast se borrar los campos*/
                 usuario.text.clear()
                 contrasena.text.clear()
             } else {
-                /* TODO descomentar esta parte con la persistencia
+                val bbdd = GestorBBDD.getDatabase(this)
+                val usuarioDao = bbdd.usuarioDao()
 
-                startActivity(Intent(this, PantallaPrincipal::class.java))*/
+                /* ahora, con coroutine para evitar problemas con los hilos */
+                CoroutineScope(Dispatchers.IO).launch {
+                    val usuarioEncontrado = usuarioDao.obtenerPorNombre(userEntradaLogin)
+                    if (usuarioEncontrado == null) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                this@LoginUserExiste,
+                                "El usuario introducido no existe.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            usuario.text.clear()
+                            contrasena.text.clear()
+                        }
+                    } else if (usuarioEncontrado.contraseña != contrasenaEntradaLogin) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                this@LoginUserExiste,
+                                "Contraseña incorrecta.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            contrasena.text.clear()
+                        }
+                    } else {
+                        /* si se introducen bien el login y la constraseña, el usuario podrá iniciar sesión */
+                        withContext(Dispatchers.Main) {
+                            val intent = Intent(this@LoginUserExiste, PantallaPrincipal::class.java)
+                            intent.putExtra("nombre_usuario", userEntradaLogin)
+                            startActivity(intent)
+                        }
 
-                // TODO estas tres lineas son solo para pruebas de sesiones en memoria, borrar cuando haya persistencia
-                val intent = Intent(this, PantallaPrincipal::class.java)
-                intent.putExtra("nombre_usuario", userEntradaLogin)
-                startActivity(intent)
 
+                    }
+                }
 
-
-
-            }
-        }
-        /* en caso de no tenerla, redirigir a pantalla de LoginUserNoExiste mediante el textView */
-        val crearCuenta = findViewById<TextView>(R.id.txtVw_crearCuenta)
-        crearCuenta.setOnClickListener {
-            startActivity(Intent(this, LoginUserNoExiste::class.java))
-        }
-    }
+                /* y en caso de no tener cuenta, el usuario hará clic sobre crear cuenta */
+                val crearCuenta = findViewById<TextView>(R.id.txtVw_crearCuenta)
+                crearCuenta.setOnClickListener {
+                    startActivity(Intent(this, LoginUserNoExiste::class.java))
+                }
+            } /* usuario con valores correctos */
+        } /* fin de la acción del botón 'Entrar' */
+    } /* main */
 }
