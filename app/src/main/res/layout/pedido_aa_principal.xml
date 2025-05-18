@@ -33,7 +33,7 @@
         android:inputType="text"
         android:paddingEnd="8dp"
         android:textAlignment="center"
-        android:textSize="15sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -108,7 +108,9 @@
     <include
         android:id="@+id/cabecera_tabla_pedido"
         layout="@layout/pedido_tabla_filas_cabecera"
-        android:layout_width="395dp"
+        android:layout_width="0dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:layout_height="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -119,7 +121,9 @@
     <!-- Tabla Todos los Gráficos del Pedido -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabla_pedido"
-        android:layout_width="395dp"
+        android:layout_width="0dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:layout_height="323dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -139,14 +143,14 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintHorizontal_bias="0.23"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabla_pedido"
         app:layout_constraintVertical_bias="0.65" />
 
     <Button
         android:id="@+id/btn_realizarPedido"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/fondoBoton"
         android:fontFamily="@font/catchy_mager"

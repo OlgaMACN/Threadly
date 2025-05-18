@@ -11,7 +11,7 @@
         android:id="@+id/txtVw_cabeceraDialogEliminarGrafico"
         android:layout_width="0dp"
         android:layout_height="65dp"
-        android:background="@drawable/reutilizable_cabecera"
+        android:background="@drawable/reutilizable_borde_cabecera_dialog"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/cabeceraDialogEliminarGrafico"

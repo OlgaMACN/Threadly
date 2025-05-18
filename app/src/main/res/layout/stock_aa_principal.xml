@@ -91,8 +91,10 @@
     <include
         android:id="@+id/cabecera_tabla_stock"
         layout="@layout/stock_tabla_filas_cabecera"
-        android:layout_width="395dp"
+        android:layout_width="0dp"
         android:layout_height="25dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         app:layout_constraintBottom_toTopOf="@id/btn_agregarMadejaStk"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -103,7 +105,9 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabla_stock"
-        android:layout_width="395dp"
+        android:layout_width="0dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/btn_agregarMadejaStk"
         app:layout_constraintEnd_toEndOf="parent"
