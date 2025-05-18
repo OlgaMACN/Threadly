@@ -1,4 +1,4 @@
-package grafico_pedido
+package logica.grafico_pedido
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -21,8 +21,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import pedido_hilos.Grafico
-import stock_personal.StockSingleton
+import logica.pedido_hilos.Grafico
+import logica.stock_personal.StockSingleton
 import ui_utils.ajustarDialog
 import utiles.calcularMadejas
 import utiles.funcionToolbar

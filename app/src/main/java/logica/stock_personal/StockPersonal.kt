@@ -1,4 +1,4 @@
-package stock_personal
+package logica.stock_personal
 
 import android.annotation.SuppressLint
 import android.app.Dialog

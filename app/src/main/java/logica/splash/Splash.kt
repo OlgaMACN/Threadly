@@ -1,6 +1,6 @@
-package splash
+package logica.splash
 
-import login.LoginUserExiste
+import logica.login.LoginUserExiste
 import java.util.Timer
 import java.util.TimerTask
 import android.content.Intent

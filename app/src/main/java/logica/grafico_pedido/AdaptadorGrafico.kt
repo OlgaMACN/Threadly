@@ -1,4 +1,4 @@
-package grafico_pedido
+package logica.grafico_pedido
 
 import android.annotation.SuppressLint
 import android.text.Editable

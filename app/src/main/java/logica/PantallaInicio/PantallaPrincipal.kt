@@ -1,4 +1,4 @@
-package PantallaInicio
+package logica.PantallaInicio
 
 import android.content.Intent
 import android.os.Bundle

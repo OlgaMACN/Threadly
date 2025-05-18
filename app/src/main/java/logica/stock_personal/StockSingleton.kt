@@ -1,4 +1,4 @@
-package stock_personal
+package logica.stock_personal
 
 /* TODO comentar a Sandra: quería meterla en un paquete 'patrones' pero sino no me pilla la lista del stock */
 /* esta clase sirve para que haya una única instancia de la lista, accesible desde cualquier otra clase */

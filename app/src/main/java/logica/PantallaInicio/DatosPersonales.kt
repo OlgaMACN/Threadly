@@ -1,4 +1,4 @@
-package PantallaInicio
+package logica.PantallaInicio
 
 
 import android.app.Dialog
@@ -9,8 +9,8 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
-import login.LoginUserExiste
-import login.LoginUserNoExiste
+import logica.login.LoginUserExiste
+import logica.login.LoginUserNoExiste
 
 class DatosPersonales : AppCompatActivity() {
 

@@ -1,4 +1,4 @@
-package CatalogoHilos
+package logica.CatalogoHilos
 
 import android.app.Dialog
 import android.os.Bundle

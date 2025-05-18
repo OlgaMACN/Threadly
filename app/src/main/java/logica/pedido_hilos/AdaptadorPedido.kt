@@ -1,4 +1,4 @@
-package pedido_hilos
+package logica.pedido_hilos
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

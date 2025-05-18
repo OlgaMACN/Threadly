@@ -1,4 +1,4 @@
-package pedido_hilos
+package logica.pedido_hilos
 
 import android.Manifest
 import android.app.Dialog
@@ -21,7 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import grafico_pedido.GraficoPedido
+import logica.grafico_pedido.GraficoPedido
 import ui_utils.ajustarDialog
 import utiles.ExportadorCSV
 import utiles.funcionToolbar

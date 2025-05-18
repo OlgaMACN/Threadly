@@ -1,4 +1,4 @@
-package stock_personal
+package logica.stock_personal
 
 /* los data class son como las clases que hacen de objeto en java */
 data class HiloStock(

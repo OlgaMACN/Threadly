@@ -1,6 +1,6 @@
-package pedido_hilos
+package logica.pedido_hilos
 
-import grafico_pedido.HiloGrafico
+import logica.grafico_pedido.HiloGrafico
 import java.io.Serializable
 
 /* clase que contiene los atributos de un gráfico de punto de cruz */

@@ -1,6 +1,6 @@
-package login
+package logica.login
 
-import PantallaInicio.PantallaPrincipal
+import logica.PantallaInicio.PantallaPrincipal
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType

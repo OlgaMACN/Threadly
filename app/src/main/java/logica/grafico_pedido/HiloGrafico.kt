@@ -1,4 +1,4 @@
-package grafico_pedido
+package logica.grafico_pedido
 
 import java.io.Serializable
 

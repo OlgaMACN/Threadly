@@ -20,7 +20,7 @@
 
         <!-- Splash: será la que dará inicio a la ejecución -->
         <activity
-            android:name="splash.Splash"
+            android:name="logica.splash.Splash"
             android:exported="true"
             android:theme="@style/Base.Theme.Threadly">
             <intent-filter>
@@ -32,48 +32,48 @@
 
         <!-- Login -->
         <activity
-            android:name="login.LoginUserExiste"
+            android:name="logica.login.LoginUserExiste"
             android:exported="true" />
         <activity
-            android:name="login.LoginUserNoExiste"
+            android:name="logica.login.LoginUserNoExiste"
             android:exported="true" />
 
         <!-- Pantalla Inicio -->
         <activity
-            android:name="PantallaInicio.PantallaPrincipal"
+            android:name="logica.PantallaInicio.PantallaPrincipal"
             android:exported="true" />
 
         <activity
-            android:name="PantallaInicio.DatosPersonales"
+            android:name="logica.PantallaInicio.DatosPersonales"
             android:exported="true" />
 
         <activity
-            android:name="PantallaInicio.ModificarDatos"
+            android:name="logica.PantallaInicio.ModificarDatos"
             android:exported="true" />
 
         <!-- Catálogo -->
         <activity
-            android:name="CatalogoHilos.CatalogoHilos"
+            android:name="logica.CatalogoHilos.CatalogoHilos"
             android:exported="true" />
 
         <!-- Stock Personal -->
         <activity
-            android:name="stock_personal.StockPersonal"
+            android:name="logica.stock_personal.StockPersonal"
             android:exported="true" />
 
         <!-- Pedido -->
         <activity
-            android:name="pedido_hilos.PedidoHilos"
+            android:name="logica.pedido_hilos.PedidoHilos"
             android:exported="true" />
 
         <!-- Gráfico Pedidos -->
         <activity
-            android:name="grafico_pedido.GraficoPedido"
+            android:name="logica.grafico_pedido.GraficoPedido"
             android:exported="true" />
 
         <!-- Almacén Pedidos -->
         <activity
-            android:name="almacen_pedidos.AlmacenPedidos"
+            android:name="logica.almacen_pedidos.AlmacenPedidos"
             android:exported="true" />
     </application>
 

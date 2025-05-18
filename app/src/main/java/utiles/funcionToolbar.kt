@@ -1,13 +1,13 @@
 package utiles
 
-import CatalogoHilos.CatalogoHilos
-import PantallaInicio.PantallaPrincipal
+import logica.CatalogoHilos.CatalogoHilos
+import logica.PantallaInicio.PantallaPrincipal
 import android.app.Activity
 import android.content.Intent
 import android.widget.ImageButton
 import com.threadly.R
-import pedido_hilos.PedidoHilos
-import stock_personal.StockPersonal
+import logica.pedido_hilos.PedidoHilos
+import logica.stock_personal.StockPersonal
 
 private var ultimoClick = 0L
 
