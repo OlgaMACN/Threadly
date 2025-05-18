@@ -47,6 +47,8 @@ dependencies {
     implementation(libs.firebase.perf.ktx)
     implementation(libs.androidx.monitor)
     implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.room.common.jvm) /* dependencias de room */
+    implementation(libs.androidx.room.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
