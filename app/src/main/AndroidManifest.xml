@@ -53,7 +53,7 @@
 
         <!-- Catálogo -->
         <activity
-            android:name="logica.CatalogoHilos.CatalogoHilos"
+            android:name="logica.catalogo_hilos.CatalogoHilos"
             android:exported="true" />
 
         <!-- Stock Personal -->

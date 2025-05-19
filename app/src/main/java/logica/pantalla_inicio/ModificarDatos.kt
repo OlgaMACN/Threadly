@@ -14,8 +14,9 @@ import kotlinx.coroutines.withContext
 import persistencia.bbdd.GestorBBDD
 import persistencia.dao.UsuarioDAO
 import persistencia.entidades.Usuario
+import utiles.BaseActivity
 
-class ModificarDatos : AppCompatActivity() {
+class ModificarDatos : BaseActivity() {
 
     private lateinit var imgOpciones: List<ImageView>
     private lateinit var nombreActualizado: EditText
@@ -48,15 +49,13 @@ class ModificarDatos : AppCompatActivity() {
         val bbdd = GestorBBDD.getDatabase(this)
         usuarioDao = bbdd.usuarioDao()
 
-        /* recoge el id de usuario para obtener sus datos */
-        val userId = intent.getIntExtra("usuario_id", -1) /* para depurar errores */
         /* si llega mal el usuario se cierra la actividad para evitar cuelgues */
-        if (userId < 0) {
+        if (usuarioId < 0) {
             finish()
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
-            usuario = usuarioDao.obtenerPorId(userId)
+            usuario = usuarioDao.obtenerPorId(usuarioId)
             withContext(Dispatchers.Main) {
                 usuario?.let {
                     nombreActualizado.hint = it.nombre

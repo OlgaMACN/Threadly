@@ -22,13 +22,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import logica.grafico_pedido.GraficoPedido
+import utiles.BaseActivity
 import utiles.ajustarDialog
 import utiles.ExportadorCSV
 import utiles.funcionToolbar
 
 private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada gráfico */
 
-class PedidoHilos : AppCompatActivity() {
+class PedidoHilos : BaseActivity() {
 
     private lateinit var adaptadorPedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()

@@ -19,10 +19,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import utiles.BaseActivity
 import utiles.ajustarDialog
 import utiles.funcionToolbar
 
-class StockPersonal : AppCompatActivity() {
+class StockPersonal : BaseActivity() {
 
     private lateinit var tablaStock: RecyclerView
     private lateinit var adaptadorStock: AdaptadorStock

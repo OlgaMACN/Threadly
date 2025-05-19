@@ -1,11 +1,9 @@
 package logica.pantalla_inicio
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,25 +11,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import logica.stock_personal.StockSingleton
 import persistencia.bbdd.GestorBBDD
+import utiles.BaseActivity
 import utiles.funcionToolbar
 
-class PantallaPrincipal : AppCompatActivity() {
-
-    private var usuarioId: Int = -1 /* para identificar al usuario */
-
+class PantallaPrincipal : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pantalla_aa_inicio)
+
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
-
-        /* recoger el id del usuario para tenerlo controlado */
-        usuarioId = intent.getIntExtra("usuario_id", -1)
-        if (usuarioId < 0) {
-            finish()
-            return
-        }
-
         cargarUsuario()
 
         /* obtener número de madejas del stock */
@@ -42,10 +31,7 @@ class PantallaPrincipal : AppCompatActivity() {
         txtStock.text = "$totalMadejas"
 
         /* para mostrar el nombre del usuario al entrar (pasado desde login) */
-        val nombreUsuario = intent.getStringExtra("nombre_usuario") ?: "Usuario"
-        val txtNombreUsuario = findViewById<TextView>(R.id.txtVw_nombreUsuario)
-        txtNombreUsuario.text = nombreUsuario
-
+        findViewById<TextView>(R.id.txtVw_nombreUsuario).text = nombreUsuario
 
         /* mostrar tip aleatorio */
         val txtTip = findViewById<TextView>(R.id.txtVw_contenidoTip)
@@ -64,10 +50,7 @@ class PantallaPrincipal : AppCompatActivity() {
 
         /* al tratarse de un 'imageButton' configuramos metodo 'onClick' */
         configuracion.setOnClickListener() {
-            Intent(this, DatosPersonales::class.java).also {
-                it.putExtra("usuario_id", usuarioId)
-                startActivity(it)
-            }
+            irAActividad(DatosPersonales::class.java)
         }
     }
 

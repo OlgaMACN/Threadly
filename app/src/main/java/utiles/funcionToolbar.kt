@@ -1,18 +1,17 @@
 package utiles
 
-import logica.CatalogoHilos.CatalogoHilos
-import logica.pantalla_inicio.PantallaPrincipal
-import android.app.Activity
-import android.content.Intent
 import android.widget.ImageButton
 import com.threadly.R
 import logica.almacen_pedidos.AlmacenPedidos
+import logica.catalogo_hilos.CatalogoHilos
+import logica.pantalla_inicio.PantallaPrincipal
 import logica.pedido_hilos.PedidoHilos
 import logica.stock_personal.StockPersonal
 
 private var ultimoClick = 0L
 
-fun funcionToolbar(activity: Activity) {
+/* con esta clase habrá siempre acceso a usuarioId y nombre desde cualquier pantalla */
+fun funcionToolbar(activity: BaseActivity) {
     /* inicialización de botones del toolbar */
     val btn_inicio = activity.findViewById<ImageButton>(R.id.botonInicio)
     val btn_catalogo = activity.findViewById<ImageButton>(R.id.botonCatalogo)
@@ -29,12 +28,10 @@ fun funcionToolbar(activity: Activity) {
         }
     }
 
-    /* sólo funciona si no es la activity actual */
-    fun siNoEsActivityActual(target: Class<out Activity>) {
+    /* el toolbar sólo funciona si no es la activity actual */
+    fun siNoEsActivityActual(target: Class<out BaseActivity>) {
         if (activity::class.java != target) {
-            val intent = Intent(activity, target)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            activity.startActivity(intent)
+            activity.irAActividad(target)
             activity.finish()
         }
     }

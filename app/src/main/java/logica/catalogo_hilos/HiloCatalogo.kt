@@ -1,4 +1,4 @@
-package logica.CatalogoHilos
+package logica.catalogo_hilos
 
 data class HiloCatalogo (
     val numHilo: Int,

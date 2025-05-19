@@ -1,4 +1,4 @@
-package logica.CatalogoHilos
+package logica.catalogo_hilos
 
 import android.app.Dialog
 import android.os.Bundle
@@ -12,13 +12,13 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import utiles.BaseActivity
 import utiles.funcionToolbar
 
-class CatalogoHilos : AppCompatActivity() {
+class CatalogoHilos : BaseActivity() {
 
     private lateinit var tablaCatalogo: RecyclerView
     private lateinit var adaptadorCatalogo: AdaptadorCatalogo

@@ -23,12 +23,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import logica.pedido_hilos.Grafico
 import logica.stock_personal.StockSingleton
+import utiles.BaseActivity
 import utiles.ajustarDialog
 import utiles.calcularMadejas
 import utiles.funcionToolbar
 import utiles.ordenarHilos
 
-class GraficoPedido : AppCompatActivity() {
+class GraficoPedido : BaseActivity() {
 
     private lateinit var adaptadorGrafico: AdaptadorGrafico
     private var grafico: Grafico? = null /* traer el gráfico de la pantalla anterior */

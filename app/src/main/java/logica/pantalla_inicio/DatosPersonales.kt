@@ -17,9 +17,10 @@ import logica.login.LoginUserExiste
 import logica.login.LoginUserNoExiste
 import persistencia.bbdd.GestorBBDD
 import persistencia.dao.UsuarioDAO
+import utiles.BaseActivity
 import utiles.ajustarDialog
 
-class DatosPersonales : AppCompatActivity() {
+class DatosPersonales : BaseActivity() {
 
     private lateinit var txtNombreUsuario: TextView
     private lateinit var imgPerfil: ImageView
@@ -29,7 +30,6 @@ class DatosPersonales : AppCompatActivity() {
     private lateinit var btnVolverInicio: Button
 
     private lateinit var usuarioDao: UsuarioDAO
-    private var usuarioId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +44,6 @@ class DatosPersonales : AppCompatActivity() {
         val bbdd = GestorBBDD.getDatabase(this)
         usuarioDao = bbdd.usuarioDao()
 
-        usuarioId = intent.getIntExtra("usuario_id", -1)
         if (usuarioId < 0) {
             finish()
             return
@@ -52,10 +51,7 @@ class DatosPersonales : AppCompatActivity() {
 
         /* si se pulsa en 'modificar datos' se mandan los datos a esa pantalla */
         btnModificarDatos.setOnClickListener {
-            /* al usuario completo, gracias a la BdD, pasándole el id */
-            val intent = Intent(this, ModificarDatos::class.java)
-            intent.putExtra("usuario_id", usuarioId)
-            startActivity(intent)
+            irAActividad(ModificarDatos::class.java)
         }
         btnVolverInicio.setOnClickListener {
             finish() /* vuelve a pantalla anterior sin perder los cambios */

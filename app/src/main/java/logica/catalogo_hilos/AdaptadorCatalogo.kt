@@ -1,4 +1,4 @@
-package logica.CatalogoHilos
+package logica.catalogo_hilos
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
