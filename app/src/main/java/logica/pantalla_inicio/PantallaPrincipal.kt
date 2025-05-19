@@ -50,8 +50,11 @@ class PantallaPrincipal : AppCompatActivity() {
 
         /* al tratarse de un 'imageButton' configuramos metodo 'onClick' */
         configuracion.setOnClickListener() {
-            val intent = Intent(this, DatosPersonales::class.java)
-            startActivity(intent)
+            val nombreUsuario = intent.getStringExtra("nombre_usuario") ?: "Usuario"
+            Intent(this, DatosPersonales::class.java).also {
+                it.putExtra("nombre_usuario", nombreUsuario)
+                startActivity(it)
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ import persistencia.entidades.Usuario
 class ModificarDatos : AppCompatActivity() {
 
     private lateinit var imgOpciones: List<ImageView>
-    private lateinit var edtNuevoNombre: EditText
+    private lateinit var nombreActualizado: EditText
     private lateinit var btnGuardarCambios: Button
     private lateinit var btnVolverDatosPersonales: Button
 
@@ -41,7 +41,7 @@ class ModificarDatos : AppCompatActivity() {
             findViewById(R.id.imgVw_avatar6)
         )
         /* declaramos componentes de esta pantalla */
-        edtNuevoNombre = findViewById(R.id.editxtVw_contenidoCambioNombre)
+        nombreActualizado = findViewById(R.id.editxtVw_contenidoCambioNombre)
         btnGuardarCambios = findViewById(R.id.btn_GuardarCambios)
         btnVolverDatosPersonales = findViewById(R.id.btn_VolverModificarDatos)
 
@@ -51,13 +51,16 @@ class ModificarDatos : AppCompatActivity() {
 
         /* recoge el id de usuario para obtener sus datos */
         val userId = intent.getIntExtra("usuario_id", -1) /* para depurar errores */
-        if (userId < 0) finish() /* si llega mal el usuario se cierra la actividad para evitar cuelgues */
-
+        /* si llega mal el usuario se cierra la actividad para evitar cuelgues */
+        if (userId < 0) {
+            finish()
+            return
+        }
         CoroutineScope(Dispatchers.IO).launch {
             usuario = usuarioDao.obtenerPorId(userId)
             withContext(Dispatchers.Main) {
                 usuario?.let {
-                    edtNuevoNombre.hint = it.nombre
+                    nombreActualizado.hint = it.nombre
                     imagenSeleccionada = it.idImagen
                     /* resalta la imagen pulsada */
                     imgOpciones[imagenSeleccionada - 1].alpha = 1f
@@ -66,29 +69,39 @@ class ModificarDatos : AppCompatActivity() {
         }
 
         /* meramente estético, para destacar la imagen pulsada */
-        imgOpciones.forEachIndexed { idx, img ->
+        imgOpciones.forEachIndexed { index, img ->
             img.setOnClickListener {
                 /* todas iguales */
                 imgOpciones.forEach { it.alpha = 0.5f }
                 /* cambia el alpha de la imagen al seleccionarla */
                 img.alpha = 1f
-                imagenSeleccionada = idx + 1
+                imagenSeleccionada = index + 1
             }
             img.alpha = 0.5f
         }
 
         /* guardar cambios */
         btnGuardarCambios.setOnClickListener {
-            val nuevoNombre = edtNuevoNombre.text.toString().trim()
-            if (nuevoNombre.isEmpty()) {
-                Toast.makeText(this, "Introduce un nuevo nombre.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            usuario?.let { usr ->
-                val actualizado = usr.copy(
-                    nombre = nuevoNombre,
+            val nuevoNombre = nombreActualizado.text.toString().trim()
+            /*  if (nuevoNombre.isEmpty()) {
+                  Toast.makeText(this, "Introduce un nuevo nombre.", Toast.LENGTH_SHORT).show()
+                  return@setOnClickListener
+              }*/
+
+            usuario?.let { user ->
+                /* TODO para que no obligue a cambiar el nombre, no? */
+                val nombreFinal = if (nuevoNombre.isEmpty()) user.nombre else nuevoNombre
+
+                if (nombreFinal == user.nombre && imagenSeleccionada == user.idImagen) {
+                    Toast.makeText(this, "No has hecho ningún cambio.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val actualizado = user.copy(
+                    nombre = nombreFinal,
                     idImagen = imagenSeleccionada
                 )
+
                 CoroutineScope(Dispatchers.IO).launch {
                     usuarioDao.actualizar(actualizado)
                     withContext(Dispatchers.Main) {
@@ -96,7 +109,11 @@ class ModificarDatos : AppCompatActivity() {
                             this@ModificarDatos,
                             "Datos actualizados", Toast.LENGTH_SHORT
                         ).show()
-                        finish()  /* vuelve a la pantalla anterior, con los cambios persistidos */
+                        /* enviar los cambios para que se actualicen */
+                        val intent = Intent(this@ModificarDatos, DatosPersonales::class.java)
+                        intent.putExtra("nombre_usuario", nombreFinal)
+                        startActivity(intent)
+                        finish()
                     }
                 }
             }
@@ -105,4 +122,5 @@ class ModificarDatos : AppCompatActivity() {
         /* volver sin guardar */
         btnVolverDatosPersonales.setOnClickListener { finish() }
     }
+}
 }

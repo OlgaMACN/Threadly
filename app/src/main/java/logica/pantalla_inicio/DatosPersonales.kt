@@ -29,6 +29,14 @@ class DatosPersonales : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pantalla_datos_personales)
 
+        /* recoger el nombre de usuario desde la pantalla principal */
+        val nombreUsr = intent.getStringExtra("nombre_usuario")
+        if (nombreUsr == null) {
+            /* si por lo que sea no llega el nombre de usuario, evitar cierre brusco */
+            finish()
+            return
+        }
+
         /* declaramos todos los botones de esta pantalla */
         var txtNombre = findViewById<TextView>(R.id.txtVw_contenidoNombre)
         var imgPerfil = findViewById<ImageView>(R.id.imgVw_fotoPerfil)
@@ -42,7 +50,6 @@ class DatosPersonales : AppCompatActivity() {
         usuarioDao = bbdd.usuarioDao()
 
         /* cargar datos del usuario */
-        val nombreUsr = intent.getStringExtra("nombre_usuario") ?: return
         CoroutineScope(Dispatchers.IO).launch {
             usuarioActual = usuarioDao.obtenerPorNombre(nombreUsr)
             withContext(Dispatchers.Main) {

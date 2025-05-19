@@ -48,7 +48,7 @@
     <!-- Pantalla Datos Personales (pantalla_datos_personales) -->
     <string name="datosPersonales">Datos Personales</string>
     <string name="nombreUsuario">Nombre de Usuario : </string>
-    <string name="fotoPerfil">Foto de Perfil :</string>
+    <string name="fotoPerfil">Foto de Perfil:</string>
     <string name="miembroDesde">Miembro desde :</string>
     <string name="botonModificar">Modificar Datos</string>
     <string name="botonCerrarSesion">Cerrar Sesión</string>
