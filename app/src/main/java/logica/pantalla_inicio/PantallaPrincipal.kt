@@ -3,6 +3,7 @@ package logica.pantalla_inicio
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
@@ -46,7 +47,6 @@ class PantallaPrincipal : AppCompatActivity() {
         txtNombreUsuario.text = nombreUsuario
 
 
-
         /* mostrar tip aleatorio */
         val txtTip = findViewById<TextView>(R.id.txtVw_contenidoTip)
         val db = GestorBBDD.getDatabase(this)
@@ -71,6 +71,7 @@ class PantallaPrincipal : AppCompatActivity() {
         }
     }
 
+    /* al volver de DatosPersonales.kt se actualizarán los datos */
     override fun onResume() {
         super.onResume()
         cargarUsuario()
@@ -85,22 +86,22 @@ class PantallaPrincipal : AppCompatActivity() {
             val usuario = usuarioDao.obtenerPorId(usuarioId)
             withContext(Dispatchers.Main) {
                 usuario?.let {
-                    findViewById<TextView>(R.id.txtVw_nombreUsuario).text = it.nombre
-                    findViewById<ImageButton>(R.id.imgBtn_configuracion).setImageResource(
+
+                    findViewById<ImageView>(R.id.imgVw_imagenPerfil).setImageResource(
                         when (it.idImagen) {
-                            1 -> R.drawable.img_avatar_defecto
-                            2 -> R.drawable.img_avatar2
-                            3 -> R.drawable.img_avatar3
-                            4 -> R.drawable.img_avatar4
-                            5 -> R.drawable.img_avatar5
-                            6 -> R.drawable.img_avatar6
+                            1 -> R.drawable.img_avatar2
+                            2 -> R.drawable.img_avatar3
+                            3 -> R.drawable.img_avatar4
+                            4 -> R.drawable.img_avatar5
+                            5 -> R.drawable.img_avatar6
+                            6 -> R.drawable.img_avatar_defecto
                             else -> R.drawable.img_avatar_defecto
                         }
                     )
+                    findViewById<TextView>(R.id.txtVw_nombreUsuario).text = it.nombre
                 }
             }
         }
     }
-
 
 }
