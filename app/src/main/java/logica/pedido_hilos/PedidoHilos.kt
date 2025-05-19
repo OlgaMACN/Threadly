@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import logica.grafico_pedido.GraficoPedido
-import ui_utils.ajustarDialog
+import utiles.ajustarDialog
 import utiles.ExportadorCSV
 import utiles.funcionToolbar
 

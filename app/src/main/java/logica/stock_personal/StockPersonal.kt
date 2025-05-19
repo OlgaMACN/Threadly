@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import ui_utils.ajustarDialog
+import utiles.ajustarDialog
 import utiles.funcionToolbar
 
 class StockPersonal : AppCompatActivity() {

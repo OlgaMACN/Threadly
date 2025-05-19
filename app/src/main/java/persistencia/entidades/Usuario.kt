@@ -9,4 +9,6 @@ data class Usuario(
     val nombre: String,
     val contraseña: String,
     val idImagen: Int = 1 /* fk a la imagen de perfil, que por defecto la inicial será 1 */
+
+
 )

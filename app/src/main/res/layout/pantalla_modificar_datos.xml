@@ -106,7 +106,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar2"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_escogerImagen"
-        app:srcCompat="@drawable/img_usuario_avatar"
+        app:srcCompat="@drawable/img_avatar5"
         tools:layout_editor_absoluteX="260dp"
         tools:layout_editor_absoluteY="249dp" />
 
@@ -120,7 +120,7 @@
         app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar1"
-        app:srcCompat="@drawable/img_hombre_avatar"
+        app:srcCompat="@drawable/img_avatar6"
         tools:layout_editor_absoluteX="63dp"
         tools:layout_editor_absoluteY="355dp" />
 
@@ -148,7 +148,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar5"
         app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar3"
-        app:srcCompat="@drawable/img_avatar_ejemplo"
+        app:srcCompat="@drawable/img_avatar1"
         tools:layout_editor_absoluteX="263dp"
         tools:layout_editor_absoluteY="355dp" />
 

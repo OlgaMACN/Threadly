@@ -1,4 +1,4 @@
-package ui_utils
+package utiles;
 
 import android.app.Dialog
 import android.content.res.Resources

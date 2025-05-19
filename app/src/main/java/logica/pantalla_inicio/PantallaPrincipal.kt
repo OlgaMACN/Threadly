@@ -14,7 +14,6 @@ import logica.stock_personal.StockSingleton
 import persistencia.bbdd.GestorBBDD
 import utiles.funcionToolbar
 
-
 class PantallaPrincipal : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +44,6 @@ class PantallaPrincipal : AppCompatActivity() {
                 txtTip.text = consejo?.contenido ?: "Consejo no disponible"
             }
         }
-
 
         /* navegación a pantalla de datos personales a través de botón 'configuración' */
         val configuracion = findViewById<ImageButton>(R.id.imgBtn_configuracion)

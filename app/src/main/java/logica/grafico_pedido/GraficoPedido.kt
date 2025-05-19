@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import logica.pedido_hilos.Grafico
 import logica.stock_personal.StockSingleton
-import ui_utils.ajustarDialog
+import utiles.ajustarDialog
 import utiles.calcularMadejas
 import utiles.funcionToolbar
 import utiles.ordenarHilos

@@ -100,10 +100,9 @@
         android:layout_height="94dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_ModificarDatos"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.20"
-        app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_fotoPerfil"
-        app:srcCompat="@drawable/img_avatar_ejemplo" />
+        app:srcCompat="@drawable/img_avatar1" />
 
     <Button
         android:id="@+id/btn_ModificarDatos"
