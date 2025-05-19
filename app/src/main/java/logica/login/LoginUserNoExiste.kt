@@ -88,19 +88,19 @@ class LoginUserNoExiste : AppCompatActivity() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                        /* si no existe, el registro en la BdD se completará correctamente */
+
                     } else {
-                        usuarioDao.insertar(
-                            Usuario(
-                                nombre = usuarioEntrada,
-                                contraseña = constrasenaEntrada
-                            )
-                        )
+                        /* si no existe, el registro en la BdD se completará correctamente */
+                        val nuevoUsuario =
+                            Usuario(nombre = usuarioEntrada, contraseña = constrasenaEntrada)
+                        val idGenerado =
+                            usuarioDao.insertar(nuevoUsuario).toInt()
 
                         withContext(Dispatchers.Main) {
                             val intent =
                                 Intent(this@LoginUserNoExiste, PantallaPrincipal::class.java)
                             intent.putExtra("nombre_usuario", usuarioEntrada)
+                            intent.putExtra("usuario_id", idGenerado)
                             startActivity(intent)
 
                         }

@@ -51,7 +51,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_modificarDatos"
         app:layout_constraintVertical_bias="0.19"
-        app:srcCompat="@drawable/linea_recta"
+        app:srcCompat="@drawable/recurso_linea_recta"
         app:tint="@color/morado_palo" />
 
     <TextView
@@ -98,7 +98,7 @@
         android:layout_height="70dp"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar6_buenodefecto"
+        app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar_defecto"
         app:layout_constraintEnd_toStartOf="@+id/editTxtVw_contenidoCambioNombre"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar3"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_escogerImagen"
@@ -124,13 +124,13 @@
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar6_buenodefecto"
+        app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar_defecto"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar5"
         app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar3"
         app:srcCompat="@drawable/img_avatar6" />
 
     <ImageView
-        android:id="@+id/imgVw_avatar6_buenodefecto"
+        android:id="@+id/imgVw_avatar_defecto"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:clickable="true"

@@ -37,7 +37,7 @@ class ModificarDatos : AppCompatActivity() {
             findViewById(R.id.imgVw_avatar4),
             findViewById(R.id.imgVw_avatar5),
             findViewById(R.id.imgVw_avatar6),
-            findViewById(R.id.imgVw_avatar6_buenodefecto)
+            findViewById(R.id.imgVw_avatar_defecto)
         )
         /* declaramos componentes de esta pantalla */
         nombreActualizado = findViewById(R.id.editxtVw_contenidoCambioNombre)
@@ -62,7 +62,9 @@ class ModificarDatos : AppCompatActivity() {
                     nombreActualizado.hint = it.nombre
                     imagenSeleccionada = it.idImagen
                     /* resalta la imagen pulsada */
-                    imgOpciones[imagenSeleccionada - 1].alpha = 1f
+                    imgOpciones.forEach { img -> img.alpha = 0.5f }
+                    if (imagenSeleccionada in 1..6)
+                        imgOpciones[imagenSeleccionada - 1].alpha = 1f
                 }
             }
         }

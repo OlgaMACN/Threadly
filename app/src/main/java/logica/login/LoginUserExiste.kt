@@ -90,6 +90,7 @@ class LoginUserExiste : AppCompatActivity() {
                         withContext(Dispatchers.Main) {
                             val intent = Intent(this@LoginUserExiste, PantallaPrincipal::class.java)
                             intent.putExtra("nombre_usuario", userEntradaLogin)
+                            intent.putExtra("usuario_id", usuarioEncontrado.id)
                             startActivity(intent)
                         }
 

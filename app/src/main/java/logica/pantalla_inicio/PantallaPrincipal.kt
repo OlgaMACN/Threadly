@@ -16,10 +16,22 @@ import utiles.funcionToolbar
 
 class PantallaPrincipal : AppCompatActivity() {
 
+    private var usuarioId: Int = -1 /* para identificar al usuario */
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pantalla_aa_inicio)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
+
+        /* recoger el id del usuario para tenerlo controlado */
+        usuarioId = intent.getIntExtra("usuario_id", -1)
+        if (usuarioId < 0) {
+            finish()
+            return
+        }
+
+        cargarUsuario()
 
         /* obtener número de madejas del stock */
         val totalMadejas = StockSingleton.listaStock.sumOf { it.madejas }
@@ -32,6 +44,8 @@ class PantallaPrincipal : AppCompatActivity() {
         val nombreUsuario = intent.getStringExtra("nombre_usuario") ?: "Usuario"
         val txtNombreUsuario = findViewById<TextView>(R.id.txtVw_nombreUsuario)
         txtNombreUsuario.text = nombreUsuario
+
+
 
         /* mostrar tip aleatorio */
         val txtTip = findViewById<TextView>(R.id.txtVw_contenidoTip)
@@ -50,11 +64,43 @@ class PantallaPrincipal : AppCompatActivity() {
 
         /* al tratarse de un 'imageButton' configuramos metodo 'onClick' */
         configuracion.setOnClickListener() {
-            val nombreUsuario = intent.getStringExtra("nombre_usuario") ?: "Usuario"
             Intent(this, DatosPersonales::class.java).also {
-                it.putExtra("nombre_usuario", nombreUsuario)
+                it.putExtra("usuario_id", usuarioId)
                 startActivity(it)
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        cargarUsuario()
+    }
+
+    /* función para cargar el usuario*/
+    private fun cargarUsuario() {
+        val bbdd = GestorBBDD.getDatabase(this)
+        val usuarioDao = bbdd.usuarioDao()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val usuario = usuarioDao.obtenerPorId(usuarioId)
+            withContext(Dispatchers.Main) {
+                usuario?.let {
+                    findViewById<TextView>(R.id.txtVw_nombreUsuario).text = it.nombre
+                    findViewById<ImageButton>(R.id.imgBtn_configuracion).setImageResource(
+                        when (it.idImagen) {
+                            1 -> R.drawable.img_avatar_defecto
+                            2 -> R.drawable.img_avatar2
+                            3 -> R.drawable.img_avatar3
+                            4 -> R.drawable.img_avatar4
+                            5 -> R.drawable.img_avatar5
+                            6 -> R.drawable.img_avatar6
+                            else -> R.drawable.img_avatar_defecto
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+
 }
