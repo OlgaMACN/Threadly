@@ -51,7 +51,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_modificarDatos"
         app:layout_constraintVertical_bias="0.19"
-        app:srcCompat="@drawable/linea_recta"
+        app:srcCompat="@drawable/recurso_linea_recta"
         app:tint="@color/morado_palo" />
 
     <TextView
@@ -63,22 +63,9 @@
         android:gravity="start"
         android:text="@string/escogerImagen"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar1"
+        app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_modificarDatos" />
-
-    <ImageView
-        android:id="@+id/imgVw_avatar1"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar4"
-        app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar2"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtVw_escogerImagen"
-        app:srcCompat="@drawable/img_avatar2" />
 
     <ImageView
         android:id="@+id/imgVw_avatar2"
@@ -88,9 +75,10 @@
         android:focusable="true"
         app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar5"
         app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar3"
-        app:layout_constraintStart_toEndOf="@+id/imgVw_avatar1"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_escogerImagen"
-        app:srcCompat="@drawable/img_avatar4" />
+        app:srcCompat="@drawable/img_avatar2" />
 
     <ImageView
         android:id="@+id/imgVw_avatar3"
@@ -99,10 +87,10 @@
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar6"
-        app:layout_constraintEnd_toStartOf="@+id/editTxtVw_contenidoCambioNombre"
+        app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar4"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar2"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_escogerImagen"
-        app:srcCompat="@drawable/img_usuario_avatar" />
+        app:srcCompat="@drawable/img_avatar3" />
 
     <ImageView
         android:id="@+id/imgVw_avatar4"
@@ -110,12 +98,11 @@
         android:layout_height="70dp"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar5"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar1"
-        app:srcCompat="@drawable/img_hombre_avatar" />
+        app:layout_constraintBottom_toTopOf="@+id/imgVw_avatar_defecto"
+        app:layout_constraintEnd_toStartOf="@+id/editTxtVw_contenidoCambioNombre"
+        app:layout_constraintStart_toEndOf="@+id/imgVw_avatar3"
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_escogerImagen"
+        app:srcCompat="@drawable/img_avatar4" />
 
     <ImageView
         android:id="@+id/imgVw_avatar5"
@@ -125,9 +112,10 @@
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar6"
-        app:layout_constraintStart_toEndOf="@+id/imgVw_avatar4"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar2"
-        app:srcCompat="@drawable/img_avatar3" />
+        app:srcCompat="@drawable/img_avatar5" />
 
     <ImageView
         android:id="@+id/imgVw_avatar6"
@@ -135,11 +123,23 @@
         android:layout_height="70dp"
         android:clickable="true"
         android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imgVw_avatar_defecto"
         app:layout_constraintStart_toEndOf="@+id/imgVw_avatar5"
         app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar3"
+        app:srcCompat="@drawable/img_avatar6" />
+
+    <ImageView
+        android:id="@+id/imgVw_avatar_defecto"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintStart_toEndOf="@+id/imgVw_avatar6"
+        app:layout_constraintTop_toBottomOf="@+id/imgVw_avatar4"
         app:layout_constraintEnd_toStartOf="@+id/btn_VolverModificarDatos"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@drawable/img_avatar_ejemplo"
+        app:srcCompat="@drawable/img_avatar_defecto"
         tools:layout_editor_absoluteX="249dp"
         tools:layout_editor_absoluteY="278dp" />
 
@@ -170,7 +170,7 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/btn_GuardarCambios"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imgVw_avatar3"
+        app:layout_constraintStart_toEndOf="@+id/imgVw_avatar4"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_cambiarNombre" />
 
     <Button

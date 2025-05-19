@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/pantallarosavertical">
+    android:background="@drawable/recurso_pantallarosavertical">
 
     <TextView
         android:id="@+id/txtVw_datosPersonalesEncabezado"
@@ -43,7 +43,7 @@
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/linea_recta"
+        app:srcCompat="@drawable/recurso_linea_recta"
         app:tint="@color/morado_palo"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
@@ -100,10 +100,9 @@
         android:layout_height="94dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_ModificarDatos"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.20"
-        app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_fotoPerfil"
-        app:srcCompat="@drawable/img_avatar_ejemplo" />
+        app:srcCompat="@drawable/img_avatar_defecto" />
 
     <Button
         android:id="@+id/btn_ModificarDatos"

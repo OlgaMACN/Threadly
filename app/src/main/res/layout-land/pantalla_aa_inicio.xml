@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fondorosahorizontal">
+    android:background="@drawable/recurso_fondorosahorizontal">
 
 
     <TextView
@@ -37,7 +37,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/img_avatar_ejemplo" />
+        app:srcCompat="@drawable/img_avatar_defecto" />
 
     <TextView
         android:id="@+id/txtvw_saludo"

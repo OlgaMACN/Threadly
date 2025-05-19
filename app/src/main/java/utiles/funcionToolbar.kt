@@ -1,13 +1,14 @@
 package utiles
 
-import CatalogoHilos.CatalogoHilos
-import PantallaInicio.PantallaPrincipal
+import logica.CatalogoHilos.CatalogoHilos
+import logica.pantalla_inicio.PantallaPrincipal
 import android.app.Activity
 import android.content.Intent
 import android.widget.ImageButton
 import com.threadly.R
-import pedido_hilos.PedidoHilos
-import stock_personal.StockPersonal
+import logica.almacen_pedidos.AlmacenPedidos
+import logica.pedido_hilos.PedidoHilos
+import logica.stock_personal.StockPersonal
 
 private var ultimoClick = 0L
 
@@ -68,9 +69,9 @@ fun funcionToolbar(activity: Activity) {
     }
 
     /* configuración botón almacén pedidos */
-    btn_pedido.setOnClickListener {
+    btn_almacen_pedidos.setOnClickListener {
         clicSeguro {
-            siNoEsActivityActual(PedidoHilos::class.java)
+            siNoEsActivityActual(AlmacenPedidos::class.java)
         }
     }
 

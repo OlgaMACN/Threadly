@@ -1,6 +1,6 @@
 package utiles
 
-import grafico_pedido.HiloGrafico
+import logica.grafico_pedido.HiloGrafico
 
 /* función para ordenar los hilos en la tabla */
 fun ordenarHilos(listaHilos: List<HiloGrafico>): List<HiloGrafico> {
