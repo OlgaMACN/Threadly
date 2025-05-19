@@ -1,6 +1,5 @@
 package logica.pantalla_inicio
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -33,12 +32,12 @@ class ModificarDatos : AppCompatActivity() {
 
         /* lista para no repetir las mismas operaciones seis veces con cada imagen */
         imgOpciones = listOf(
-            findViewById(R.id.imgVw_avatar1),
             findViewById(R.id.imgVw_avatar2),
             findViewById(R.id.imgVw_avatar3),
             findViewById(R.id.imgVw_avatar4),
             findViewById(R.id.imgVw_avatar5),
-            findViewById(R.id.imgVw_avatar6)
+            findViewById(R.id.imgVw_avatar6),
+            findViewById(R.id.imgVw_avatar6_buenodefecto)
         )
         /* declaramos componentes de esta pantalla */
         nombreActualizado = findViewById(R.id.editxtVw_contenidoCambioNombre)
@@ -109,10 +108,6 @@ class ModificarDatos : AppCompatActivity() {
                             this@ModificarDatos,
                             "Datos actualizados", Toast.LENGTH_SHORT
                         ).show()
-                        /* enviar los cambios para que se actualicen */
-                        val intent = Intent(this@ModificarDatos, DatosPersonales::class.java)
-                        intent.putExtra("nombre_usuario", nombreFinal)
-                        startActivity(intent)
                         finish()
                     }
                 }
@@ -122,5 +117,4 @@ class ModificarDatos : AppCompatActivity() {
         /* volver sin guardar */
         btnVolverDatosPersonales.setOnClickListener { finish() }
     }
-}
 }

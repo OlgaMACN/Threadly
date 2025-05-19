@@ -3,7 +3,6 @@ package logica.pantalla_inicio
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -19,18 +18,23 @@ import logica.login.LoginUserNoExiste
 import persistencia.bbdd.GestorBBDD
 import persistencia.dao.UsuarioDAO
 import persistencia.entidades.Usuario
+import utiles.ajustarDialog
 
 class DatosPersonales : AppCompatActivity() {
 
     private lateinit var usuarioDao: UsuarioDAO
     private var usuarioActual: Usuario? = null
+    private var nombreUsr: String? = null
+
+    private lateinit var txtNombre: TextView
+    private lateinit var imgPerfil: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pantalla_datos_personales)
 
         /* recoger el nombre de usuario desde la pantalla principal */
-        val nombreUsr = intent.getStringExtra("nombre_usuario")
+        nombreUsr = intent.getStringExtra("nombre_usuario")
         if (nombreUsr == null) {
             /* si por lo que sea no llega el nombre de usuario, evitar cierre brusco */
             finish()
@@ -38,8 +42,8 @@ class DatosPersonales : AppCompatActivity() {
         }
 
         /* declaramos todos los botones de esta pantalla */
-        var txtNombre = findViewById<TextView>(R.id.txtVw_contenidoNombre)
-        var imgPerfil = findViewById<ImageView>(R.id.imgVw_fotoPerfil)
+        txtNombre = findViewById(R.id.txtVw_contenidoNombre)
+        imgPerfil = findViewById(R.id.imgVw_fotoPerfil)
         val btn_modificarDatos = findViewById<Button>(R.id.btn_ModificarDatos)
         val btn_cerrarSesion = findViewById<Button>(R.id.btn_CerrarSesion)
         val btn_eliminarCuenta = findViewById<Button>(R.id.btn_EliminarCuenta)
@@ -49,27 +53,7 @@ class DatosPersonales : AppCompatActivity() {
         val bbdd = GestorBBDD.getDatabase(this)
         usuarioDao = bbdd.usuarioDao()
 
-        /* cargar datos del usuario */
-        CoroutineScope(Dispatchers.IO).launch {
-            usuarioActual = usuarioDao.obtenerPorNombre(nombreUsr)
-            withContext(Dispatchers.Main) {
-                usuarioActual?.let {
-                    txtNombre.text = it.nombre
-                    /* carga la imagen a través del id */
-                    imgPerfil.setImageResource(
-                        when (it.idImagen) {
-                            1 -> R.drawable.img_avatar1
-                            2 -> R.drawable.img_avatar2
-                            3 -> R.drawable.img_avatar3
-                            4 -> R.drawable.img_avatar4
-                            5 -> R.drawable.img_avatar5
-                            6 -> R.drawable.img_avatar6
-                            else -> R.drawable.img_avatar1
-                        }
-                    )
-                }
-            }
-        }
+        cargarDatos() /* para actualizar los cambios*/
 
         /* si se pulsa en 'modificar datos' se mandan los datos a esa pantalla */
         btn_modificarDatos.setOnClickListener {
@@ -88,15 +72,13 @@ class DatosPersonales : AppCompatActivity() {
 
         /* eliminar cuenta */
         btn_eliminarCuenta.setOnClickListener() {
-            val dialog = Dialog(this).apply {
-                setContentView(R.layout.pantalla_dialog_eliminar_cuenta)
-                window?.setBackgroundDrawableResource(android.R.color.transparent)
-                window?.setLayout(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-                setCancelable(false)
-            }
+            val dialog = Dialog(this)
+            dialog.setContentView(R.layout.pantalla_dialog_eliminar_cuenta)
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+            ajustarDialog(dialog)
+
+            dialog.setCancelable(false)
 
             dialog.findViewById<Button>(R.id.btn_Arrepentimiento).setOnClickListener {
                 dialog.dismiss()
@@ -117,16 +99,59 @@ class DatosPersonales : AppCompatActivity() {
                                 "Se ha eliminado tu cuenta, hasta pronto… 😢",
                                 Toast.LENGTH_LONG
                             ).show()
-                            startActivity(Intent(this@DatosPersonales, LoginUserNoExiste::class.java))
+                            startActivity(
+                                Intent(
+                                    this@DatosPersonales,
+                                    LoginUserNoExiste::class.java
+                                )
+                            )
                             finishAffinity()
                         }
                     }
                 }
             }
+
             dialog.show()
         }
-
-        /* volver sin guardar datos de cambio */
         btn_volverPantallaInicio.setOnClickListener { finish() }
     }
+
+
+    override fun onResume() {
+        super.onResume()
+        cargarDatos()
+    }
+
+    private fun cargarDatos() {
+        nombreUsr?.let { nombre ->
+            CoroutineScope(Dispatchers.IO).launch {
+                val usuario = usuarioDao.obtenerPorNombre(nombre)
+                withContext(Dispatchers.Main) {
+                    usuario?.let {
+                        usuarioActual = it
+                        txtNombre.text = it.nombre
+                        /* carga la imagen a través del id */
+                        imgPerfil.setImageResource(
+                            when (it.idImagen) {
+                                1 -> R.drawable.img_avatar_defecto
+                                2 -> R.drawable.img_avatar2
+                                3 -> R.drawable.img_avatar6
+                                4 -> R.drawable.img_avatar3
+                                5 -> R.drawable.img_avatar4
+                                6 -> R.drawable.img_avatar5
+                                else -> R.drawable.img_avatar_defecto
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
+
+
+
+
+
+
+
