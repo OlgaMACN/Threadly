@@ -38,14 +38,14 @@
         android:background="@color/fondoPantallas" />
 
 
-    <!--No interesa el textView, sólo el color...
-        android:id="@+id/txtVw_colorHiloConsulta"
-        android:layout_width="0dp"
+    <!-- texto en caso de no encontrar el color -->
+    <TextView
+        android:id="@+id/txtVw_colorImparseable"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:fontFamily="@font/catchy_mager"
-        android:gravity="center"
-        android:text="@string/colorHiloCat"
-        android:textColor="@color/black"
-        android:textSize="15sp" />-->
+        android:text="Referencia Imparseable"
+        android:textSize="12sp"
+        android:textColor="@color/referenciaImparseable"
+        android:visibility="gone"
+        android:layout_marginStart="8dp"/>
 </LinearLayout>

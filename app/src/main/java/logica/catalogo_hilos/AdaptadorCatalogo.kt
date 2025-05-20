@@ -16,11 +16,10 @@ class AdaptadorCatalogo(
 ) : RecyclerView.Adapter<AdaptadorCatalogo.CatalogoViewHolder>() {
 
     inner class CatalogoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
         val txtHilo: TextView = view.findViewById(R.id.txtVw_numHiloConsulta)
         val txtMadejas: TextView = view.findViewById(R.id.txtVw_nombreHiloConsulta)
         val viewColorSwatch: View = view.findViewById(R.id.view_ColorHilo)
-
+        val txtColorError: TextView = view.findViewById(R.id.txtVw_colorImparseable)
         val filaLayout: View = view /* contenedor de la fila para cambiar el fondo */
 
         init {
@@ -50,15 +49,20 @@ class AdaptadorCatalogo(
         val colorStr = item.color
         if (!colorStr.isNullOrBlank()) { /* sólo parsea si no es nulo o vacío */
             try {
-                /* parsear el código de color */
                 val parsed =
                     Color.parseColor(if (colorStr.startsWith("#")) colorStr else "#$colorStr")
                 holder.viewColorSwatch.setBackgroundColor(parsed)
+                holder.viewColorSwatch.visibility = View.VISIBLE
+                holder.txtColorError.visibility = View.GONE
             } catch (e: IllegalArgumentException) {
-                holder.viewColorSwatch.setBackgroundColor(Color.BLACK)
+                /* si nos se puede parsear se muestra el texto */
+                holder.viewColorSwatch.visibility = View.GONE
+                holder.txtColorError.visibility = View.VISIBLE
             }
         } else {
-            holder.viewColorSwatch.setBackgroundColor(Color.BLACK)
+            /* si nos se puede parsear se muestra el texto */
+            holder.viewColorSwatch.visibility = View.GONE
+            holder.txtColorError.visibility = View.VISIBLE
         }
 
         /* comprueba si ha de resaltar la fila o no */
