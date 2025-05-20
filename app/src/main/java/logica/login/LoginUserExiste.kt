@@ -16,11 +16,36 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import logica.pantalla_inicio.PantallaPrincipal
 import persistencia.bbdd.GestorBBDD
+import utiles.SesionUsuario
 
 class LoginUserExiste : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_user_existe)
+
+        /* comprobar si la sesión está abierta, para acceder directamente sin loguearse */
+        val sesionId = SesionUsuario.obtenerSesion(this)
+        if (sesionId != -1) {
+            val bbdd = GestorBBDD.getDatabase(this)
+            val usuarioDao = bbdd.usuarioDao()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val usuario = usuarioDao.obtenerPorId(sesionId)
+                if (usuario != null) {
+                    withContext(Dispatchers.Main) {
+                        val intent = Intent(this@LoginUserExiste, PantallaPrincipal::class.java).apply {
+                            putExtra("usuario_id", usuario.id)
+                            putExtra("nombre_usuario", usuario.nombre)
+                        }
+                        startActivity(intent)
+                        finish()
+                    }
+                } else {
+                    SesionUsuario.cerrarSesion(this@LoginUserExiste) /* si el usuario ha sido borrado */
+                }
+            }
+            return /*no se ejecutará el login si hay sesión activa */
+        }
 
         val usuario = findViewById<EditText>(R.id.edTxt_ingresarNombreUser)
         val contrasena = findViewById<EditText>(R.id.edTxt_ingresarConstrasenaUser)
@@ -48,7 +73,6 @@ class LoginUserExiste : AppCompatActivity() {
             val userEntradaLogin = usuario.text.toString().trim()
             val contrasenaEntradaLogin = contrasena.text.toString().trim()
 
-            // todo podría pulir los toast para que sean más concretos, ya para mejoras finales jeje
             /* ni vacío ni mayor a 20 caracteres */
             if (userEntradaLogin.isEmpty() || contrasenaEntradaLogin.isEmpty() || userEntradaLogin.length > 20 || contrasenaEntradaLogin.length > 20) {
                 Toast.makeText(
@@ -88,13 +112,14 @@ class LoginUserExiste : AppCompatActivity() {
                     } else {
                         /* si se introducen bien el login y la constraseña, el usuario podrá iniciar sesión */
                         withContext(Dispatchers.Main) {
+                            SesionUsuario.guardarSesion(this@LoginUserExiste, usuarioEncontrado.id)
+
                             val intent = Intent(this@LoginUserExiste, PantallaPrincipal::class.java)
                             intent.putExtra("nombre_usuario", userEntradaLogin)
                             intent.putExtra("usuario_id", usuarioEncontrado.id)
                             startActivity(intent)
+                            finish()
                         }
-
-
                     }
                 }
 

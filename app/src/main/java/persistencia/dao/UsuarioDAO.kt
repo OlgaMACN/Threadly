@@ -20,10 +20,16 @@ interface UsuarioDAO {
     @Query("SELECT * FROM Usuario WHERE id = :id")
     suspend fun obtenerPorId(id: Int): Usuario?
 
+    @Query("DELETE FROM usuario WHERE id = :id")
+    fun eliminarPorId(id: Int)
+
     @Update(onConflict = OnConflictStrategy.FAIL)
     suspend fun actualizar(usuario: Usuario)
 
     @Delete
     suspend fun eliminar(usuario: Usuario)
+
+
+
 
 }

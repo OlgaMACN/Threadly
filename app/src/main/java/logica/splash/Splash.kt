@@ -12,6 +12,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.threadly.R
+import logica.pantalla_inicio.PantallaPrincipal
+import utiles.SesionUsuario
 
 class Splash : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,11 +39,21 @@ class Splash : AppCompatActivity() {
             }
         }, 2500)
 
-        /* después de 6 segundos, pasar al login */
+        /* después de 5 segundos, pasar al login */
         Timer().schedule(object : TimerTask() {
             override fun run() {
-                startActivity(Intent(this@Splash, LoginUserExiste::class.java))
-                finish() // para que el usuario no pueda volver a esta pantalla
+                val pantallaProgramada = if (SesionUsuario.haySesionActiva(this@Splash)) {
+                    /* si el usuario no ha cerrado sesión pasará del splash al login */
+                    val intent = Intent(this@Splash, PantallaPrincipal::class.java).apply {
+                        putExtra("usuario_id", SesionUsuario.obtenerSesion(this@Splash))
+                    }
+                    intent
+                } else {
+                    /* si no se encuentra una sesión activa en el teléfono, al login */
+                    Intent(this@Splash, LoginUserExiste::class.java)
+                }
+                startActivity(pantallaProgramada)
+                finish()
             }
         }, 5000)
     }
