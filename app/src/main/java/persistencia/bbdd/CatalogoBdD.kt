@@ -9,7 +9,7 @@ import persistencia.entidades.Catalogo
 
 @Database(entities = [Catalogo::class], version = 1)
 abstract class CatalogoBdD : RoomDatabase() {
-    abstract fun hiloDao(): CatalogoDAO
+    abstract fun catalogoDao(): CatalogoDAO
 
     companion object {
         @Volatile

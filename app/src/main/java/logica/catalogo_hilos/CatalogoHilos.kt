@@ -8,6 +8,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
@@ -15,18 +16,23 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import kotlinx.coroutines.launch
+import persistencia.bbdd.CatalogoBdD
+import persistencia.dao.CatalogoDAO
+import persistencia.entidades.Catalogo
 import utiles.BaseActivity
 import utiles.RepositorioCatalogo
 import utiles.funciones.ajustarDialog
 import utiles.funciones.funcionToolbar
+import utiles.funciones.toCatalogo
 
 class CatalogoHilos : BaseActivity() {
 
-    /* variable para guardar el hilo a modificar */
-    private var numHiloAModificar: Int? = null
+    private lateinit var catalogoDao: CatalogoDAO
 
     private lateinit var tablaCatalogo: RecyclerView
     private lateinit var adaptadorCatalogo: AdaptadorCatalogo
@@ -44,13 +50,29 @@ class CatalogoHilos : BaseActivity() {
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
         tablaCatalogo = findViewById(R.id.tabla_catalogo)
-
         adaptadorCatalogo =
             AdaptadorCatalogo(listaCatalogo, ::dialogEliminarHiloCatalogo)
-
         tablaCatalogo.layoutManager = LinearLayoutManager(this)
         tablaCatalogo.adapter = adaptadorCatalogo
 
+        /* inicialización del repositorio del catálogo y del dao */
+        repositorioCatalogo = RepositorioCatalogo(this)
+        catalogoDao = CatalogoBdD.getDatabase(applicationContext).catalogoDao()
+
+
+        /* acceder a la BdD sin bloquear la interfaz y evitar fugas de memoria */
+        lifecycleScope.launch {
+            /* comprobará si es la primera vez en la propia función */
+            repositorioCatalogo.inicializarCatalogoSiEsNecesario()
+            val datos = repositorioCatalogo.obtenerCatalogo()
+
+
+           // Log.d("CatalogoHilos", "Datos obtenidos: ${datos.size}") // <-- todo Añade esto
+
+            listaCatalogo.clear()
+            listaCatalogo.addAll(datos.map { it.toHiloCatalogo() })
+            adaptadorCatalogo.actualizarLista(listaCatalogo)
+        }
 
         /* componentes */
         val btn_AgregarHilo = findViewById<Button>(R.id.btn_agregarHiloConsulta)
@@ -65,6 +87,15 @@ class CatalogoHilos : BaseActivity() {
         }
 
         buscadorHilo()
+    }
+
+    /* función de conversión para poder usar el modelo del adaptador */
+    fun Catalogo.toHiloCatalogo(): HiloCatalogo {
+        return HiloCatalogo(
+            numHilo = this.codigoHilo,
+            nombreHilo = this.nombreHilo,
+            color = this.color
+        )
     }
 
     /* buscar un hilo en el catálogo */
@@ -147,10 +178,37 @@ class CatalogoHilos : BaseActivity() {
                 return@setOnClickListener
             }
 
-            listaCatalogo.add(HiloCatalogo(numHiloString, nombreHilo, null))
+            val nuevoHilo = HiloCatalogo(numHiloString, nombreHilo, null)
+            listaCatalogo.add(nuevoHilo)
             adaptadorCatalogo.notifyItemInserted(listaCatalogo.size - 1)
             adaptadorCatalogo.actualizarLista(listaCatalogo)
 
+            lifecycleScope.launch {
+                try {
+                    catalogoDao.insertar(nuevoHilo.toCatalogo())
+
+                    /* si el hilo se inserta bien en la BdD, se actualizan el adaptador y la lista */
+                    listaCatalogo.add(nuevoHilo)
+                    adaptadorCatalogo.actualizarLista(listaCatalogo)
+
+                    runOnUiThread { /* mostrar toast en el hilo principal para que no crashee */
+                        Toast.makeText(
+                            this@CatalogoHilos,
+                            "Hilo añadido al catálogo correctamente",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        dialog.dismiss()
+                    }
+                } catch (e: Exception) {
+                    runOnUiThread {
+                        Toast.makeText(
+                            this@CatalogoHilos,
+                            "Error al añadir el hilo :(",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
             dialog.dismiss()
         }
 
@@ -207,7 +265,6 @@ class CatalogoHilos : BaseActivity() {
 
         dialog.show()
     }
-
 
     /* modificar hilo 2: con los campos escogidos ya se procede a modificar */
     private fun dialogModificarHiloFinal(
@@ -277,10 +334,13 @@ class CatalogoHilos : BaseActivity() {
                 hiloActual.nombreHilo = nuevoNombre
             }
             /* para que el adaptador sepa que el hilo ha cambiado */
-            adaptadorCatalogo.notifyItemChanged(posicion)
+            adaptadorCatalogo.actualizarLista(listaCatalogo)
             Toast.makeText(this, "Hilo modificado correctamente", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
 
+            lifecycleScope.launch {
+                catalogoDao.actualizar(hiloActual.toCatalogo())
+            }
         }
 
         dialog.show()
@@ -327,6 +387,10 @@ class CatalogoHilos : BaseActivity() {
             listaCatalogo.removeAt(posicion)
             adaptadorCatalogo.notifyItemRemoved(posicion)
             Toast.makeText(this, "Hilo $numHilo eliminado del catálogo", Toast.LENGTH_SHORT).show()
+
+            lifecycleScope.launch {
+                catalogoDao.eliminar(hilo.toCatalogo())
+            }
             dialog.dismiss()
         }
 

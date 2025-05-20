@@ -14,6 +14,7 @@ interface CatalogoDAO {
     @Query("SELECT * FROM catalogo")
     suspend fun obtenerTodos(): List<Catalogo>
 
+    /* estrategia que evita duplicados al hacer la inserción */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertar(hilo: Catalogo)
 

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.threadly.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -86,6 +87,7 @@ class DatosPersonales : BaseActivity() {
         val btnConfirmar = dialog.findViewById<Button>(R.id.btn_EliminarCuentaThreadly)
 
         btnCancelar.setOnClickListener {
+            Toast.makeText(this, "¡Uff qué susto...! Qué bien que te quedes \uD83E\uDD70", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
 
@@ -104,6 +106,8 @@ class DatosPersonales : BaseActivity() {
                 consejoDao.borrarConsejosDeUsuario(usuarioId) */
 
                 withContext(Dispatchers.Main) {
+                    Toast.makeText(this@DatosPersonales, "Tu cuenta se ha eliminado \uD83D\uDE22 ¡Hasta pronto!", Toast.LENGTH_LONG).show()
+
                     /* cierra sesión del usuario borrado y vuelve al login */
                     SesionUsuario.cerrarSesion(this@DatosPersonales)
 
