@@ -13,4 +13,5 @@ interface ConsejoDAO {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertarTodos(vararg consejos: Consejo)
+
 }

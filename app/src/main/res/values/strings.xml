@@ -108,7 +108,7 @@
 
     <!-- Pantalla Catalogo Hilos -->
     <string name="ConsultarHilosEncabezado">CONSULTAR HILOS</string>
-    <string name="buscarHiloConsulta">Buscar hilo...</string>
+    <string name="no_hay_resultadosCatalogo">Ese hilo no se encuentra en tu catálogo :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
     <!-- tabla stock cabecera (stock_tabla_filas_cabecera) -->
     <string name="NumHiloConsulta">Nº HILO</string>
     <string name="nombreHiloConsulta">NOMBRE</string>
@@ -132,7 +132,7 @@
     <string name="introducirNombreHiloModificar">Introduce un nombre...</string>
     <!-- Dialog Eliminar Hilo (catalogo_dialog_eliminar_hilo)-->
     <string name="eliminarHiloCabeceraCat">ELIMINAR HILO</string>
-    <string name="mensajeEliminarHiloCat">¿Seguro que quieres borrar el hilo del catálogo?</string>
+    <string name="confirmarEliminarHiloCat">¿Seguro que quieres eliminar el hilo "%s" del catálogo?</string>
     <string name="botonVolverEliminarCat">Volver</string>
     <string name="botonEliminarHiloCat">Sí, eliminar</string>
 

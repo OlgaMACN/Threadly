@@ -1,11 +1,14 @@
 package logica.catalogo_hilos
 
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -16,17 +19,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import utiles.BaseActivity
+import utiles.ajustarDialog
 import utiles.funcionToolbar
 
 class CatalogoHilos : BaseActivity() {
 
+    /* variable para guardar el hilo a modificar */
+    private var numHiloAModificar: Int? = null
+
     private lateinit var tablaCatalogo: RecyclerView
     private lateinit var adaptadorCatalogo: AdaptadorCatalogo
     private val listaCatalogo = mutableListOf<HiloCatalogo>()
-
-    /*me declaro dos variables para guardar estado de CheckBox*/
-    private var valorCheckHilo : Boolean = false
-    private var valorCheckNombre : Boolean = false
 
     private lateinit var checkBoxHilo: CheckBox
     private lateinit var checkBoxNombre: CheckBox
@@ -38,62 +41,60 @@ class CatalogoHilos : BaseActivity() {
 
         tablaCatalogo = findViewById(R.id.tabla_catalogo)
 
-        adaptadorCatalogo = AdaptadorCatalogo(listaCatalogo, ::dialogEliminarHilo)
+        adaptadorCatalogo =
+            logica.catalogo_hilos.AdaptadorCatalogo(listaCatalogo, ::dialogEliminarHiloCatalogo)
 
         tablaCatalogo.layoutManager = LinearLayoutManager(this)
         tablaCatalogo.adapter = adaptadorCatalogo
 
 
+        /* componentes */
         val btn_AgregarHilo = findViewById<Button>(R.id.btn_agregarHiloConsulta)
-
         val btn_ModificarHilo = findViewById<Button>(R.id.btn_modificarHiloConsulta)
+        checkBoxHilo = findViewById(R.id.ckBx_numHiloModificar)
+        checkBoxNombre = findViewById(R.id.ckB_nombreHiloModificar)
 
-
-        //configuracion boton agregar hilo
-        btn_AgregarHilo.setOnClickListener() { dialogAgregarHilo() }
-
-        //configuracion boton modificar hilo
-        btn_ModificarHilo.setOnClickListener() { dialogModificarHilo() }
-
+        /* acciones */
+        btn_AgregarHilo.setOnClickListener() { dialogAgregarHiloCatalogo() }
+        btn_ModificarHilo.setOnClickListener() { dialogModificarHiloCatalogo() }
         buscadorHilo()
     }
 
-    /* acción del buscador */
+    /* buscar un hilo en el catálogo */
     private fun buscadorHilo() {
         val editTextBuscar = findViewById<EditText>(R.id.txtVw_buscarHiloConsulta)
         val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaCatalogo)
-        val tablaStock = findViewById<RecyclerView>(R.id.tabla_catalogo)
-        val txtNoResultados = findViewById<TextView>(R.id.txtVw_sinResultados)
+        val txtNoResultados = findViewById<TextView>(R.id.txtVw_sinResultadosCatalogo)
 
         txtNoResultados.visibility = View.GONE
 
         btnLupa.setOnClickListener {
             val texto = editTextBuscar.text.toString().trim().uppercase()
-            val coincidencia = listaCatalogo.find { it.numHilo.toString() == texto }
+            val coincidencia = listaCatalogo.find {
+                it.numHilo.toString() == texto || it.nombreHilo.contains(texto, ignoreCase = true)
+            }
 
             if (coincidencia != null) {
-                val resultados = listOf(coincidencia)
-                /* si encuentra el hilo lo resaltará en la tabla */
+                val index = listaCatalogo.indexOf(coincidencia)
+
                 adaptadorCatalogo.resaltarHilo(coincidencia.numHilo.toString())
                 adaptadorCatalogo.actualizarLista(listaCatalogo)
-                tablaStock.visibility = View.VISIBLE
-                txtNoResultados.visibility = View.GONE
+                tablaCatalogo.scrollToPosition(index)
 
-                val index = listaCatalogo.indexOf(coincidencia)
-                tablaStock.scrollToPosition(index)
+                tablaCatalogo.visibility = View.VISIBLE
+                txtNoResultados.visibility = View.GONE
             } else {
-                tablaStock.visibility = View.GONE
+                tablaCatalogo.visibility = View.GONE
                 txtNoResultados.visibility = View.VISIBLE
             }
         }
 
-        /* si se borra la búsqueda la tabla vuelve a aparecer */
         editTextBuscar.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     adaptadorCatalogo.resaltarHilo(null)
                     adaptadorCatalogo.actualizarLista(listaCatalogo)
-                    tablaStock.visibility = View.VISIBLE
+                    tablaCatalogo.visibility = View.VISIBLE
                     txtNoResultados.visibility = View.GONE
                 }
             }
@@ -103,64 +104,51 @@ class CatalogoHilos : BaseActivity() {
         })
     }
 
-    private fun dialogAgregarHilo() {
+    /* agregar hilo al catálogo */
+    private fun dialogAgregarHiloCatalogo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_agregar_hilo)
 
-        /* se oscurece el fondo y queda súper chulo */
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        /* ancho y alto para configurar el tamaño independientemente del layout */
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-
-        /* con setCancelable se consigue que no se cierre el dialogo si el user clica fuera de él */
+        ajustarDialog(dialog)
         dialog.setCancelable(false)
 
-        /* variables para este dialog */
         val inputNumHilo = dialog.findViewById<EditText>(R.id.edTxt_agregarNumHilo)
-        val inputNombreHilo =
-            dialog.findViewById<EditText>(R.id.editTxt_agregarNombreHilo)
+        val inputNombreHilo = dialog.findViewById<EditText>(R.id.editTxt_agregarNombreHilo)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volverAgregarHilo)
         val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarAgregarHilo)
 
+        btnVolver.setOnClickListener {
+            dialog.dismiss()
+        }
 
         btnGuardar.setOnClickListener {
-            val hilo = inputNumHilo.text.toString().trim()
+            val numHiloString = inputNumHilo.text.toString().trim()
             val nombreHilo = inputNombreHilo.text.toString().uppercase().trim()
 
-            if (hilo.isEmpty() || nombreHilo.isEmpty()) {
+            if (numHiloString.isEmpty() || nombreHilo.isEmpty()) {
                 Toast.makeText(this, "Ningún campo puede estar vacío", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            val numHilo =
-                hilo.toIntOrNull() /* convierto a entero para poder validar datos numéricos */
-            if (nombreHilo.isEmpty() || numHilo == null || numHilo < 0) {
+            val numHilo = numHiloString.toIntOrNull()
+            if (numHilo == null || numHilo < 0) {
+                Toast.makeText(this, "Introduce un número de hilo válido", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if (listaCatalogo.any { it.numHilo == numHilo }) {
                 Toast.makeText(
                     this,
-                    "Solo números enteros positivos o letras",
+                    "El número de hilo ya existe en el catálogo",
                     Toast.LENGTH_LONG
-                )
-                    .show()
+                ).show()
                 return@setOnClickListener
             }
 
-            if (listaCatalogo.any { it.numHilo.toString() == hilo }) {
-                Toast.makeText(this, "El hilo '$hilo' ya existe", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-
-            listaCatalogo.add(HiloCatalogo(numHilo, nombreHilo))
+            listaCatalogo.add(logica.catalogo_hilos.HiloCatalogo(numHilo, nombreHilo))
             adaptadorCatalogo.notifyItemInserted(listaCatalogo.size - 1)
             adaptadorCatalogo.actualizarLista(listaCatalogo)
-            /* una vez insertado el hilo, se cierra el dialog*/
-            dialog.dismiss()
-        }
-
-        btnVolver.setOnClickListener() {
 
             dialog.dismiss()
         }
@@ -168,140 +156,160 @@ class CatalogoHilos : BaseActivity() {
         dialog.show()
     }
 
-    /*para escoger datos a modificar del hilo del catalogo*/
-    private fun dialogModificarHilo() {
+    /* modificar hilo 1: se escoge el hilo y los campos a modificar */
+    private fun dialogModificarHiloCatalogo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_modificar)
-
-        /* se oscurece el fondo y queda súper chulo */
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        /* ancho y alto para configurar el tamaño independientemente del layout */
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-
-        /* con setCancelable se consigue que no se cierre el dialogo si el user clica fuera de él */
+        ajustarDialog(dialog)
         dialog.setCancelable(false)
 
-        val inputNumHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirNumHilo)
-        checkBoxHilo = dialog.findViewById(R.id.ckBx_numHiloModificar)
-        checkBoxNombre = dialog.findViewById(R.id.ckB_nombreHiloModificar)
-
+        val edTxt_numHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirNumHilo)
         val btnSiguiente = dialog.findViewById<Button>(R.id.btn_botonSiguienteModificar)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volverModificarHilo)
 
-        btnSiguiente.setOnClickListener() {
-            //TODO asociar numero de hilo que se introduce aqui con siguiente metodo en caso de modificarlo (porque cambiaría)
-            val hilo = inputNumHilo.text.toString().trim()
+        btnVolver.setOnClickListener { dialog.dismiss() }
 
-            if (hilo.isEmpty() || !checkBoxHilo.isChecked || !checkBoxNombre.isChecked) {
+        btnSiguiente.setOnClickListener {
+            val numHiloStr = edTxt_numHilo.text.toString().trim()
+            val numHilo = numHiloStr.toIntOrNull()
 
-                Toast.makeText(this,
-                    "Debes introducir un número de hilo y marcar una de las opciones", Toast.LENGTH_LONG).show()
-            } else {
-
-                guardarEstados()
-                dialogModificarHiloFinal()
+            if (numHilo == null) {
+                Toast.makeText(this, "Número inválido", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
             }
 
-        }
-
-        btnVolver.setOnClickListener() {
-
-            dialog.dismiss()
+            val encontrado = listaCatalogo.find { it.numHilo == numHilo }
+            if (encontrado == null) {
+                Toast.makeText(this, "Hilo no encontrado", Toast.LENGTH_LONG).show()
+            } else {
+                numHiloAModificar = numHilo
+                dialog.dismiss()
+                dialogModificarHiloFinal()
+            }
         }
 
         dialog.show()
-
     }
 
-    /*guardamos estados de checkbox*/
-    private fun guardarEstados() {
-        valorCheckHilo = checkBoxHilo.isChecked
-        valorCheckNombre = checkBoxNombre.isChecked
-    }
-
-    /*para modificar campo escogido del hilo correspondiente*/
-    //TODO el metodo debe recibir por parametro el valor de cada uno de los checkbox
+    /* modificar hilo 2: con los campos escogidos ya se procede a modificar */
     private fun dialogModificarHiloFinal() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_modificar_final)
-
-        /* se oscurece el fondo y queda súper chulo */
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        /* ancho y alto para configurar el tamaño independientemente del layout */
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-
-        /* con setCancelable se consigue que no se cierre el dialogo si el user clica fuera de él */
+        ajustarDialog(dialog)
         dialog.setCancelable(false)
 
-        val inputNumHiloNuevo = dialog.findViewById<EditText>(R.id.edTxt_introducirNumHiloModificar)
-        val inputNombreHiloNuevo = dialog.findViewById<EditText>(R.id.editTxt_introducirNombreHiloModificar)
-
+        val edTxt_numNuevo = dialog.findViewById<EditText>(R.id.edTxt_introducirNumHiloModificar)
+        val edTxt_nombreNuevo =
+            dialog.findViewById<EditText>(R.id.editTxt_introducirNombreHiloModificar)
+        val checkNum = dialog.findViewById<CheckBox>(R.id.ckBx_numHiloModificar)
+        val checkNombre = dialog.findViewById<CheckBox>(R.id.ckB_nombreHiloModificar)
         val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarModificarHilo)
-        val btnVolver = dialog.findViewById<Button>(R.id.btn_volverModificarHiloFinal)
+        val btnCancelar = dialog.findViewById<Button>(R.id.btn_volverModificarHiloFinal)
 
-        btnGuardar.setOnClickListener() {
+        btnCancelar.setOnClickListener { dialog.dismiss() }
 
-            when {
+        btnGuardar.setOnClickListener {
+            val modNum = checkNum.isChecked
+            val modNombre = checkNombre.isChecked
 
-                valorCheckHilo && valorCheckNombre -> {
-                    //TODO si ambos estan marcados, se pueden editar los dos
+            if (!modNum && !modNombre) {
+                Toast.makeText(this, "Selecciona al menos una opción", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            val index = listaCatalogo.indexOfFirst { it.numHilo == numHiloAModificar }
+            if (index == -1) {
+                Toast.makeText(this, "El hilo no existe en el catálogo", Toast.LENGTH_LONG).show()
+                dialog.dismiss()
+                return@setOnClickListener
+            }
+
+            val nuevoNum = edTxt_numNuevo.text.toString().trim().toIntOrNull()
+
+            /* normalizar antes validarlo por si acaso */
+            val nuevoNombreRaw = edTxt_nombreNuevo.text.toString()
+            val nuevoNombre = nuevoNombreRaw.trim().uppercase()
+
+            if (modNum) {
+                if (nuevoNum == null) {
+                    Toast.makeText(this, "Número inválido", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
                 }
-                valorCheckHilo -> {
-                    //TODO unicamente se ha marcado el num de hilo
-                }
-                valorCheckNombre -> {
-                    //TODO unicamente se ha marcado el nombre
+                if (nuevoNum != numHiloAModificar && listaCatalogo.any { it.numHilo == nuevoNum }) {
+                    Toast.makeText(this, "Ese número de hilo ya existe", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
                 }
             }
 
-        }
+            if (modNombre && nuevoNombre.isBlank()) {
+                Toast.makeText(this, "Nombre inválido", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
 
-        btnVolver.setOnClickListener() {
+            val hiloOriginal = listaCatalogo[index]
+            val hiloModificado = logica.catalogo_hilos.HiloCatalogo(
+                if (modNum) nuevoNum!! else hiloOriginal.numHilo,
+                if (modNombre) nuevoNombre else hiloOriginal.nombreHilo
+            )
 
+            listaCatalogo[index] = hiloModificado
+            adaptadorCatalogo.actualizarLista(listaCatalogo)
+            adaptadorCatalogo.resaltarHilo(hiloModificado.numHilo.toString())
+            tablaCatalogo.scrollToPosition(index)
             dialog.dismiss()
         }
 
         dialog.show()
-
     }
 
-    /* para borrar un hilo manteniendo pulsada la fila */
-    private fun dialogEliminarHilo(posicion: Int) {
+    /* eliminar un hilo del catalogo */
+    private fun dialogEliminarHiloCatalogo(posicion: Int) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_eliminar_hilo)
-
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        ajustarDialog(dialog)
         dialog.setCancelable(false)
 
-        /* variables del dialog */
         val btnEliminar = dialog.findViewById<Button>(R.id.btn_botonEliminarHiloCat)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_botonVolverEliminarCat)
+        val txtConfirmacion = dialog.findViewById<TextView>(R.id.txtVw_mensajeEliminarHiloCat)
+
+        val hilo = listaCatalogo[posicion]
+        val nombreHilo = hilo.nombreHilo
+        val numHilo = hilo.numHilo.toString()
+
+        val textoOriginal = getString(R.string.confirmarEliminarHiloCat)
+        val textoConDatos = textoOriginal.replace("%s", "$numHilo - $nombreHilo")
+
+        val spannable = SpannableString(textoConDatos)
+        val start = textoConDatos.indexOf(numHilo)
+        val end = start + numHilo.length + nombreHilo.length + 3
+
+        if (start != -1) {
+            spannable.setSpan(
+                ForegroundColorSpan(Color.RED),
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        txtConfirmacion.text = spannable
 
         btnVolver.setOnClickListener {
             dialog.dismiss()
         }
 
         btnEliminar.setOnClickListener {
-            val hiloEliminado = listaCatalogo[posicion].numHilo
             listaCatalogo.removeAt(posicion)
             adaptadorCatalogo.notifyItemRemoved(posicion)
-
-            Toast.makeText(this, "Hilo '$hiloEliminado' eliminado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Hilo $numHilo eliminado del catálogo", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
 
         dialog.show()
     }
+
 }

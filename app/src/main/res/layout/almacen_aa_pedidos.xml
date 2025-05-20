@@ -48,7 +48,6 @@
         android:layout_width="38dp"
         android:layout_height="43dp"
         android:background="@android:color/transparent"
-        android:contentDescription="@string/buscarHiloConsulta"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@id/edTxt_buscadorAlmacen"
         app:layout_constraintEnd_toEndOf="@id/edTxt_buscadorAlmacen"

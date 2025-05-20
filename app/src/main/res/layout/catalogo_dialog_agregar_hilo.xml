@@ -33,7 +33,7 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:hint="@string/agregarNumHilo"
-        android:inputType="number"
+        android:inputType="text"
         android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/editTxt_agregarNombreHilo"

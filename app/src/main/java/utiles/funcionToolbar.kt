@@ -50,7 +50,6 @@ fun funcionToolbar(activity: BaseActivity) {
         }
     }
 
-
     /* configuración botón inicio */
     btn_inicio.setOnClickListener {
         clicSeguro {
@@ -71,5 +70,4 @@ fun funcionToolbar(activity: BaseActivity) {
             siNoEsActivityActual(AlmacenPedidos::class.java)
         }
     }
-
 }
