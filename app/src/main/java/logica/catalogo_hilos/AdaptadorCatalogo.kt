@@ -49,13 +49,14 @@ class AdaptadorCatalogo(
         holder.txtColor.text = item.color ?: "Sin color"
 
         /* por si no se carga bien el color, que en vez de expeción, sea negro */
-        try {
-            item.color?.let {
-                holder.txtColor.setTextColor(Color.parseColor(it))
-            } ?: run {
+        val colorStr = item.color
+        if (!colorStr.isNullOrBlank()) { /* sólo parsea si no es nulo o vacío */
+            try {
+                holder.txtColor.setTextColor(Color.parseColor(colorStr))
+            } catch (e: IllegalArgumentException) {
                 holder.txtColor.setTextColor(Color.BLACK)
             }
-        } catch (e: IllegalArgumentException) {
+        } else {
             holder.txtColor.setTextColor(Color.BLACK)
         }
 
@@ -72,7 +73,6 @@ class AdaptadorCatalogo(
     @SuppressLint("NotifyDataSetChanged")
     fun actualizarLista(nuevaLista: List<HiloCatalogo>) {
         items = nuevaLista.toMutableList()
-        // TODO cambiar a algo más eficiente pero de momento tira
         notifyDataSetChanged()
     }
 

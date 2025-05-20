@@ -1,6 +1,7 @@
 package utiles
 
 import android.content.Context
+import android.util.Log
 import com.threadly.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,9 +17,14 @@ class RepositorioCatalogo(private val context: Context) {
     suspend fun inicializarCatalogoSiEsNecesario() {
         withContext(Dispatchers.IO) {
             val existentes = dao.obtenerTodos()
+            Log.d("RepoCatalogo", "Antes de inicializar: existen ${existentes.size} hilos en BD")
             if (existentes.isEmpty()) {
                 val desdeXml = leerXML(context, R.raw.catalogo_hilos)
+                Log.d("RepoCatalogo", "Leídos ${desdeXml.size} hilos desde XML")
                 dao.insertarTodos(desdeXml)
+
+                val despues = dao.obtenerTodos()
+                Log.d("RepoCatalogo", "Después de insertar: existen ${despues.size} hilos en BD")
             }
         }
     }

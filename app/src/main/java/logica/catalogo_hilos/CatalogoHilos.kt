@@ -67,10 +67,11 @@ class CatalogoHilos : BaseActivity() {
             val datos = repositorioCatalogo.obtenerCatalogo()
 
 
-           // Log.d("CatalogoHilos", "Datos obtenidos: ${datos.size}") // <-- todo Añade esto
+            Log.d("CatalogoHilos", "Datos obtenidos: ${datos.size}") // <-- todo Añade esto
 
-            listaCatalogo.clear()
+            listaCatalogo.clear() /* borra datos viejos de la lista en memoria */
             listaCatalogo.addAll(datos.map { it.toHiloCatalogo() })
+            Log.d("CatalogoHilos", "Lista convertida: $listaCatalogo") // todo
             adaptadorCatalogo.actualizarLista(listaCatalogo)
         }
 

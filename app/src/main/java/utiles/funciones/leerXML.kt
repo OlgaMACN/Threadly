@@ -13,13 +13,13 @@ fun leerXML(context: Context, resourceId: Int): List<Catalogo> {
         val builderFactory = DocumentBuilderFactory.newInstance()
         val docBuilder = builderFactory.newDocumentBuilder()
         val doc = docBuilder.parse(inputStream)
-        val nodosHilo = doc.getElementsByTagName("Hilo")
+        val nodosHilo = doc.getElementsByTagName("hilo")
 
         for (i in 0 until nodosHilo.length) {
             val nodo = nodosHilo.item(i) as Element
-            val codigo = nodo.getElementsByTagName("Codigo").item(0).textContent.trim()
-            val nombre = nodo.getElementsByTagName("Nombre").item(0).textContent.trim()
-            val color = nodo.getElementsByTagName("Color").item(0).textContent.trim()
+            val codigo = nodo.getElementsByTagName("codigo").item(0).textContent.trim()
+            val nombre = nodo.getElementsByTagName("nombre").item(0).textContent.trim()
+            val color = nodo.getElementsByTagName("color").item(0).textContent.trim()
 
             listaHilos.add(
                 Catalogo(
