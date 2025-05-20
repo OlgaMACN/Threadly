@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import utiles.BaseActivity
+import utiles.RepositorioCatalogo
 import utiles.funciones.ajustarDialog
 import utiles.funciones.funcionToolbar
 
@@ -33,6 +34,9 @@ class CatalogoHilos : BaseActivity() {
 
     private lateinit var checkBoxHilo: CheckBox
     private lateinit var checkBoxNombre: CheckBox
+
+    /* añadir repositorio para acceder a la BBDD del catálogo */
+    private lateinit var repositorioCatalogo: RepositorioCatalogo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
