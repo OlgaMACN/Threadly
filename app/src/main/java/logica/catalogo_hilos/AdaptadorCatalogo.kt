@@ -19,7 +19,7 @@ class AdaptadorCatalogo(
 
         val txtHilo: TextView = view.findViewById(R.id.txtVw_numHiloConsulta)
         val txtMadejas: TextView = view.findViewById(R.id.txtVw_nombreHiloConsulta)
-        val txtColor: TextView = view.findViewById(R.id.txtVw_colorHiloConsulta)
+        val viewColorSwatch: View = view.findViewById(R.id.view_ColorHilo)
 
         val filaLayout: View = view /* contenedor de la fila para cambiar el fondo */
 
@@ -45,19 +45,20 @@ class AdaptadorCatalogo(
         val item = items[position]
         holder.txtHilo.text = item.numHilo.toString()
         holder.txtMadejas.text = item.nombreHilo
-        holder.txtColor.text = item.color
-        holder.txtColor.text = item.color ?: "Sin color"
 
         /* por si no se carga bien el color, que en vez de expeción, sea negro */
         val colorStr = item.color
         if (!colorStr.isNullOrBlank()) { /* sólo parsea si no es nulo o vacío */
             try {
-                holder.txtColor.setTextColor(Color.parseColor(colorStr))
+                /* parsear el código de color */
+                val parsed =
+                    Color.parseColor(if (colorStr.startsWith("#")) colorStr else "#$colorStr")
+                holder.viewColorSwatch.setBackgroundColor(parsed)
             } catch (e: IllegalArgumentException) {
-                holder.txtColor.setTextColor(Color.BLACK)
+                holder.viewColorSwatch.setBackgroundColor(Color.BLACK)
             }
         } else {
-            holder.txtColor.setTextColor(Color.BLACK)
+            holder.viewColorSwatch.setBackgroundColor(Color.BLACK)
         }
 
         /* comprueba si ha de resaltar la fila o no */
