@@ -121,7 +121,7 @@
     <string name="boton_ModificarHiloConsulta">Modificar hilo</string>
     <!-- Dialog Añadir Hilo (catalogo_dialog_agregar_hilo) -->
     <string name="agregarHiloConsulta">AÑADIR HILO</string>
-    <string name="agregarNumHilo">Nº del hilo.</string>
+    <string name="agregarNumHilo">Nº del hilo</string>
     <string name="agregarNombreHilo">Nombre del hilo</string>
     <!-- Dialog Modificar Hilo (catalogo_dialog_modificar_hilo)-->
     <string name="modificarHiloConsulta">MODIFICAR HILO</string>

@@ -162,6 +162,7 @@ class CatalogoHilos : BaseActivity() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_modificar)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        ajustarDialog(dialog)
         dialog.setCancelable(false)
 
         val inputNumHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirNumHilo)
@@ -217,6 +218,7 @@ class CatalogoHilos : BaseActivity() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_modificar_final)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        ajustarDialog(dialog)
         dialog.setCancelable(false)
 
         val inputNumHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirNumHiloModificar)
