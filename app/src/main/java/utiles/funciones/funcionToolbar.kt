@@ -1,4 +1,4 @@
-package utiles
+package utiles.funciones
 
 import android.widget.ImageButton
 import com.threadly.R
@@ -7,6 +7,7 @@ import logica.catalogo_hilos.CatalogoHilos
 import logica.pantalla_inicio.PantallaPrincipal
 import logica.pedido_hilos.PedidoHilos
 import logica.stock_personal.StockPersonal
+import utiles.BaseActivity
 
 private var ultimoClick = 0L
 

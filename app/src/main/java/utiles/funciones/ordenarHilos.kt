@@ -1,4 +1,4 @@
-package utiles
+package utiles.funciones
 
 import logica.grafico_pedido.HiloGrafico
 

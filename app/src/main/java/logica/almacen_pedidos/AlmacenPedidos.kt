@@ -1,10 +1,9 @@
 package logica.almacen_pedidos
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
 import utiles.BaseActivity
-import utiles.funcionToolbar
+import utiles.funciones.funcionToolbar
 
 class AlmacenPedidos : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

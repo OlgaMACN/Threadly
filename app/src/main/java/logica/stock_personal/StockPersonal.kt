@@ -15,13 +15,12 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import utiles.BaseActivity
-import utiles.ajustarDialog
-import utiles.funcionToolbar
+import utiles.funciones.ajustarDialog
+import utiles.funciones.funcionToolbar
 
 class StockPersonal : BaseActivity() {
 

@@ -16,7 +16,7 @@ import persistencia.bbdd.GestorBBDD
 import persistencia.dao.UsuarioDAO
 import utiles.BaseActivity
 import utiles.SesionUsuario
-import utiles.ajustarDialog
+import utiles.funciones.ajustarDialog
 
 class DatosPersonales : BaseActivity() {
 

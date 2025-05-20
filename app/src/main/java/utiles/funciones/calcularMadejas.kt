@@ -1,4 +1,4 @@
-package utiles
+package utiles.funciones
 
 fun calcularMadejas(puntadas: Int, countTela: Int): Int {
     /* con una estructura de switch se establecen los valores según cada count */

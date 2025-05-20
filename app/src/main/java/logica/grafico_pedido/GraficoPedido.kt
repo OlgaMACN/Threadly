@@ -1,6 +1,5 @@
 package logica.grafico_pedido
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
@@ -17,17 +16,16 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import logica.pedido_hilos.Grafico
 import logica.stock_personal.StockSingleton
 import utiles.BaseActivity
-import utiles.ajustarDialog
-import utiles.calcularMadejas
-import utiles.funcionToolbar
-import utiles.ordenarHilos
+import utiles.funciones.ajustarDialog
+import utiles.funciones.calcularMadejas
+import utiles.funciones.funcionToolbar
+import utiles.funciones.ordenarHilos
 
 class GraficoPedido : BaseActivity() {
 

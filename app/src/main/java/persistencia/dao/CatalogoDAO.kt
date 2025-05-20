@@ -1,4 +1,9 @@
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface CatalogoDAO {
@@ -20,4 +25,7 @@ interface CatalogoDAO {
 
     @Query("DELETE FROM catalogo")
     suspend fun eliminarTodos()
+
+    @Query("SELECT * FROM catalogo WHERE codigoHilo = :codigo LIMIT 1")
+    suspend fun buscarPorCodigo(codigo: String): Catalogo?
 }

@@ -15,7 +15,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,9 +22,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import logica.grafico_pedido.GraficoPedido
 import utiles.BaseActivity
-import utiles.ajustarDialog
+import utiles.funciones.ajustarDialog
 import utiles.ExportadorCSV
-import utiles.funcionToolbar
+import utiles.funciones.funcionToolbar
 
 private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada gráfico */
 

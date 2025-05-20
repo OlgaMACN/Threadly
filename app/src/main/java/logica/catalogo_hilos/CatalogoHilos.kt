@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import utiles.BaseActivity
-import utiles.ajustarDialog
-import utiles.funcionToolbar
+import utiles.funciones.ajustarDialog
+import utiles.funciones.funcionToolbar
 
 class CatalogoHilos : BaseActivity() {
 

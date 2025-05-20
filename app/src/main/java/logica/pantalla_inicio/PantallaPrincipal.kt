@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 import logica.stock_personal.StockSingleton
 import persistencia.bbdd.GestorBBDD
 import utiles.BaseActivity
-import utiles.funcionToolbar
+import utiles.funciones.funcionToolbar
 
 class PantallaPrincipal : BaseActivity() {
 
