@@ -16,7 +16,7 @@
         android:gravity="center"
         android:text="@string/numHiloCat"
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/txtVw_nombreHiloConsulta"
@@ -27,7 +27,7 @@
         android:gravity="center"
         android:text="@string/nombreHiloCat"
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/txtVw_colorHiloConsulta"
@@ -38,5 +38,5 @@
         android:gravity="center"
         android:text="@string/colorHiloCat"
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textSize="15sp" />
 </LinearLayout>

@@ -1,6 +1,6 @@
 package utiles.funciones
 
-import Catalogo
+import persistencia.entidades.Catalogo
 import android.content.Context
 import org.w3c.dom.Element
 import javax.xml.parsers.DocumentBuilderFactory

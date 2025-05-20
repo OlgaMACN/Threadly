@@ -1,7 +1,7 @@
 package utiles
 
-import Catalogo
-import CatalogoDAO
+import persistencia.entidades.Catalogo
+import persistencia.dao.CatalogoDAO
 import android.content.Context
 import com.threadly.R
 import kotlinx.coroutines.Dispatchers

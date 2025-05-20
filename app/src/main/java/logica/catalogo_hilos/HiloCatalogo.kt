@@ -1,7 +1,7 @@
 package logica.catalogo_hilos
 
 data class HiloCatalogo (
-    val numHilo: Int,
+    var numHilo: String,
     var nombreHilo: String,
     var color: String?
 )

@@ -1,11 +1,11 @@
 package persistencia.bbdd
 
-import Catalogo
-import CatalogoDAO
+import persistencia.dao.CatalogoDAO
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import persistencia.entidades.Catalogo
 
 @Database(entities = [Catalogo::class], version = 1)
 abstract class CatalogoBdD : RoomDatabase() {

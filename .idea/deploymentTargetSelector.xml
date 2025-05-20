@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-14T16:43:58.085012500Z">
+        <DropdownSelection timestamp="2025-05-20T13:15:19.040723400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\DAM\.android\avd\Tablet_Mamurri_API_27.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=c7fb52b30505" />
             </handle>
           </Target>
         </DropdownSelection>

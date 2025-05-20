@@ -1,3 +1,5 @@
+package persistencia.entidades
+
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
@@ -13,3 +15,4 @@ data class Catalogo(
     val nombreHilo: String,
     val color: String?
 )
+

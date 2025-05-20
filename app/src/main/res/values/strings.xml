@@ -121,11 +121,11 @@
     <string name="boton_ModificarHiloConsulta">Modificar hilo</string>
     <!-- Dialog Añadir Hilo (catalogo_dialog_agregar_hilo) -->
     <string name="agregarHiloConsulta">AÑADIR HILO</string>
-    <string name="agregarNumHilo">Introduce un número...</string>
-    <string name="agregarNombreHilo">Introduce un nombre...</string>
+    <string name="agregarNumHilo">Nº del hilo.</string>
+    <string name="agregarNombreHilo">Nombre del hilo</string>
     <!-- Dialog Modificar Hilo (catalogo_dialog_modificar_hilo)-->
     <string name="modificarHiloConsulta">MODIFICAR HILO</string>
-    <string name="introducirNumHilo">Introduce número de hilo...</string>
+    <string name="introducirNumHilo">Nº hilo a modificar</string>
     <string name="marcarCampos">Marca los campos que deseas modificar :</string>
     <string name="numHiloModificar">Número</string>
     <string name="nombreHiloModificar">Nombre</string>

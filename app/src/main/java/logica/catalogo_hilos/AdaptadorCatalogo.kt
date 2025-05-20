@@ -37,7 +37,7 @@ class AdaptadorCatalogo(
     ): CatalogoViewHolder {
 
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.stock_tabla_filas_contenido, parent, false)
+            .inflate(R.layout.catalogo_tabla_filas_contenido, parent, false)
         return CatalogoViewHolder(view)
     }
 
