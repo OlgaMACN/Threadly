@@ -30,5 +30,16 @@
         android:textColor="@color/textoCabecera_y_Botones"
         android:textSize="20sp"
         android:textStyle="bold" />
+    <TextView
+        android:id="@+id/txtVw_colorHiloConsulta"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/colorHiloConsulta"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

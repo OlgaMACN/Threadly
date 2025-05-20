@@ -146,7 +146,8 @@ class CatalogoHilos : BaseActivity() {
                 return@setOnClickListener
             }
 
-            listaCatalogo.add(logica.catalogo_hilos.HiloCatalogo(numHilo, nombreHilo))
+            listaCatalogo.add(HiloCatalogo(numHilo, nombreHilo, null))
+
             adaptadorCatalogo.notifyItemInserted(listaCatalogo.size - 1)
             adaptadorCatalogo.actualizarLista(listaCatalogo)
 
@@ -249,9 +250,10 @@ class CatalogoHilos : BaseActivity() {
             }
 
             val hiloOriginal = listaCatalogo[index]
-            val hiloModificado = logica.catalogo_hilos.HiloCatalogo(
-                if (modNum) nuevoNum!! else hiloOriginal.numHilo,
-                if (modNombre) nuevoNombre else hiloOriginal.nombreHilo
+            val hiloModificado = HiloCatalogo(
+                nuevoNum ?: hiloOriginal.numHilo,
+                nuevoNombre.ifBlank { hiloOriginal.nombreHilo },
+                hiloOriginal.color /* el color no cambia */
             )
 
             listaCatalogo[index] = hiloModificado

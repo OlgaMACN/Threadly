@@ -110,11 +110,13 @@
     <string name="ConsultarHilosEncabezado">CONSULTAR HILOS</string>
     <string name="no_hay_resultadosCatalogo">Ese hilo no se encuentra en tu catálogo :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
     <!-- tabla stock cabecera (stock_tabla_filas_cabecera) -->
-    <string name="NumHiloConsulta">Nº HILO</string>
+    <string name="NumHiloConsulta">HILO</string>
     <string name="nombreHiloConsulta">NOMBRE</string>
+    <string name="colorHiloConsulta">COLOR</string>
     <!-- tabla stock filas (stock_tabla_filas_contenido) -->
     <string name="numHiloCat">Hilo</string>
     <string name="nombreHiloCat">Nombre</string>
+    <string name="colorHiloCat">Color</string>
     <string name="boton_agregarHiloConsulta">Añadir hilo</string>
     <string name="boton_ModificarHiloConsulta">Modificar hilo</string>
     <!-- Dialog Añadir Hilo (catalogo_dialog_agregar_hilo) -->

@@ -75,7 +75,7 @@
     <!-- Cabecera -->
     <include
         android:id="@+id/cabecera_tabla_stock"
-        layout="@layout/stock_tabla_filas_cabecera"
+        layout="@layout/catalogo_tabla_filas_cabecera"
         android:layout_width="0dp"
         android:layout_height="25dp"
         android:layout_marginStart="30dp"

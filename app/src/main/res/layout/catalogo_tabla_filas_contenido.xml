@@ -28,4 +28,15 @@
         android:text="@string/nombreHiloCat"
         android:textColor="@color/black"
         android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/txtVw_colorHiloConsulta"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/colorHiloCat"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
 </LinearLayout>

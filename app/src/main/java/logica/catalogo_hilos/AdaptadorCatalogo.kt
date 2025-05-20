@@ -1,6 +1,7 @@
 package logica.catalogo_hilos
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,8 @@ class AdaptadorCatalogo(
 
         val txtHilo: TextView = view.findViewById(R.id.txtVw_numHiloConsulta)
         val txtMadejas: TextView = view.findViewById(R.id.txtVw_nombreHiloConsulta)
+        val txtColor: TextView = view.findViewById(R.id.txtVw_colorHiloConsulta)
+
         val filaLayout: View = view /* contenedor de la fila para cambiar el fondo */
 
         init {
@@ -42,6 +45,19 @@ class AdaptadorCatalogo(
         val item = items[position]
         holder.txtHilo.text = item.numHilo.toString()
         holder.txtMadejas.text = item.nombreHilo
+        holder.txtColor.text = item.color
+        holder.txtColor.text = item.color ?: "Sin color"
+
+        /* por si no se carga bien el color, que en vez de expeción, sea negro */
+        try {
+            item.color?.let {
+                holder.txtColor.setTextColor(Color.parseColor(it))
+            } ?: run {
+                holder.txtColor.setTextColor(Color.BLACK)
+            }
+        } catch (e: IllegalArgumentException) {
+            holder.txtColor.setTextColor(Color.BLACK)
+        }
 
         /* comprueba si ha de resaltar la fila o no */
         if (item.numHilo.toString() == hiloResaltado) {
