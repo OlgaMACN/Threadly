@@ -35,7 +35,6 @@ class StockPersonal : BaseActivity() {
 
     private lateinit var tablaStock: RecyclerView
     private lateinit var adaptadorStock: AdaptadorStock
-    private var listaStock = mutableListOf<HiloStock>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +45,7 @@ class StockPersonal : BaseActivity() {
 
         tablaStock = findViewById(R.id.tabla_stock)
         /* callback: pasa la función de eliminar hilo directamente al adaptador, es decir, la tabla */
-        adaptadorStock = AdaptadorStock(listaStock, ::dialogEliminarHilo)
+        adaptadorStock = AdaptadorStock(StockSingleton.listaStock, ::dialogEliminarHilo)
         /* elementos de la tabla en vertical gracias al LinearLayoutManager */
         tablaStock.layoutManager = LinearLayoutManager(this)
         tablaStock.adapter = adaptadorStock
@@ -59,17 +58,17 @@ class StockPersonal : BaseActivity() {
                 listaInicial.forEach {
                     dao.insertarHilo(HiloStockEnt(it.hiloId, it.madejas))
                 }
-                listaStock.addAll(listaInicial)
-                adaptadorStock.actualizarLista(listaStock)
+                StockSingleton.listaStock.addAll(listaInicial)
+                adaptadorStock.actualizarLista(StockSingleton.listaStock)
             }
             marcarPrimeraVez(this)
         } else {
             lifecycleScope.launch {
                 val dao = StockBdD.getDatabase(this@StockPersonal).hiloStockDao()
-                listaStock.addAll(dao.obtenerTodos().map {
+                StockSingleton.listaStock.addAll(dao.obtenerTodos().map {
                     HiloStock(it.hiloId, it.madejas)
                 })
-                adaptadorStock.actualizarLista(listaStock)
+                adaptadorStock.actualizarLista(StockSingleton.listaStock)
             }
         }
 
@@ -100,15 +99,15 @@ class StockPersonal : BaseActivity() {
 
         btnLupa.setOnClickListener {
             val texto = hiloBuscado.text.toString().trim().uppercase()
-            val coincidencia = listaStock.find { it.hiloId == texto }
+            val coincidencia = StockSingleton.listaStock.find { it.hiloId == texto }
 
             if (coincidencia != null) {
                 /* si encuentra el hilo lo resaltará en la tabla */
                 adaptadorStock.resaltarHilo(coincidencia.hiloId)
-                adaptadorStock.actualizarLista(listaStock)
+                adaptadorStock.actualizarLista(StockSingleton.listaStock)
                 tablaStock.visibility = View.VISIBLE
                 txtNoResultados.visibility = View.GONE
-                tablaStock.scrollToPosition(listaStock.indexOf(coincidencia))
+                tablaStock.scrollToPosition(StockSingleton.listaStock.indexOf(coincidencia))
             } else {
                 tablaStock.visibility = View.GONE
                 txtNoResultados.visibility = View.VISIBLE
@@ -120,7 +119,7 @@ class StockPersonal : BaseActivity() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     adaptadorStock.resaltarHilo(null)
-                    adaptadorStock.actualizarLista(listaStock)
+                    adaptadorStock.actualizarLista(StockSingleton.listaStock)
                     tablaStock.visibility = View.VISIBLE
                     txtNoResultados.visibility = View.GONE
                 }
@@ -171,17 +170,17 @@ class StockPersonal : BaseActivity() {
                 return@setOnClickListener
             }
 
-            if (listaStock.any { it.hiloId == hilo }) {
+            if (StockSingleton.listaStock.any { it.hiloId == hilo }) {
                 Toast.makeText(this, "El hilo '$hilo' ya existe", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
             /* añadir el hilo de manera ordenada a la lista y actualizarla */
             val hiloNuevo = HiloStock(hilo, madejas)
-            listaStock.add(hiloNuevo)
-
-            listaStock = ordenarHilos(listaStock) { it.hiloId }.toMutableList()
-            adaptadorStock.actualizarLista(listaStock)
+            StockSingleton.listaStock.add(hiloNuevo)
+            StockSingleton.listaStock =
+                ordenarHilos(StockSingleton.listaStock) { it.hiloId }.toMutableList()
+            adaptadorStock.actualizarLista(StockSingleton.listaStock)
 
             /* persistencia */
             lifecycleScope.launch {
@@ -217,7 +216,7 @@ class StockPersonal : BaseActivity() {
             @SuppressLint("SetTextI18n")
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val hilo = s.toString().uppercase().trim()
-                val item = listaStock.find { it.hiloId == hilo }
+                val item = StockSingleton.listaStock.find { it.hiloId == hilo }
 
                 if (item != null) {
                     txtMadejasActuales.text = "Madejas actuales: ${item.madejas}"
@@ -250,7 +249,7 @@ class StockPersonal : BaseActivity() {
                 return@setOnClickListener
             }
 
-            val item = listaStock.find { it.hiloId == hilo }
+            val item = StockSingleton.listaStock.find { it.hiloId == hilo }
             if (item != null) {
                 item.madejas += cantidad
                 adaptadorStock.actualizarHilo(item)
@@ -293,7 +292,7 @@ class StockPersonal : BaseActivity() {
             @SuppressLint("SetTextI18n")
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val hiloId = s.toString().uppercase().trim()
-                hiloEncontrado = listaStock.find { it.hiloId == hiloId }
+                hiloEncontrado = StockSingleton.listaStock.find { it.hiloId == hiloId }
 
                 if (hiloEncontrado != null) {
                     txtMadejasActuales.text = "Madejas actuales: ${hiloEncontrado!!.madejas}"
@@ -357,7 +356,7 @@ class StockPersonal : BaseActivity() {
         val hiloABorrar = dialog.findViewById<TextView>(R.id.txtVw_confirmarEliminarHiloStk)
 
         /* para poder señalar el hilo que se va a borrar hay que capturarlo */
-        val hiloEliminado = listaStock[posicion].hiloId
+        val hiloEliminado = StockSingleton.listaStock[posicion].hiloId
 
         /* obtener el texto original con el marcador "%s", mismo que en @strings */
         val textoOriginal = getString(R.string.confirmarEliminarHiloStk)
@@ -388,8 +387,8 @@ class StockPersonal : BaseActivity() {
         }
 
         btnEliminar.setOnClickListener {
-            listaStock.removeAt(posicion)
-            adaptadorStock.actualizarLista(listaStock)
+            StockSingleton.listaStock.removeAt(posicion)
+            adaptadorStock.actualizarLista(StockSingleton.listaStock)
 
             lifecycleScope.launch {
                 StockBdD.getDatabase(this@StockPersonal).hiloStockDao()

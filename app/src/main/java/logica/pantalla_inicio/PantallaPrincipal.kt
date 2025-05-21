@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import com.threadly.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,10 +61,13 @@ class PantallaPrincipal : BaseActivity() {
         super.onResume()
         cargarUsuario()
 
-        /* actualizar madejas del stock*/
-        StockSingleton.inicializarStockSiNecesario(this)
-        val totalMadejas = StockSingleton.mostrarTotalStock()
-        findViewById<TextView>(R.id.txtVw_contenidoStock).text = "$totalMadejas"
+        /* actualizar madejas del stock desde la BdD */
+        lifecycleScope.launch {
+            StockSingleton.actualizarDesdeBaseDeDatos(this@PantallaPrincipal)
+            val total = StockSingleton.mostrarTotalStock()
+            findViewById<TextView>(R.id.txtVw_contenidoStock).text = "$total"
+
+        }
     }
 
     /* función para cargar el usuario*/

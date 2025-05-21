@@ -249,7 +249,7 @@ class CatalogoHilos : BaseActivity() {
                 return@setOnClickListener
             }
 
-            val posicion = listaCatalogo.indexOfFirst { it.numHilo == numHiloTexto }
+            val posicion = listaCatalogo.indexOfFirst { it.numHilo.equals(numHiloTexto, ignoreCase = true) }
             if (posicion == -1) {
                 Toast.makeText(this, "No existe ese hilo en el catálogo", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener

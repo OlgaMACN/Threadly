@@ -2,9 +2,10 @@ package logica.stock_personal
 
 import android.content.Context
 import com.threadly.R
+import persistencia.bbdd.StockBdD
 import utiles.funciones.leerCodigoHilo
 
-/* esta clase sirve para que haya una única instancia de la lista, accesible desde cualquier otra clase */
+/* esta clase sirve para que haya una única instancia de la lista, accesible desde cualquier otra clase, con todas sus funciones */
 object StockSingleton {
     var listaStock: MutableList<HiloStock> = mutableListOf()
 
@@ -16,8 +17,14 @@ object StockSingleton {
         return listaStock.sumOf { it.madejas }
     }
 
-    fun agregarHilo(hilo: String, madejas: Int) {
-        listaStock.add(HiloStock(hilo, madejas))
+    /* al ser suspend hay que llamarla con coroutine, es asíncrona */
+    suspend fun actualizarDesdeBaseDeDatos(context: Context) {
+        val dao = StockBdD.getDatabase(context).hiloStockDao()
+        val listaActualizada = dao.obtenerTodos().map {
+            HiloStock(it.hiloId, it.madejas)
+        }
+        listaStock.clear()
+        listaStock.addAll(listaActualizada)
     }
 
     fun inicializarStockSiNecesario(context: Context) {
