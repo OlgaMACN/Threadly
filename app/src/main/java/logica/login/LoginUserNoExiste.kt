@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import logica.pantalla_inicio.PantallaPrincipal
-import persistencia.bbdd.GestorBBDD
+import persistencia.bbdd.ThreadlySingleton
 import persistencia.entidades.Usuario
 
 class LoginUserNoExiste : AppCompatActivity() {
@@ -85,7 +85,7 @@ class LoginUserNoExiste : AppCompatActivity() {
 
             else -> {
                 /* después de pasar todas las comprobaciones con los toast, se puede crear la cuenta */
-                val bbdd = GestorBBDD.getDatabase(this)
+                val bbdd = ThreadlySingleton.getDatabase(this)
                 val usuarioDao = bbdd.usuarioDao()
 
                 /* coroutine para evitar problemas con los hilos */

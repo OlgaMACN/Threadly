@@ -8,10 +8,11 @@ import persistencia.entidades.Consejo
 
 @Dao
 interface ConsejoDAO {
-    @Query("SELECT * FROM consejos ORDER BY RANDOM() LIMIT 1")
-    suspend fun obtenerAleatorio(): Consejo?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertarTodos(vararg consejos: Consejo)
+
+    @Query("SELECT * FROM consejos ORDER BY RANDOM() LIMIT 1")
+    suspend fun obtenerAleatorio(): Consejo?
 
 }

@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import persistencia.bbdd.CatalogoBdD
 import persistencia.entidades.Catalogo
-import utiles.funciones.leerXML
+import utiles.funciones.leerXml
 
 /* uso de repositorio para interactuar con la BdD, es más limpio, eficiente y facilita las gestiones */
 class RepositorioCatalogo(private val context: Context) {
@@ -18,7 +18,7 @@ class RepositorioCatalogo(private val context: Context) {
             val existentes = dao.obtenerTodos()
             //  Log.d("RepoCatalogo", "Antes de inicializar: existen ${existentes.size} hilos en BD")
             if (existentes.isEmpty()) {
-                val desdeXml = leerXML(context, R.raw.catalogo_hilos)
+                val desdeXml = leerXml(context, R.raw.catalogo_hilos)
                 //     Log.d("RepoCatalogo", "Leídos ${desdeXml.size} hilos desde XML")
                 dao.insertarTodos(desdeXml)
 

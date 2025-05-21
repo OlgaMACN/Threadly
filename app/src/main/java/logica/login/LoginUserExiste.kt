@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import logica.pantalla_inicio.PantallaPrincipal
-import persistencia.bbdd.GestorBBDD
+import persistencia.bbdd.ThreadlySingleton
 import utiles.SesionUsuario
 
 class LoginUserExiste : AppCompatActivity() {
@@ -43,7 +43,7 @@ class LoginUserExiste : AppCompatActivity() {
     private fun comprobarSesionActiva(): Boolean {
         val sesionId = SesionUsuario.obtenerSesion(this)
         if (sesionId != -1) {
-            val bbdd = GestorBBDD.getDatabase(this)
+            val bbdd = ThreadlySingleton.getDatabase(this)
             val usuarioDao = bbdd.usuarioDao()
 
             CoroutineScope(Dispatchers.IO).launch {
@@ -116,7 +116,7 @@ class LoginUserExiste : AppCompatActivity() {
             return
         }
 
-        val bbdd = GestorBBDD.getDatabase(this)
+        val bbdd = ThreadlySingleton.getDatabase(this)
         val usuarioDao = bbdd.usuarioDao()
 
         /* coroutine para evitar problemas con los hilos */

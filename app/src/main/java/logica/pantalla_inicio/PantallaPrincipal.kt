@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import logica.stock_personal.StockSingleton
-import persistencia.bbdd.GestorBBDD
+import persistencia.bbdd.ThreadlySingleton
 import utiles.BaseActivity
 import utiles.funciones.funcionToolbar
 
@@ -35,7 +35,7 @@ class PantallaPrincipal : BaseActivity() {
 
         /* mostrar tip aleatorio */
         val txtTip = findViewById<TextView>(R.id.txtVw_contenidoTip)
-        val db = GestorBBDD.getDatabase(this)
+        val db = ThreadlySingleton.getDatabase(this)
         val consejoDao = db.consejoDao()
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -62,7 +62,7 @@ class PantallaPrincipal : BaseActivity() {
 
     /* función para cargar el usuario*/
     private fun cargarUsuario() {
-        val bbdd = GestorBBDD.getDatabase(this)
+        val bbdd = ThreadlySingleton.getDatabase(this)
         val usuarioDao = bbdd.usuarioDao()
 
         CoroutineScope(Dispatchers.IO).launch {

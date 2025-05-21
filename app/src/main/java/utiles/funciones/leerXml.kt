@@ -6,7 +6,7 @@ import org.w3c.dom.Element
 import javax.xml.parsers.DocumentBuilderFactory
 
 /* leer el xml con dom para crear la BdD */
-fun leerXML(context: Context, resourceId: Int): List<Catalogo> {
+fun leerXml(context: Context, resourceId: Int): List<Catalogo> {
     val listaHilos = mutableListOf<Catalogo>()
 
     context.resources.openRawResource(resourceId).use { inputStream ->

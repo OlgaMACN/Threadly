@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import logica.login.LoginUserExiste
-import persistencia.bbdd.GestorBBDD
+import persistencia.bbdd.ThreadlySingleton
 import persistencia.dao.UsuarioDAO
 import utiles.BaseActivity
 import utiles.SesionUsuario
@@ -42,7 +42,7 @@ class DatosPersonales : BaseActivity() {
         val btnEliminarCuenta = findViewById<Button>(R.id.btn_EliminarCuenta)
 
         /* instanciar  el dao */
-        val bbdd = GestorBBDD.getDatabase(this)
+        val bbdd = ThreadlySingleton.getDatabase(this)
         usuarioDao = bbdd.usuarioDao()
 
         if (usuarioId < 0) {
@@ -94,7 +94,7 @@ class DatosPersonales : BaseActivity() {
         btnConfirmar.setOnClickListener {
             dialog.dismiss()
 
-            val bbdd = GestorBBDD.getDatabase(this)
+            val bbdd = ThreadlySingleton.getDatabase(this)
             val usuarioDao = bbdd.usuarioDao()
             //   val stockDao = bbdd.stockDao()
             val consejoDao = bbdd.consejoDao()

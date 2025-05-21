@@ -11,9 +11,6 @@ import persistencia.entidades.Catalogo
 @Dao
 interface CatalogoDAO {
 
-    @Query("SELECT * FROM catalogo")
-    suspend fun obtenerTodos(): List<Catalogo>
-
     /* estrategia que evita duplicados al hacer la inserción */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertar(hilo: Catalogo)
@@ -21,15 +18,18 @@ interface CatalogoDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertarTodos(hilos: List<Catalogo>)
 
-    @Update
-    suspend fun actualizar(hilo: Catalogo)
-
-    @Delete
-    suspend fun eliminar(hilo: Catalogo)
+    @Query("SELECT * FROM catalogo")
+    suspend fun obtenerTodos(): List<Catalogo>
 
     @Query("DELETE FROM catalogo")
     suspend fun eliminarTodos()
 
     @Query("SELECT * FROM catalogo WHERE codigoHilo = :codigo LIMIT 1")
     suspend fun buscarPorCodigo(codigo: String): Catalogo?
+
+    @Update
+    suspend fun actualizar(hilo: Catalogo)
+
+    @Delete
+    suspend fun eliminar(hilo: Catalogo)
 }

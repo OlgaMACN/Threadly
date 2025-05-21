@@ -7,11 +7,10 @@ import android.widget.ImageView
 import android.widget.Toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import persistencia.bbdd.GestorBBDD
+import persistencia.bbdd.ThreadlySingleton
 import persistencia.dao.UsuarioDAO
 import persistencia.entidades.Usuario
 import utiles.BaseActivity
@@ -46,7 +45,7 @@ class ModificarDatos : BaseActivity() {
         btnVolverDatosPersonales = findViewById(R.id.btn_VolverModificarDatos)
 
         /* instancia del DAO */
-        val bbdd = GestorBBDD.getDatabase(this)
+        val bbdd = ThreadlySingleton.getDatabase(this)
         usuarioDao = bbdd.usuarioDao()
 
         /* si llega mal el usuario se cierra la actividad para evitar cuelgues */

@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import persistencia.entidades.Consejo
 
 /* patrón singleton porque sólo habrá una instancia de la base de datos */
-object GestorBBDD {
+object ThreadlySingleton {
 
     @Volatile
     /* junto con synchronized, garantiza una única instancia de la BdD en toda la aplicación */

@@ -30,7 +30,7 @@
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:hint="@string/introducirNumHiloModificar"
-        android:inputType="number"
+        android:inputType="text"
         android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
