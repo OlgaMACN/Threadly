@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/reutilizable_marco_dialog"
+    android:elevation="10dp"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/txtVw_cabeceraDialogGuardarGrafico"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="@drawable/reutilizable_borde_cabecera_dialog"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/cabeceraDialogGuardarGrafico"
+        android:textAlignment="center"
+        android:textColor="@color/textoCabecera_y_Botones"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtVw_mensajeConfirmarGuardado"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
+        android:text="@string/mensajeConfirmarGuardado"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraDialogGuardarGrafico" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVw_mensajeConfirmarGuardado">
+
+        <Button
+            android:id="@+id/btn_volverSinGuardar"
+            android:layout_width="0dp"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/fondoBoton"
+            android:fontFamily="@font/catchy_mager"
+            android:text="@string/volverSinGuardar"
+            android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <Button
+            android:id="@+id/btn_guardarPedido"
+            android:layout_width="0dp"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/fondoBoton"
+            android:fontFamily="@font/catchy_mager"
+            android:text="@string/guardarPedido"
+            android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
