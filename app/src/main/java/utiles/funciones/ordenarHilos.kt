@@ -1,25 +1,21 @@
 package utiles.funciones
 
-import logica.grafico_pedido.HiloGrafico
-
 /* función para ordenar los hilos en la tabla */
-fun ordenarHilos(listaHilos: List<HiloGrafico>): List<HiloGrafico> {
+fun <T> ordenarHilos(listaHilos: List<T>, selector: (T) -> String): List<T> {
     return listaHilos.sortedWith(compareBy(
         { hilo ->
-            /* primero los que son sólo letras: 0, luego alfanuméricos: 1 y finalmente sólo números: 1*/
+            val hiloStr = selector(hilo)
             when {
-                hilo.hilo.matches(Regex("^[A-Za-z]+$")) -> 0
-                hilo.hilo.matches(Regex("^[0-9]+$")) -> 2
+                hiloStr.matches(Regex("^[A-Za-z]+$")) -> 0
+                hiloStr.matches(Regex("^[0-9]+$")) -> 2
                 else -> 1
             }
         },
         { hilo ->
-            /* primero se ordena por letras, si hay */
-            Regex("^([A-Za-z/]+)").find(hilo.hilo)?.value ?: ""
+            Regex("^([A-Za-z/]+)").find(selector(hilo))?.value ?: ""
         },
         { hilo ->
-            /* después, se ordena por número */
-            Regex("(\\d+)").find(hilo.hilo)?.value?.toIntOrNull() ?: 0
+            Regex("(\\d+)").find(selector(hilo))?.value?.toIntOrNull() ?: 0
         }
     ))
 }

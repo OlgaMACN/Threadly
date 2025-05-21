@@ -210,10 +210,12 @@ class GraficoPedido : BaseActivity() {
 
                 grafico?.listaHilos?.add(nuevoHilo)
 
+                /* TODO ordenar con la nueva funcion
+
                 val listaOrdenada = ordenarHilos(grafico?.listaHilos ?: emptyList())
                 grafico?.listaHilos?.clear()
                 grafico?.listaHilos?.addAll(listaOrdenada)
-                adaptadorGrafico.actualizarLista(listaOrdenada)
+                adaptadorGrafico.actualizarLista(listaOrdenada)*/
 
                 dialog.dismiss()
             } catch (e: Exception) {
@@ -271,9 +273,9 @@ class GraficoPedido : BaseActivity() {
             /* se elimina de la lista y por tanto de la tabla */
             grafico?.listaHilos?.remove(hilo)
 
-            /* y se actualiza para mantener los cambios */
+            /* TODO ordenar con la nueva función
             val listaOrdenada = ordenarHilos(grafico?.listaHilos ?: emptyList())
-            adaptadorGrafico.actualizarLista(listaOrdenada)
+            adaptadorGrafico.actualizarLista(listaOrdenada)*/
             dialog.dismiss()
         }
         dialog.show()

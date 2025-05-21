@@ -24,7 +24,8 @@ class PantallaPrincipal : BaseActivity() {
         cargarUsuario()
 
         /* obtener número de madejas del stock */
-        val totalMadejas = StockSingleton.listaStock.sumOf { it.madejas }
+        StockSingleton.inicializarStockSiNecesario(this)
+        val totalMadejas = StockSingleton.mostrarTotalStock()
 
         /* mostrar el total en txtVw_contenidoStock */
         val txtStock = findViewById<TextView>(R.id.txtVw_contenidoStock)
@@ -58,6 +59,11 @@ class PantallaPrincipal : BaseActivity() {
     override fun onResume() {
         super.onResume()
         cargarUsuario()
+
+        /* actualizar madejas del stock*/
+        StockSingleton.inicializarStockSiNecesario(this)
+        val totalMadejas = StockSingleton.mostrarTotalStock()
+        findViewById<TextView>(R.id.txtVw_contenidoStock).text = "$totalMadejas"
     }
 
     /* función para cargar el usuario*/

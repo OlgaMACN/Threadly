@@ -12,6 +12,10 @@ object StockSingleton {
         return listaStock.find { it.hiloId == hiloId }?.madejas
     }
 
+    fun mostrarTotalStock(): Int {
+        return listaStock.sumOf { it.madejas }
+    }
+
     fun agregarHilo(hilo: String, madejas: Int) {
         listaStock.add(HiloStock(hilo, madejas))
     }

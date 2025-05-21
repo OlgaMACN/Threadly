@@ -91,6 +91,8 @@
         android:id="@+id/tabla_catalogo"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:scrollbars="vertical"
+        android:scrollbarSize="15dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_agregarHiloConsulta"

@@ -26,8 +26,10 @@ import persistencia.dao.CatalogoDAO
 import persistencia.entidades.Catalogo
 import utiles.BaseActivity
 import utiles.RepositorioCatalogo
+import utiles.funciones.ValidarFormatoHilos
 import utiles.funciones.ajustarDialog
 import utiles.funciones.funcionToolbar
+import utiles.funciones.ordenarHilos
 import utiles.funciones.toCatalogo
 
 class CatalogoHilos : BaseActivity() {
@@ -36,7 +38,7 @@ class CatalogoHilos : BaseActivity() {
 
     private lateinit var tablaCatalogo: RecyclerView
     private lateinit var adaptadorCatalogo: AdaptadorCatalogo
-    private val listaCatalogo = mutableListOf<HiloCatalogo>()
+    private var listaCatalogo = mutableListOf<HiloCatalogo>()
 
     private lateinit var checkBoxHilo: CheckBox
     private lateinit var checkBoxNombre: CheckBox
@@ -66,12 +68,12 @@ class CatalogoHilos : BaseActivity() {
             repositorioCatalogo.inicializarCatalogoSiEsNecesario()
             val datos = repositorioCatalogo.obtenerCatalogo()
 
-           // Log.d("CatalogoHilos", "Datos obtenidos: ${datos.size}")
+            // Log.d("CatalogoHilos", "Datos obtenidos: ${datos.size}")
 
             listaCatalogo.clear() /* borra datos viejos de la lista en memoria */
             listaCatalogo.addAll(datos.map { it.toHiloCatalogo() })
 
-           // Log.d("CatalogoHilos", "Lista convertida: $listaCatalogo")
+            // Log.d("CatalogoHilos", "Lista convertida: $listaCatalogo")
 
             adaptadorCatalogo.actualizarLista(listaCatalogo)
         }
@@ -148,7 +150,6 @@ class CatalogoHilos : BaseActivity() {
     private fun dialogAgregarHiloCatalogo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_agregar_hilo)
-
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         ajustarDialog(dialog)
         dialog.setCancelable(false)
@@ -163,11 +164,17 @@ class CatalogoHilos : BaseActivity() {
         }
 
         btnGuardar.setOnClickListener {
-            val numHiloString = inputNumHilo.text.toString().trim()
+            val numHiloString = inputNumHilo.text.toString().uppercase().trim()
             val nombreHilo = inputNombreHilo.text.toString().uppercase().trim()
 
             if (numHiloString.isEmpty() || nombreHilo.isEmpty()) {
                 Toast.makeText(this, "Ningún campo puede estar vacío", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if (!ValidarFormatoHilos.formatoValidoHilo(numHiloString)) {
+                Toast.makeText(this, "Formato inválido: solo letras y números", Toast.LENGTH_LONG)
+                    .show()
                 return@setOnClickListener
             }
 
@@ -182,18 +189,15 @@ class CatalogoHilos : BaseActivity() {
 
             val nuevoHilo = HiloCatalogo(numHiloString, nombreHilo, null)
             listaCatalogo.add(nuevoHilo)
-            adaptadorCatalogo.notifyItemInserted(listaCatalogo.size - 1)
+
+            listaCatalogo = ordenarHilos(listaCatalogo) { it.numHilo }.toMutableList()
             adaptadorCatalogo.actualizarLista(listaCatalogo)
 
+            /* persistencia */
             lifecycleScope.launch {
                 try {
                     catalogoDao.insertar(nuevoHilo.toCatalogo())
-
-                    /* si el hilo se inserta bien en la BdD, se actualizan el adaptador y la lista */
-                    listaCatalogo.add(nuevoHilo)
-                    adaptadorCatalogo.actualizarLista(listaCatalogo)
-
-                    runOnUiThread { /* mostrar toast en el hilo principal para que no crashee */
+                    runOnUiThread {
                         Toast.makeText(
                             this@CatalogoHilos,
                             "Hilo añadido al catálogo correctamente",
@@ -211,7 +215,6 @@ class CatalogoHilos : BaseActivity() {
                     }
                 }
             }
-            dialog.dismiss()
         }
 
         dialog.show()
@@ -286,23 +289,21 @@ class CatalogoHilos : BaseActivity() {
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volverModificarHiloFinal)
         val btnModificar = dialog.findViewById<Button>(R.id.btn_guardarModificarHilo)
 
-        /* ocultar campos si el usuario sólo ha escogido uno */
         inputNumHilo.visibility = if (modificarNum) View.VISIBLE else View.GONE
         inputNombreHilo.visibility = if (modificarNombre) View.VISIBLE else View.GONE
 
-        /* datos actuales del hilo */
         val hiloActual = listaCatalogo[posicion]
         if (modificarNum) inputNumHilo.setText(hiloActual.numHilo)
         if (modificarNombre) inputNombreHilo.setText(hiloActual.nombreHilo)
 
         btnVolver.setOnClickListener {
             dialog.dismiss()
-            dialogModificarHiloCatalogo() /* volver a la selección inicial por si quiere cambiar algo */
+            dialogModificarHiloCatalogo()
         }
 
         btnModificar.setOnClickListener {
             if (modificarNum) {
-                val nuevoNum = inputNumHilo.text.toString().trim()
+                val nuevoNum = inputNumHilo.text.toString().uppercase().trim()
                 if (nuevoNum.isEmpty()) {
                     Toast.makeText(
                         this,
@@ -311,9 +312,18 @@ class CatalogoHilos : BaseActivity() {
                     ).show()
                     return@setOnClickListener
                 }
-                /* validar que el número nuevo no entre en conflicto con otro que ya exista */
+
+                if (!ValidarFormatoHilos.formatoValidoHilo(nuevoNum)) {
+                    Toast.makeText(
+                        this,
+                        "Formato de hilo inválido (solo letras y números)",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
+
                 val existe = listaCatalogo.withIndex().any { (index, hilo) ->
-                    hilo.numHilo == nuevoNum && index != posicion
+                    hilo.numHilo.equals(nuevoNum, ignoreCase = true) && index != posicion
                 }
                 if (existe) {
                     Toast.makeText(this, "Ya existe un hilo con ese número", Toast.LENGTH_SHORT)
@@ -324,7 +334,7 @@ class CatalogoHilos : BaseActivity() {
             }
 
             if (modificarNombre) {
-                val nuevoNombre = inputNombreHilo.text.toString().trim()
+                val nuevoNombre = inputNombreHilo.text.toString().uppercase().trim()
                 if (nuevoNombre.isEmpty()) {
                     Toast.makeText(
                         this,
@@ -335,8 +345,10 @@ class CatalogoHilos : BaseActivity() {
                 }
                 hiloActual.nombreHilo = nuevoNombre
             }
-            /* para que el adaptador sepa que el hilo ha cambiado */
+
+            listaCatalogo = ordenarHilos(listaCatalogo) { it.numHilo }.toMutableList()
             adaptadorCatalogo.actualizarLista(listaCatalogo)
+
             Toast.makeText(this, "Hilo modificado correctamente", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
 
@@ -347,6 +359,7 @@ class CatalogoHilos : BaseActivity() {
 
         dialog.show()
     }
+
 
     /* eliminar un hilo del catalogo */
     private fun dialogEliminarHiloCatalogo(posicion: Int) {
