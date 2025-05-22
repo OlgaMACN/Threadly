@@ -1,6 +1,5 @@
 package logica.almacen_pedidos
 
-import AdaptadorAlmacen
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +18,8 @@ class AlmacenPedidos : BaseActivity() {
         funcionToolbar(this)
 
         recyclerView = findViewById(R.id.tabla_almacen)
-        adaptador = AdaptadorAlmacen(RepositorioPedidos.listaPedidos)
+        adaptador = AdaptadorAlmacen(RepositorioPedidos.listaPedidos) { /* no hace nada aún */ }
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adaptador
     }

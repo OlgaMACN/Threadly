@@ -1,3 +1,5 @@
+package logica.almacen_pedidos
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -5,15 +7,15 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import logica.almacen_pedidos.PedidoGuardado
 
 class AdaptadorAlmacen(
-    private var listaPedidos: List<PedidoGuardado>
+    private var listaPedidos: List<PedidoGuardado>,
+    private val onDescargarClick: (PedidoGuardado) -> Unit // callback opcional
 ) : RecyclerView.Adapter<AdaptadorAlmacen.PedidoViewHolder>() {
 
     inner class PedidoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val txtNombrePedido: TextView = itemView.findViewById(R.id.txtVw_contenidoNombrePedido)
-        val btnDescargar: ImageButton = itemView.findViewById(R.id.imgBtn_lupaPedido)
+        val btnDescargar: ImageButton = itemView.findViewById(R.id.imgBtn_descargaPedido)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PedidoViewHolder {
@@ -26,7 +28,7 @@ class AdaptadorAlmacen(
         val pedido = listaPedidos[position]
         holder.txtNombrePedido.text = pedido.nombre
         holder.btnDescargar.setOnClickListener {
-            // TODO: abrir detalles o restaurar pedido
+            onDescargarClick(pedido)
         }
     }
 

@@ -73,7 +73,6 @@
         app:layout_constraintTop_toBottomOf="@id/edTxt_buscadorAlmacen"
         app:layout_constraintVertical_bias="0.05" />
 
-
     <!-- Cabecera fija para que no se mueva al hacer scroll -->
     <include
         android:id="@+id/cabecera_tabla_almacen"
