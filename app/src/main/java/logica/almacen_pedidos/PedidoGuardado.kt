@@ -7,3 +7,12 @@ data class PedidoGuardado(
     val graficos: List<Grafico>
 )
 
+data class GraficoGuardado(
+    val nombre: String,
+    val listaHilos: MutableList<Hilo>
+)
+
+data class Hilo(
+    val codigo: String,
+    val madejas: Int
+)

@@ -10,7 +10,7 @@ import com.threadly.R
 
 class AdaptadorAlmacen(
     private var listaPedidos: List<PedidoGuardado>,
-    private val onDescargarClick: (PedidoGuardado) -> Unit // callback opcional
+    private val onDescargarClick: (PedidoGuardado) -> Unit
 ) : RecyclerView.Adapter<AdaptadorAlmacen.PedidoViewHolder>() {
 
     inner class PedidoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,8 +27,15 @@ class AdaptadorAlmacen(
     override fun onBindViewHolder(holder: PedidoViewHolder, position: Int) {
         val pedido = listaPedidos[position]
         holder.txtNombrePedido.text = pedido.nombre
+
         holder.btnDescargar.setOnClickListener {
             onDescargarClick(pedido)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            val contexto = holder.itemView.context as AlmacenPedidos
+            contexto.dialogEliminarPedido(holder.adapterPosition)
+            true
         }
     }
 

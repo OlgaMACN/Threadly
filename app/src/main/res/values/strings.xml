@@ -3,6 +3,7 @@
     <string name="volver_stock">Volver</string>
     <string name="volver_pedido">Volver</string>
     <string name="volver_grafico">Volver</string>
+    <string name="volver_almacen">Volver</string>
 
     <!-- Splash (stock_aa_principal) -->
     <string name="app_name">Threadly</string>
@@ -188,5 +189,9 @@
     <string name="no_hay_resultadosAlmacen">No tienes ese pedido en tu almacén :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
     <string name="columnaNombrePedido">NOMBRE</string>
     <string name="contenidoNombrePedido">nombre</string>
+    <!--Dialog Eliminar Pedido (almacen_dialog_eliminar_pedido) -->
+    <string name="cabeceraDialogEliminarPedido">ELIMINAR PEDIDO</string>
+    <string name="confirmarEliminarPedido">¿Seguro que quieres eliminar el pedido "%s" de tu almacén?</string>
+    <string name="botonEliminarPedido">Sí</string>
 
 </resources>
