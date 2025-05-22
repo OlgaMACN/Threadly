@@ -23,8 +23,9 @@ import utiles.BaseActivity
 import utiles.funciones.ajustarDialog
 import utiles.funciones.leerXML
 import utiles.funciones.ValidarFormatoHilos
-import utiles.funciones.funcionToolbar
 import utiles.funciones.ordenarHilos
+import utiles.funciones.funcionToolbar
+
 
 class CatalogoHilos : BaseActivity() {
 

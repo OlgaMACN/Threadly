@@ -25,6 +25,7 @@ import utiles.BaseActivity
 import utiles.funciones.ajustarDialog
 import utiles.funciones.calcularMadejas
 import utiles.funciones.funcionToolbar
+import utiles.funciones.ordenarHilos
 
 class GraficoPedido : BaseActivity() {
 
@@ -203,18 +204,20 @@ class GraficoPedido : BaseActivity() {
                 val madejas = calcularMadejas(
                     puntadasInt,
                     countTelaInt!!
-                ) /* aserción no nunla, kotlin sabe */
+                ) /* aserción no nula, kotlin sabe */
+
                 /* crear y añadir el hilo a la tabla */
                 val nuevoHilo = HiloGrafico(nombreHilo, madejas)
-
                 grafico?.listaHilos?.add(nuevoHilo)
 
-                /* TODO ordenar con la nueva funcion
+                /* ordenar la lista actualizada */
+                val listaOrdenada = ordenarHilos(grafico?.listaHilos ?: emptyList()) { it.hilo }
 
-                val listaOrdenada = ordenarHilos(grafico?.listaHilos ?: emptyList())
+
+                /* actualizar el gráfico y el adaptador con la lista ordenada */
                 grafico?.listaHilos?.clear()
                 grafico?.listaHilos?.addAll(listaOrdenada)
-                adaptadorGrafico.actualizarLista(listaOrdenada)*/
+                adaptadorGrafico.actualizarLista(listaOrdenada)
 
                 dialog.dismiss()
             } catch (e: Exception) {
@@ -291,9 +294,6 @@ class GraficoPedido : BaseActivity() {
         setResult(RESULT_OK, resultIntent)
         finish()
     }
-
-
-
 
 
 }

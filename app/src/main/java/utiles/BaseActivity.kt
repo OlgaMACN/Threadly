@@ -22,6 +22,16 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
+    /* lanza otra BaseActivity propagando usuarioId y nombreUsuario y permite añadir más extras cómodamente */
+    fun lanzar(destino: Class<out BaseActivity>, extras: Intent.() -> Unit = {}) {
+        val i = Intent(this, destino).apply {
+            putExtra("usuario_id", usuarioId)
+            putExtra("nombre_usuario", nombreUsuario)
+            extras()
+        }
+        startActivity(i)
+    }
+
     /* pasar los datos de usuario entre pantallas y evitar cuelgues por pérdida de información */
     fun irAActividad(destino: Class<out BaseActivity>) {
         val intent = Intent(this, destino).apply {

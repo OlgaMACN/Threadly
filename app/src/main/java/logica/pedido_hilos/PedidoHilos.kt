@@ -9,21 +9,21 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import logica.grafico_pedido.GraficoPedido
 import utiles.BaseActivity
 import utiles.funciones.ajustarDialog
-import utiles.ExportadorCSV
+
 import utiles.funciones.funcionToolbar
 
 private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada gráfico */
@@ -33,36 +33,28 @@ class PedidoHilos : BaseActivity() {
     private lateinit var adaptadorPedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
 
-    /* para descargar el pedido */
-    companion object {
-        private const val REQUEST_CODE_WRITE = 1001
-    }
-
-    private lateinit var btnDescargarPedido: Button
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
+        override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
         /* inicializar el adaptador y configurar el recycler view */
-        val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
-        tablaPedido.layoutManager = LinearLayoutManager(this)
+            val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
+            tablaPedido.layoutManager = LinearLayoutManager(this)
+            adaptadorPedido = AdaptadorPedido(listaGraficos,
+                onItemClick = { graficoSeleccionado ->
+                    Log.d("PedidoHilos", "Click en gráfico: ${graficoSeleccionado.nombre}")
+                    // Lanzamos GraficoPedido propagando sesión y pasando el gráfico
+                    lanzar(GraficoPedido::class.java) {
+                        putExtra("grafico", graficoSeleccionado)
+                    }
+                },
+                onLongClick = { index ->
+                    dialogoEliminarGrafico(index)
+                }
+            )
+            tablaPedido.adapter = adaptadorPedido
 
-        /* inicializo el adaptador manejando los clics sobre la tabla */
-        adaptadorPedido = AdaptadorPedido(listaGraficos, onItemClick = { graficoSeleccionado ->
-            val position = listaGraficos.indexOf(graficoSeleccionado)
-            val intent = Intent(this, GraficoPedido::class.java).apply {
-                putExtra("grafico", graficoSeleccionado)
-                putExtra("position", position)
-            }
-            startActivityForResult(intent, REQUEST_CODE_GRAFICO_PEDIDO)
-        }, onLongClick = { index ->
-            dialogoEliminarGrafico(index)
-        })
-        /* asignación del adaptador */
-        tablaPedido.adapter = adaptadorPedido
 
         /* declarar componentes*/
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
@@ -73,71 +65,10 @@ class PedidoHilos : BaseActivity() {
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
 
-        /* descargar pedido: al pulsar se comprueban permisos y se exporta */
-        btnDescargarPedido.setOnClickListener {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                if (ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                    != PackageManager.PERMISSION_GRANTED
-                ) {
-                    /* se pide permiso al usuario */
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        REQUEST_CODE_WRITE
-                    )
-                } else {
-                    exportarPedidoComoCSV()
-                }
-            } else {
-                /* si la versión de android es +10 no hace falta pedir permiso */
-                exportarPedidoComoCSV()
-            }
-        }
-        /* funciones en continua ejecución durante la pantalla */
+             /* funciones en continua ejecución durante la pantalla */
         buscadorGrafico()
         actualizarTotalMadejas()
     }
-
-    /* ahora en función de si el usuario ha dado permiso para la descarga o no... */
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permisos: Array<out String>,
-        concederPermisos: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permisos, concederPermisos)
-        if (requestCode == REQUEST_CODE_WRITE &&
-            concederPermisos.isNotEmpty() &&
-            concederPermisos[0] == PackageManager.PERMISSION_GRANTED
-        ) {
-            exportarPedidoComoCSV() /* es descarga */
-        } else {
-            Toast.makeText(
-                this,
-                "Permiso denegado :(, no se puede guardar el pedido.", /* o se interrumpe */
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-
-    /* método para guardar los hilos con sus madejas */
-    private fun exportarPedidoComoCSV() {
-        // Agrupar los hilos con suma de madejas
-        val hilosAgrupados = mutableMapOf<String, Int>()
-        for (grafico in listaGraficos) {
-            for (hiloGrafico in grafico.listaHilos) {
-                val nombre = hiloGrafico.hilo.trim()
-                val madejas = hiloGrafico.madejas
-                hilosAgrupados[nombre] = hilosAgrupados.getOrDefault(nombre, 0) + madejas
-            }
-        }
-
-        // Usar la utilidad
-        ExportadorCSV.exportarPedido(this, hilosAgrupados)
-    }
-
 
     /* buscar un gráfico dentro del pedido */
     private fun buscadorGrafico() {
