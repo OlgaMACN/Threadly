@@ -66,7 +66,7 @@ class PedidoHilos : BaseActivity() {
 
         /* declarar componentes*/
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
-        btnDescargarPedido = findViewById(R.id.btn_descargarPedido)
+        val btnGuardarPedido = findViewById<Button>(R.id.btn_guardarPedido)
         val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
