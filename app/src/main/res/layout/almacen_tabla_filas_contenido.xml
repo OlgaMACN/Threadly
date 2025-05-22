@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@color/fondoPantallas"
@@ -14,8 +15,21 @@
         android:layout_weight="1"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
-        android:textSize="20sp"
         android:text="@string/contenidoNombrePedido"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+
+    <ImageButton
+        android:id="@+id/imgBtn_lupaPedido"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="@drawable/reutilizable_efecto_pulsar_toolbar"
+        android:scaleType="centerInside"
+        android:padding="4dp"
+        app:tint="@color/Cabeceras_y_Toolbar"
+        app:srcCompat="@drawable/img_descargar" />
+
 
 </LinearLayout>

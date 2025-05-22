@@ -1,11 +1,9 @@
 package logica.pedido_hilos
 
-import android.Manifest
 import android.app.Dialog
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.icu.text.SimpleDateFormat
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,15 +14,17 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import logica.almacen_pedidos.PedidoGuardado
+import logica.almacen_pedidos.RepositorioPedidos
 import logica.grafico_pedido.GraficoPedido
 import utiles.BaseActivity
 import utiles.funciones.ajustarDialog
-
 import utiles.funciones.funcionToolbar
+import java.util.Date
+import java.util.Locale
 
 private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada gráfico */
 
@@ -33,39 +33,40 @@ class PedidoHilos : BaseActivity() {
     private lateinit var adaptadorPedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
 
-        override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
         /* inicializar el adaptador y configurar el recycler view */
-            val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
-            tablaPedido.layoutManager = LinearLayoutManager(this)
-            adaptadorPedido = AdaptadorPedido(listaGraficos,
-                onItemClick = { graficoSeleccionado ->
-                    Log.d("PedidoHilos", "Click en gráfico: ${graficoSeleccionado.nombre}")
-                    // Lanzamos GraficoPedido propagando sesión y pasando el gráfico
-                    lanzar(GraficoPedido::class.java) {
-                        putExtra("grafico", graficoSeleccionado)
-                    }
-                },
-                onLongClick = { index ->
-                    dialogoEliminarGrafico(index)
+        val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
+        tablaPedido.layoutManager = LinearLayoutManager(this)
+        adaptadorPedido = AdaptadorPedido(listaGraficos,
+            onItemClick = { graficoSeleccionado ->
+                Log.d("PedidoHilos", "Click en gráfico: ${graficoSeleccionado.nombre}")
+                // Lanzamos GraficoPedido propagando sesión y pasando el gráfico
+                lanzar(GraficoPedido::class.java) {
+                    putExtra("grafico", graficoSeleccionado)
                 }
-            )
-            tablaPedido.adapter = adaptadorPedido
+            },
+            onLongClick = { index ->
+                dialogoEliminarGrafico(index)
+            }
+        )
+        tablaPedido.adapter = adaptadorPedido
 
 
         /* declarar componentes*/
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
-        val btnGuardarPedido = findViewById<Button>(R.id.btn_guardarPedido)
+        val btnGuardarPedido = findViewById<Button>(R.id.btn_guardarPedidoA)
         val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
+        btnGuardarPedido.setOnClickListener { guardarPedido() }
 
-             /* funciones en continua ejecución durante la pantalla */
+        /* funciones en continua ejecución durante la pantalla */
         buscadorGrafico()
         actualizarTotalMadejas()
     }
@@ -210,6 +211,35 @@ class PedidoHilos : BaseActivity() {
         }
         dialog.show()
     }
+
+    private fun guardarPedido() {
+        val fechaHoy = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        var baseNombre = "P$fechaHoy"
+        var nombreFinal = baseNombre
+        var contador = 1
+
+        while (RepositorioPedidos.listaPedidos.any { it.nombre == nombreFinal }) {
+            nombreFinal = "$baseNombre($contador)"
+            contador++
+        }
+
+        // Clonar lista de gráficos con sus hilos (copias profundas)
+        val copiaGraficos = listaGraficos.orEmpty().map { grafico ->
+            grafico.copy(
+                listaHilos = grafico.listaHilos?.map { hilo -> hilo.copy() }?.toMutableList() ?: mutableListOf()
+
+            )
+        }
+
+        val pedido = PedidoGuardado(nombre = nombreFinal, graficos = copiaGraficos)
+        RepositorioPedidos.listaPedidos.add(pedido)
+
+        // Limpiar la lista de gráficos actuales y notificar al adaptador
+        listaGraficos.clear()
+        adaptadorPedido.notifyDataSetChanged()
+        Toast.makeText(this, "Pedido guardado como $nombreFinal", Toast.LENGTH_SHORT).show()
+    }
+
 
     /* realizar pedido */
     private fun realizarPedido() {
