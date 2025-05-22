@@ -8,13 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.threadly.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import logica.login.LoginUserExiste
-import persistencia.bbdd.ThreadlySingleton
-import persistencia.dao.UsuarioDAO
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
@@ -24,11 +18,19 @@ class DatosPersonales : BaseActivity() {
     private lateinit var txtNombreUsuario: TextView
     private lateinit var imgPerfil: ImageView
 
-    /* declaramos todos los botones de esta pantalla */
     private lateinit var btnModificarDatos: Button
     private lateinit var btnVolverInicio: Button
 
-    private lateinit var usuarioDao: UsuarioDAO
+    companion object {
+        // Simulación de usuario en memoria
+        var usuarioEnMemoria: UsuarioEnMemoria? = null
+    }
+
+    data class UsuarioEnMemoria(
+        val id: Int,
+        val nombre: String,
+        val idImagen: Int
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,46 +43,45 @@ class DatosPersonales : BaseActivity() {
         val btnCerrarSesion = findViewById<Button>(R.id.btn_CerrarSesion)
         val btnEliminarCuenta = findViewById<Button>(R.id.btn_EliminarCuenta)
 
-        /* instanciar  el dao */
-        val bbdd = ThreadlySingleton.getDatabase(this)
-        usuarioDao = bbdd.usuarioDao()
-
         if (usuarioId < 0) {
             finish()
             return
         }
 
-        /* si se pulsa en 'modificar datos' se mandan los datos a esa pantalla */
+        // Inicializar usuario en memoria si es null (simulación)
+        if (usuarioEnMemoria == null) {
+            usuarioEnMemoria = UsuarioEnMemoria(
+                id = usuarioId,
+                nombre = intent.getStringExtra("nombre_usuario") ?: "Usuario",
+                idImagen = 6 // avatar por defecto
+            )
+        }
+
         btnModificarDatos.setOnClickListener {
             irAActividad(ModificarDatos::class.java)
         }
 
-        /* cerrar sesión */
         btnCerrarSesion.setOnClickListener {
             SesionUsuario.cerrarSesion(this)
             val intent = Intent(this, LoginUserExiste::class.java)
             startActivity(intent)
-            finishAffinity() /* cierra todas las actividades abiertas */
+            finishAffinity()
         }
 
-        /* eliminar cuenta */
         btnEliminarCuenta.setOnClickListener {
             dialogEliminarCuenta()
         }
 
-        /* volver a la pantalla inicial */
         btnVolverInicio.setOnClickListener {
-            finish() /* vuelve a pantalla anterior sin perder los cambios */
+            finish()
         }
     }
 
-    /* función para eliminar cuenta */
     private fun dialogEliminarCuenta() {
-        // Todo volver a hacer este metodo cuando tenga todas las entidades para que lo borre todo
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pantalla_dialog_eliminar_cuenta)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        ajustarDialog(dialog) // si ya usas esta función para centrar y ajustar tamaño
+        ajustarDialog(dialog)
         dialog.setCancelable(false)
 
         val btnCancelar = dialog.findViewById<Button>(R.id.btn_Arrepentimiento)
@@ -94,50 +95,34 @@ class DatosPersonales : BaseActivity() {
         btnConfirmar.setOnClickListener {
             dialog.dismiss()
 
-            val bbdd = ThreadlySingleton.getDatabase(this)
-            val usuarioDao = bbdd.usuarioDao()
-            //   val stockDao = bbdd.stockDao()
-            val consejoDao = bbdd.consejoDao()
-            /* todos los daos que almacenan datos del usuario*/
+            // Simulamos borrar el usuario en memoria
+            usuarioEnMemoria = null
 
-            CoroutineScope(Dispatchers.IO).launch {
-                /* borra los datos relacionados
-                stockDao.borrarPorUsuario(usuarioId)
-                consejoDao.borrarConsejosDeUsuario(usuarioId) */
+            Toast.makeText(this@DatosPersonales, "Tu cuenta se ha eliminado \uD83D\uDE22 ¡Hasta pronto!", Toast.LENGTH_LONG).show()
 
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@DatosPersonales, "Tu cuenta se ha eliminado \uD83D\uDE22 ¡Hasta pronto!", Toast.LENGTH_LONG).show()
+            SesionUsuario.cerrarSesion(this@DatosPersonales)
 
-                    /* cierra sesión del usuario borrado y vuelve al login */
-                    SesionUsuario.cerrarSesion(this@DatosPersonales)
-
-                    val intent = Intent(this@DatosPersonales, LoginUserExiste::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    finish()
-                }
-            }
+            val intent = Intent(this@DatosPersonales, LoginUserExiste::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
         }
 
         dialog.show()
     }
 
-
-    /* se ejecuta cada vez que vuelve del fondo */
     override fun onResume() {
         super.onResume()
         cargarDatosUsuario()
     }
 
     private fun cargarDatosUsuario() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val usuario = usuarioDao.obtenerPorId(usuarioId)
-            withContext(Dispatchers.Main) {
-                usuario?.let {
-                    txtNombreUsuario.text = it.nombre
-                    imgPerfil.setImageResource(obtenerAvatarDrawable(it.idImagen))
-                }
-            }
+        usuarioEnMemoria?.let {
+            txtNombreUsuario.text = it.nombre
+            imgPerfil.setImageResource(obtenerAvatarDrawable(it.idImagen))
+        } ?: run {
+            // Si no hay usuario en memoria, cerrar pantalla o manejar error
+            finish()
         }
     }
 
@@ -153,9 +138,3 @@ class DatosPersonales : BaseActivity() {
         }
     }
 }
-
-
-
-
-
-

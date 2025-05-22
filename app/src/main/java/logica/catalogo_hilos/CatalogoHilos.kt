@@ -1,6 +1,7 @@
 package logica.catalogo_hilos
 
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -8,7 +9,6 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
@@ -16,25 +16,17 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import kotlinx.coroutines.launch
-import persistencia.bbdd.CatalogoBdD
-import persistencia.dao.CatalogoDAO
-import persistencia.entidades.Catalogo
 import utiles.BaseActivity
-import utiles.RepositorioCatalogo
-import utiles.funciones.ValidarFormatoHilos
 import utiles.funciones.ajustarDialog
+import utiles.funciones.leerXML
+import utiles.funciones.ValidarFormatoHilos
 import utiles.funciones.funcionToolbar
 import utiles.funciones.ordenarHilos
-import utiles.funciones.toCatalogo
 
 class CatalogoHilos : BaseActivity() {
-
-    private lateinit var catalogoDao: CatalogoDAO
 
     private lateinit var tablaCatalogo: RecyclerView
     private lateinit var adaptadorCatalogo: AdaptadorCatalogo
@@ -43,66 +35,39 @@ class CatalogoHilos : BaseActivity() {
     private lateinit var checkBoxHilo: CheckBox
     private lateinit var checkBoxNombre: CheckBox
 
-    /* añadir repositorio para acceder a la BBDD del catálogo */
-    private lateinit var repositorioCatalogo: RepositorioCatalogo
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.catalogo_aa_hilos)
-        funcionToolbar(this) /* llamada a la función para usar el toolbar */
+        funcionToolbar(this)
 
         tablaCatalogo = findViewById(R.id.tabla_catalogo)
-        adaptadorCatalogo =
-            AdaptadorCatalogo(listaCatalogo, ::dialogEliminarHiloCatalogo)
+        adaptadorCatalogo = AdaptadorCatalogo(listaCatalogo, ::dialogEliminarHiloCatalogo)
         tablaCatalogo.layoutManager = LinearLayoutManager(this)
         tablaCatalogo.adapter = adaptadorCatalogo
 
-        /* inicialización del repositorio del catálogo y del dao */
-        repositorioCatalogo = RepositorioCatalogo(this)
-        catalogoDao = CatalogoBdD.getDatabase(applicationContext).catalogoDao()
+        // Cargar lista desde XML raw (ejemplo: R.raw.catalogo_hilos)
+        cargarCatalogoDesdeXML(this, R.raw.catalogo_hilos)
 
-
-        /* acceder a la BdD sin bloquear la interfaz y evitar fugas de memoria */
-        lifecycleScope.launch {
-            /* comprobará si es la primera vez en la propia función */
-            repositorioCatalogo.inicializarCatalogoSiEsNecesario()
-            val datos = repositorioCatalogo.obtenerCatalogo()
-
-            // Log.d("CatalogoHilos", "Datos obtenidos: ${datos.size}")
-
-            listaCatalogo.clear() /* borra datos viejos de la lista en memoria */
-            listaCatalogo.addAll(datos.map { it.toHiloCatalogo() })
-
-            // Log.d("CatalogoHilos", "Lista convertida: $listaCatalogo")
-
-            adaptadorCatalogo.actualizarLista(listaCatalogo)
-        }
-
-        /* componentes */
         val btn_AgregarHilo = findViewById<Button>(R.id.btn_agregarHiloConsulta)
         val btn_ModificarHilo = findViewById<Button>(R.id.btn_modificarHiloConsulta)
         checkBoxHilo = findViewById(R.id.ckBx_numHiloModificar)
         checkBoxNombre = findViewById(R.id.ckB_nombreHiloModificar)
 
-        /* acciones */
-        btn_AgregarHilo.setOnClickListener() { dialogAgregarHiloCatalogo() }
-        btn_ModificarHilo.setOnClickListener {
-            dialogModificarHiloCatalogo()
-        }
+        btn_AgregarHilo.setOnClickListener { dialogAgregarHiloCatalogo() }
+        btn_ModificarHilo.setOnClickListener { dialogModificarHiloCatalogo() }
 
         buscadorHilo()
     }
 
-    /* función de conversión para poder usar el modelo del adaptador */
-    fun Catalogo.toHiloCatalogo(): HiloCatalogo {
-        return HiloCatalogo(
-            numHilo = this.codigoHilo,
-            nombreHilo = this.nombreHilo,
-            color = this.color
-        )
+    private fun cargarCatalogoDesdeXML(context: Context, resourceId: Int) {
+        val catalogoDesdeXML: List<HiloCatalogo> = leerXML(context, resourceId)
+
+        listaCatalogo = ordenarHilos(catalogoDesdeXML) { it.numHilo }.toMutableList()
+
+        adaptadorCatalogo.actualizarLista(listaCatalogo)
     }
 
-    /* buscar un hilo en el catálogo */
+
     private fun buscadorHilo() {
         val editTextBuscar = findViewById<EditText>(R.id.txtVw_buscarHiloConsulta)
         val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaCatalogo)
@@ -146,7 +111,6 @@ class CatalogoHilos : BaseActivity() {
         })
     }
 
-    /* agregar hilo al catálogo */
     private fun dialogAgregarHiloCatalogo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_agregar_hilo)
@@ -159,9 +123,7 @@ class CatalogoHilos : BaseActivity() {
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volverAgregarHilo)
         val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarAgregarHilo)
 
-        btnVolver.setOnClickListener {
-            dialog.dismiss()
-        }
+        btnVolver.setOnClickListener { dialog.dismiss() }
 
         btnGuardar.setOnClickListener {
             val numHiloString = inputNumHilo.text.toString().uppercase().trim()
@@ -193,34 +155,14 @@ class CatalogoHilos : BaseActivity() {
             listaCatalogo = ordenarHilos(listaCatalogo) { it.numHilo }.toMutableList()
             adaptadorCatalogo.actualizarLista(listaCatalogo)
 
-            /* persistencia */
-            lifecycleScope.launch {
-                try {
-                    catalogoDao.insertar(nuevoHilo.toCatalogo())
-                    runOnUiThread {
-                        Toast.makeText(
-                            this@CatalogoHilos,
-                            "Hilo añadido al catálogo correctamente",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        dialog.dismiss()
-                    }
-                } catch (e: Exception) {
-                    runOnUiThread {
-                        Toast.makeText(
-                            this@CatalogoHilos,
-                            "Error al añadir el hilo :(",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            }
+            Toast.makeText(this, "Hilo añadido al catálogo correctamente", Toast.LENGTH_SHORT)
+                .show()
+            dialog.dismiss()
         }
 
         dialog.show()
     }
 
-    /* modificar hilo 1: se escoge el hilo y los campos a modificar */
     private fun dialogModificarHiloCatalogo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_modificar)
@@ -234,9 +176,7 @@ class CatalogoHilos : BaseActivity() {
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volverModificarHilo)
         val btnSiguiente = dialog.findViewById<Button>(R.id.btn_botonSiguienteModificar)
 
-        btnVolver.setOnClickListener {
-            dialog.dismiss()
-        }
+        btnVolver.setOnClickListener { dialog.dismiss() }
 
         btnSiguiente.setOnClickListener {
             val numHiloTexto = inputNumHilo.text.toString().trim()
@@ -249,7 +189,8 @@ class CatalogoHilos : BaseActivity() {
                 return@setOnClickListener
             }
 
-            val posicion = listaCatalogo.indexOfFirst { it.numHilo.equals(numHiloTexto, ignoreCase = true) }
+            val posicion =
+                listaCatalogo.indexOfFirst { it.numHilo.equals(numHiloTexto, ignoreCase = true) }
             if (posicion == -1) {
                 Toast.makeText(this, "No existe ese hilo en el catálogo", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -271,7 +212,6 @@ class CatalogoHilos : BaseActivity() {
         dialog.show()
     }
 
-    /* modificar hilo 2: con los campos escogidos ya se procede a modificar */
     private fun dialogModificarHiloFinal(
         posicion: Int,
         modificarNum: Boolean,
@@ -351,17 +291,11 @@ class CatalogoHilos : BaseActivity() {
 
             Toast.makeText(this, "Hilo modificado correctamente", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
-
-            lifecycleScope.launch {
-                catalogoDao.actualizar(hiloActual.toCatalogo())
-            }
         }
 
         dialog.show()
     }
 
-
-    /* eliminar un hilo del catalogo */
     private fun dialogEliminarHiloCatalogo(posicion: Int) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_eliminar_hilo)
@@ -394,22 +328,15 @@ class CatalogoHilos : BaseActivity() {
 
         txtConfirmacion.text = spannable
 
-        btnVolver.setOnClickListener {
-            dialog.dismiss()
-        }
+        btnVolver.setOnClickListener { dialog.dismiss() }
 
         btnEliminar.setOnClickListener {
             listaCatalogo.removeAt(posicion)
             adaptadorCatalogo.notifyItemRemoved(posicion)
             Toast.makeText(this, "Hilo $numHilo eliminado del catálogo", Toast.LENGTH_SHORT).show()
-
-            lifecycleScope.launch {
-                catalogoDao.eliminar(hilo.toCatalogo())
-            }
             dialog.dismiss()
         }
 
         dialog.show()
     }
-
 }

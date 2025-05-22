@@ -7,7 +7,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 
 /* leer sólo el nodo codigo para el stock */
-fun leerCodigoHilo(context: Context, resourceId: Int): MutableList<HiloStock> {
+fun LeerXMLCodigo(context: Context, resourceId: Int): MutableList<HiloStock> {
     val lista = mutableListOf<HiloStock>()
     context.resources.openRawResource(resourceId).use { inputStream ->
         val builderFactory = DocumentBuilderFactory.newInstance()

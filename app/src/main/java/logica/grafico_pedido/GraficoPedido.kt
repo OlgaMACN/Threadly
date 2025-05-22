@@ -25,7 +25,6 @@ import utiles.BaseActivity
 import utiles.funciones.ajustarDialog
 import utiles.funciones.calcularMadejas
 import utiles.funciones.funcionToolbar
-import utiles.funciones.ordenarHilos
 
 class GraficoPedido : BaseActivity() {
 

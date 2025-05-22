@@ -1,13 +1,12 @@
 package utiles.funciones
 
-import persistencia.entidades.Catalogo
 import android.content.Context
+import logica.catalogo_hilos.HiloCatalogo
 import org.w3c.dom.Element
 import javax.xml.parsers.DocumentBuilderFactory
 
-/* leer el xml con dom para crear la BdD */
-fun leerXml(context: Context, resourceId: Int): List<Catalogo> {
-    val listaHilos = mutableListOf<Catalogo>()
+fun leerXML(context: Context, resourceId: Int): List<HiloCatalogo> {
+    val listaHilos = mutableListOf<HiloCatalogo>()
 
     context.resources.openRawResource(resourceId).use { inputStream ->
         val builderFactory = DocumentBuilderFactory.newInstance()
@@ -22,11 +21,10 @@ fun leerXml(context: Context, resourceId: Int): List<Catalogo> {
             val color = nodo.getElementsByTagName("color").item(0).textContent.trim()
 
             listaHilos.add(
-                Catalogo(
-                    id = 0,  /* se autogenera */
-                    codigoHilo = codigo,
+                HiloCatalogo(
+                    numHilo = codigo,
                     nombreHilo = nombre,
-                    color = color
+                    color = color.takeIf { it.isNotEmpty() }  /* si está vacío. será null */
                 )
             )
         }

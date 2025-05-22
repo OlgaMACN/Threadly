@@ -71,7 +71,7 @@
     <!--Dialog Eliminar Hilo (stock_dialog_eliminar_hilo) -->
     <string name="cabeceraDialogEliminarHiloStk">ELIMINAR HILO</string>
     <string name="confirmarEliminarHiloStk">¿Seguro que quieres eliminar el hilo "%s" de tu stock?</string>
-    <string name="botonEliminarHiloStk">Sí, eliminar</string>
+    <string name="botonEliminarHiloStk">Sí</string>
     <!-- Dialog Añadir Madejas (stock_dialog_agregar_madeja) -->
     <string name="cabeceraAgregarMadejaStk">AÑADIR MADEJAS</string>
     <string name="textoAgregarMadejaStk">Número de madejas a añadir para el hilo: </string>

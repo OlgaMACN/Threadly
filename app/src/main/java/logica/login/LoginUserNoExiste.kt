@@ -9,13 +9,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import logica.pantalla_inicio.PantallaPrincipal
-import persistencia.bbdd.ThreadlySingleton
-import persistencia.entidades.Usuario
 
 class LoginUserNoExiste : AppCompatActivity() {
 
@@ -23,6 +17,11 @@ class LoginUserNoExiste : AppCompatActivity() {
     private lateinit var contrasena: EditText
     private lateinit var botonOjo: ImageView
     private var contrasenaVisible = false
+
+    companion object {
+        // Simulamos usuarios en memoria (nombre, contraseña)
+        private val usuariosRegistrados = mutableListOf<Pair<String, String>>()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +38,6 @@ class LoginUserNoExiste : AppCompatActivity() {
         botonOjo = findViewById(R.id.imgVw_eye_closed)
     }
 
-    /* habilitar el efecto de abrir y cerrar el ojo */
     private fun configurarBotonOjo() {
         botonOjo.setOnClickListener {
             contrasenaVisible = !contrasenaVisible
@@ -60,12 +58,10 @@ class LoginUserNoExiste : AppCompatActivity() {
         btnEntrar.setOnClickListener { intentarCrearCuenta() }
     }
 
-    /* crear cuenta y navegar a la pantalla de inicio */
     private fun intentarCrearCuenta() {
         val usuarioEntrada = usuario.text.toString().trim()
         val contrasenaEntrada = contrasena.text.toString().trim()
 
-        /* ni vacío, ni menor a 8 caracteres, ni mayor a 20 */
         when {
             usuarioEntrada.isEmpty() || contrasenaEntrada.isEmpty() -> {
                 mostrarToast("Por favor, rellena los campos.")
@@ -84,43 +80,25 @@ class LoginUserNoExiste : AppCompatActivity() {
             }
 
             else -> {
-                /* después de pasar todas las comprobaciones con los toast, se puede crear la cuenta */
-                val bbdd = ThreadlySingleton.getDatabase(this)
-                val usuarioDao = bbdd.usuarioDao()
+                val existe = usuariosRegistrados.any { it.first.equals(usuarioEntrada, ignoreCase = true) }
+                if (existe) {
+                    mostrarToast("Nombre en uso :( Tienes que escoger otro")
+                } else {
+                    usuariosRegistrados.add(usuarioEntrada to contrasenaEntrada)
 
-                /* coroutine para evitar problemas con los hilos */
-                CoroutineScope(Dispatchers.IO).launch {
-                    val usuarioExistente = usuarioDao.obtenerPorNombre(usuarioEntrada)
+                    val idGenerado = usuariosRegistrados.size
 
-                    /* si el usuario existe no dejará crear otro con el mismo nombre */
-                    if (usuarioExistente != null) {
-                        withContext(Dispatchers.Main) {
-                            mostrarToast("Nombre en uso :( Tienes que escoger otro")
-                        }
-                    } else {
-                        /* si no existe, el registro en la BdD se completará correctamente */
-                        val nuevoUsuario =
-                            Usuario(nombre = usuarioEntrada, contraseña = contrasenaEntrada)
-                        val idGenerado = usuarioDao.insertar(nuevoUsuario).toInt()
-
-                        withContext(Dispatchers.Main) {
-                            val intent = Intent(
-                                this@LoginUserNoExiste,
-                                PantallaPrincipal::class.java
-                            ).apply {
-                                putExtra("nombre_usuario", usuarioEntrada)
-                                putExtra("usuario_id", idGenerado)
-                            }
-                            startActivity(intent)
-                            finish()
-                        }
+                    val intent = Intent(this@LoginUserNoExiste, PantallaPrincipal::class.java).apply {
+                        putExtra("nombre_usuario", usuarioEntrada)
+                        putExtra("usuario_id", idGenerado)
                     }
+                    startActivity(intent)
+                    finish()
                 }
             }
         }
     }
 
-    /* sólo para mostrar los toast y reducir código */
     private fun mostrarToast(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
     }
