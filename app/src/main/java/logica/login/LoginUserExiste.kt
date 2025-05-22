@@ -48,7 +48,8 @@ class LoginUserExiste : AppCompatActivity() {
                 contrasena.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                 botonOjo.setImageResource(R.drawable.img_eye_open)
             } else {
-                contrasena.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                contrasena.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                 botonOjo.setImageResource(R.drawable.img_eye_closed)
             }
             contrasena.setSelection(contrasena.text.length)
@@ -63,8 +64,11 @@ class LoginUserExiste : AppCompatActivity() {
     private fun configurarCrearCuenta() {
         val crearCuenta = findViewById<TextView>(R.id.txtVw_crearCuenta)
         crearCuenta.setOnClickListener {
-            // Aquí puedes ir a una actividad para crear cuenta, si quieres
-            Toast.makeText(this, "Funcionalidad crear cuenta no implementada.", Toast.LENGTH_SHORT).show()
+            val crearCuenta = findViewById<TextView>(R.id.txtVw_crearCuenta)
+            crearCuenta.setOnClickListener {
+                val intent = Intent(this, LoginUserNoExiste::class.java)
+                startActivity(intent)
+            }
         }
     }
 

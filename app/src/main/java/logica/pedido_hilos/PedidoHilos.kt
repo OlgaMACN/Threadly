@@ -32,6 +32,8 @@ class PedidoHilos : BaseActivity() {
 
     private lateinit var adaptadorPedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
+    private var pedidoGuardado = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -226,7 +228,8 @@ class PedidoHilos : BaseActivity() {
         // Clonar lista de gráficos con sus hilos (copias profundas)
         val copiaGraficos = listaGraficos.orEmpty().map { grafico ->
             grafico.copy(
-                listaHilos = grafico.listaHilos?.map { hilo -> hilo.copy() }?.toMutableList() ?: mutableListOf()
+                listaHilos = grafico.listaHilos?.map { hilo -> hilo.copy() }?.toMutableList()
+                    ?: mutableListOf()
 
             )
         }
@@ -237,6 +240,7 @@ class PedidoHilos : BaseActivity() {
         // Limpiar la lista de gráficos actuales y notificar al adaptador
         listaGraficos.clear()
         adaptadorPedido.notifyDataSetChanged()
+        pedidoGuardado = true
         Toast.makeText(this, "Pedido guardado como $nombreFinal", Toast.LENGTH_SHORT).show()
     }
 
@@ -313,4 +317,57 @@ class PedidoHilos : BaseActivity() {
             }
         }
     }
+
+    /* interceptar que se pulsa 'atrás' */
+    @Suppress("MissingSuperCall")
+    override fun onBackPressed() {
+        dialogGuardarPedido()
+    }
+
+    fun onSalirDePantalla(destino: () -> Unit) {
+        dialogGuardarPedido(salirDespues = false, destino = destino)
+    }
+
+    private fun dialogGuardarPedido(salirDespues: Boolean = true, destino: (() -> Unit)? = null) {
+        if (pedidoGuardado || listaGraficos.isEmpty()) {
+            if (destino != null) {
+                destino()
+            } else if (salirDespues) {
+                finish()
+            }
+            return
+        }
+
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.pedido_dialog_guardar_pedido)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        ajustarDialog(dialog)
+        dialog.setCancelable(false)
+
+        val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarPedido)
+        val btnVolver = dialog.findViewById<Button>(R.id.btn_volverSinGuardar)
+
+        btnGuardar.setOnClickListener {
+            guardarPedido()
+            dialog.dismiss()
+            if (destino != null) {
+                destino()
+            } else if (salirDespues) {
+                finish()
+            }
+        }
+
+        btnVolver.setOnClickListener {
+            dialog.dismiss()
+            if (destino != null) {
+                destino()
+            } else if (salirDespues) {
+                finish()
+            }
+        }
+
+        dialog.show()
+    }
+
+
 }

@@ -152,9 +152,9 @@
     <string name="eliminarGrafico">Eliminar</string>
     <!-- Dialog Guardar Pedido (pedido_dialog_guardar_pedido) -->
     <string name="cabeceraDialogGuardarGrafico">EY, UN MOMENTO...</string>
-    <string name="mensajeConfirmarGuardado">Si te vas sin guardar se perderán los cambios y el pedido. ¿Seguro que quieres irte del pedido sin guardar?</string>
+    <string name="mensajeConfirmarGuardado">Si te vas sin guardar se perderán los cambios y el pedido. \n¿Seguro que quieres irte del pedido sin guardar?</string>
     <string name="volverSinGuardar">Sí, chao</string>
-    <string name="guardarPedido">Guarda, porfa</string>
+    <string name="guardarPedido">Guardar</string>
 
     <!-- Gráfico Individual (pedidob_aa_principal)  -->
     <string name="cabeceraGrafico">NOMBRE GRÁFICO</string>

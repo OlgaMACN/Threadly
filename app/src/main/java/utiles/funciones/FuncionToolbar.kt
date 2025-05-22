@@ -32,10 +32,18 @@ fun funcionToolbar(activity: BaseActivity) {
     /* el toolbar sólo funciona si no es la activity actual */
     fun siNoEsActivityActual(target: Class<out BaseActivity>) {
         if (activity::class.java != target) {
-            activity.irAActividad(target)
-            activity.finish()
+            if (activity is PedidoHilos) {
+                (activity as PedidoHilos).onSalirDePantalla {
+                    activity.irAActividad(target)
+                    activity.finish()
+                }
+            } else {
+                activity.irAActividad(target)
+                activity.finish()
+            }
         }
     }
+
 
     /* configuración botón catálogo */
     btn_catalogo.setOnClickListener {
