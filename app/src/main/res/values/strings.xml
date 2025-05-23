@@ -193,5 +193,8 @@
     <string name="cabeceraDialogEliminarPedido">ELIMINAR PEDIDO</string>
     <string name="confirmarEliminarPedido">¿Seguro que quieres eliminar el pedido "%s" de tu almacén?</string>
     <string name="botonEliminarPedido">Sí</string>
-
+    <!--Dialog Editar Pedido (almacen_dialog_editar_pedido) -->
+    <string name="cabeceraDialogEditarPedido">EDITAR PEDIDO</string>
+    <string name="confirmarEditarPedido">¿Quieres volver a editar el pedido "%s" de tu almacén?</string>
+    <string name="botonEditarPedido">Sí</string>
 </resources>
