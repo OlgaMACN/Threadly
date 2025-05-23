@@ -1,7 +1,9 @@
 package logica.almacen_pedidos
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -9,6 +11,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -18,6 +21,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import logica.pedido_hilos.PedidoHilos
 import utiles.BaseActivity
 import utiles.funciones.ajustarDialog
 import utiles.funciones.exportarPedidoCSV
@@ -25,7 +29,7 @@ import utiles.funciones.funcionToolbar
 
 class AlmacenPedidos : BaseActivity() {
 
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var tablaAlmacen: RecyclerView
     private lateinit var adaptador: AdaptadorAlmacen
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,20 +37,38 @@ class AlmacenPedidos : BaseActivity() {
         setContentView(R.layout.almacen_aa_pedidos)
         funcionToolbar(this)
 
-        recyclerView = findViewById(R.id.tabla_almacen)
+        tablaAlmacen = findViewById(R.id.tabla_almacen)
 
-        adaptador = AdaptadorAlmacen(RepositorioPedidos.listaPedidos) { pedido ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val descargado = exportarPedidoCSV(this, pedido)
-                val mensaje = if (descargado) "Pedido descargado en Documentos/Threadly" else "Este pedido ya fue descargado o ocurrió un error"
-                Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Esta función requiere Android 10 o superior", Toast.LENGTH_SHORT).show()
+        adaptador = AdaptadorAlmacen(
+            RepositorioPedidos.listaPedidos,
+            onDescargarClick = { pedido ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val resultado = exportarPedidoCSV(this, pedido)
+                    if (resultado) {
+                        Toast.makeText(
+                            this,
+                            "Pedido guardado en Descargas/Threadly",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(this, "Error al descargar :(", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Exportación disponible solo en Android 10 o superior",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            },
+            onItemClick = { pedido ->
+                dialogEditarPedido(pedido)
             }
-        }
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adaptador
+        )
 
+        tablaAlmacen.layoutManager = LinearLayoutManager(this)
+        tablaAlmacen.adapter = adaptador
         buscadorPedido()
     }
 
@@ -133,4 +155,51 @@ class AlmacenPedidos : BaseActivity() {
 
         dialog.show()
     }
+
+    fun dialogEditarPedido(pedido: PedidoGuardado) {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.almacen_dialog_editar_pedido)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        ajustarDialog(dialog)
+        dialog.setCancelable(false)
+
+        val btnEditar = dialog.findViewById<Button>(R.id.btn_botonEditarPedido)
+        val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_almacen)
+        val txtMensaje = dialog.findViewById<TextView>(R.id.txtVw_confirmarEditarPedido)
+
+        val nombrePedido = pedido.nombre
+        val textoOriginal = getString(R.string.confirmarEditarPedido)
+        val textoConPedido = textoOriginal.replace("%s", nombrePedido)
+
+        val spannable = SpannableString(textoConPedido)
+        val start = textoConPedido.indexOf(nombrePedido)
+        val end = start + nombrePedido.length
+
+        if (start != -1) {
+            spannable.setSpan(
+                StyleSpan(Typeface.BOLD),
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        txtMensaje.text = spannable
+
+        txtMensaje.text = textoConPedido
+        btnEditar.setOnClickListener {
+            val intent = Intent(this, PedidoHilos::class.java)
+            intent.putExtra("pedido_a_editar", pedido)
+            startActivity(intent)
+            dialog.dismiss()
+        }
+
+        btnVolver.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+
 }
