@@ -33,12 +33,31 @@ class PedidoHilos : BaseActivity() {
     private lateinit var adaptadorPedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
     private var pedidoGuardado = false
+    private var nombrePedidoEditado: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
+
+        /* para editar un pedido */
+        val pedidoRecibido = intent.getSerializableExtra("pedido_a_editar") as? PedidoGuardado
+        if (pedidoRecibido != null) {
+            listaGraficos.clear()
+            listaGraficos.addAll(
+                pedidoRecibido.graficos.map {
+                    it.copy(
+                        listaHilos = it.listaHilos?.map { hilo -> hilo.copy() }?.toMutableList()
+                            ?: mutableListOf()
+                    )
+                }
+            )
+            pedidoGuardado = true // así sabemos que este pedido ya estaba guardado
+            nombrePedidoEditado =
+                pedidoRecibido.nombre // NUEVA VARIABLE para saber a quién sobrescribir
+        }
+
 
         /* inicializar el adaptador y configurar el recycler view */
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
@@ -215,6 +234,33 @@ class PedidoHilos : BaseActivity() {
     }
 
     private fun guardarPedido() {
+        val copiaGraficos = listaGraficos.map { grafico ->
+            grafico.copy(
+                listaHilos = grafico.listaHilos?.map { it.copy() }?.toMutableList()
+                    ?: mutableListOf()
+            )
+        }
+
+        val nombreFinal = nombrePedidoEditado ?: nombrePedido()
+
+        val nuevoPedido = PedidoGuardado(nombre = nombreFinal, graficos = copiaGraficos)
+
+        // Si estamos editando, reemplazamos el existente
+        val indexExistente =
+            RepositorioPedidos.listaPedidos.indexOfFirst { it.nombre == nombreFinal }
+        if (indexExistente != -1) {
+            RepositorioPedidos.listaPedidos[indexExistente] = nuevoPedido
+        } else {
+            RepositorioPedidos.listaPedidos.add(nuevoPedido)
+        }
+
+        listaGraficos.clear()
+        adaptadorPedido.notifyDataSetChanged()
+        pedidoGuardado = true
+        Toast.makeText(this, "Pedido guardado como $nombreFinal", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun nombrePedido(): String {
         val fechaHoy = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
         var baseNombre = "P$fechaHoy"
         var nombreFinal = baseNombre
@@ -224,26 +270,8 @@ class PedidoHilos : BaseActivity() {
             nombreFinal = "$baseNombre($contador)"
             contador++
         }
-
-        // Clonar lista de gráficos con sus hilos (copias profundas)
-        val copiaGraficos = listaGraficos.orEmpty().map { grafico ->
-            grafico.copy(
-                listaHilos = grafico.listaHilos?.map { hilo -> hilo.copy() }?.toMutableList()
-                    ?: mutableListOf()
-
-            )
-        }
-
-        val pedido = PedidoGuardado(nombre = nombreFinal, graficos = copiaGraficos)
-        RepositorioPedidos.listaPedidos.add(pedido)
-
-        // Limpiar la lista de gráficos actuales y notificar al adaptador
-        listaGraficos.clear()
-        adaptadorPedido.notifyDataSetChanged()
-        pedidoGuardado = true
-        Toast.makeText(this, "Pedido guardado como $nombreFinal", Toast.LENGTH_SHORT).show()
+        return nombreFinal
     }
-
 
     /* realizar pedido */
     private fun realizarPedido() {
