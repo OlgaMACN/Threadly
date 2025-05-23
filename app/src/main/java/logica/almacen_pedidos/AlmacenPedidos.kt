@@ -2,23 +2,26 @@ package logica.almacen_pedidos
 
 import android.app.Dialog
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.text.Editable
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import utiles.BaseActivity
 import utiles.funciones.ajustarDialog
+import utiles.funciones.exportarPedidoCSV
 import utiles.funciones.funcionToolbar
-import java.io.File
-import java.io.FileWriter
 
 class AlmacenPedidos : BaseActivity() {
 
@@ -33,11 +36,14 @@ class AlmacenPedidos : BaseActivity() {
         recyclerView = findViewById(R.id.tabla_almacen)
 
         adaptador = AdaptadorAlmacen(RepositorioPedidos.listaPedidos) { pedido ->
-            val descargado = exportarPedidoACSV(pedido)
-            val mensaje = if (descargado) "Pedido descargado en Descargas" else "Este pedido ya fue descargado"
-            Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val descargado = exportarPedidoCSV(this, pedido)
+                val mensaje = if (descargado) "Pedido descargado en Documentos/Threadly" else "Este pedido ya fue descargado o ocurrió un error"
+                Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Esta función requiere Android 10 o superior", Toast.LENGTH_SHORT).show()
+            }
         }
-
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adaptador
 
@@ -106,7 +112,12 @@ class AlmacenPedidos : BaseActivity() {
         val end = start + nombrePedido.length
 
         if (start != -1) {
-            spannable.setSpan(ForegroundColorSpan(Color.RED), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(
+                ForegroundColorSpan(Color.RED),
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         }
 
         txtMensaje.text = spannable
@@ -121,36 +132,5 @@ class AlmacenPedidos : BaseActivity() {
         }
 
         dialog.show()
-    }
-
-    private fun exportarPedidoACSV(pedido: PedidoGuardado): Boolean {
-        val nombreArchivo = "${pedido.nombre}.csv"
-        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val archivo = File(downloadsDir, nombreArchivo)
-
-        if (archivo.exists()) return false
-
-        val mapaHilos = mutableMapOf<String, Int>()
-        for (grafico in pedido.graficos) {
-            for (hilo in grafico.listaHilos) {
-                val codigo = hilo.hilo
-                val cantidad = hilo.madejas
-                mapaHilos[codigo] = mapaHilos.getOrDefault(codigo, 0) + cantidad
-            }
-        }
-
-        return try {
-            val writer = FileWriter(archivo)
-            writer.append("Hilo,Madejas\n")
-            for ((codigo, total) in mapaHilos) {
-                writer.append("$codigo,$total\n")
-            }
-            writer.flush()
-            writer.close()
-            true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
     }
 }
