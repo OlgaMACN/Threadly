@@ -1,6 +1,7 @@
-package logica.CatalogoHilos
+package logica.catalogo_hilos
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,9 +16,10 @@ class AdaptadorCatalogo(
 ) : RecyclerView.Adapter<AdaptadorCatalogo.CatalogoViewHolder>() {
 
     inner class CatalogoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
         val txtHilo: TextView = view.findViewById(R.id.txtVw_numHiloConsulta)
         val txtMadejas: TextView = view.findViewById(R.id.txtVw_nombreHiloConsulta)
+        val viewColorSwatch: View = view.findViewById(R.id.view_ColorHilo)
+        val txtColorError: TextView = view.findViewById(R.id.txtVw_colorImparseable)
         val filaLayout: View = view /* contenedor de la fila para cambiar el fondo */
 
         init {
@@ -34,7 +36,7 @@ class AdaptadorCatalogo(
     ): CatalogoViewHolder {
 
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.stock_tabla_filas_contenido, parent, false)
+            .inflate(R.layout.catalogo_tabla_filas_contenido, parent, false)
         return CatalogoViewHolder(view)
     }
 
@@ -42,6 +44,26 @@ class AdaptadorCatalogo(
         val item = items[position]
         holder.txtHilo.text = item.numHilo.toString()
         holder.txtMadejas.text = item.nombreHilo
+
+        /* por si no se carga bien el color, que en vez de expeción, sea negro */
+        val colorStr = item.color
+        if (!colorStr.isNullOrBlank()) { /* sólo parsea si no es nulo o vacío */
+            try {
+                val parsed =
+                    Color.parseColor(if (colorStr.startsWith("#")) colorStr else "#$colorStr")
+                holder.viewColorSwatch.setBackgroundColor(parsed)
+                holder.viewColorSwatch.visibility = View.VISIBLE
+                holder.txtColorError.visibility = View.GONE
+            } catch (e: IllegalArgumentException) {
+                /* si nos se puede parsear se muestra el texto */
+                holder.viewColorSwatch.visibility = View.GONE
+                holder.txtColorError.visibility = View.VISIBLE
+            }
+        } else {
+            /* si nos se puede parsear se muestra el texto */
+            holder.viewColorSwatch.visibility = View.GONE
+            holder.txtColorError.visibility = View.VISIBLE
+        }
 
         /* comprueba si ha de resaltar la fila o no */
         if (item.numHilo.toString() == hiloResaltado) {
@@ -56,7 +78,6 @@ class AdaptadorCatalogo(
     @SuppressLint("NotifyDataSetChanged")
     fun actualizarLista(nuevaLista: List<HiloCatalogo>) {
         items = nuevaLista.toMutableList()
-        // TODO cambiar a algo más eficiente pero de momento tira
         notifyDataSetChanged()
     }
 

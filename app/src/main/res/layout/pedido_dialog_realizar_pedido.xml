@@ -94,7 +94,7 @@
         android:fontFamily="@font/catchy_mager"
         android:text="@string/volver_pedido"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="15sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
 </LinearLayout>

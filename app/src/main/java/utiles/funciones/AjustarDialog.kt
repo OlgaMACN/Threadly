@@ -1,4 +1,4 @@
-package utiles;
+package utiles.funciones;
 
 import android.app.Dialog
 import android.content.res.Resources

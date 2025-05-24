@@ -5,6 +5,8 @@
     android:background="@color/fondoPantallas"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:clickable="true"
+    android:focusable="true"
     android:paddingHorizontal="16dp">
 
     <TextView

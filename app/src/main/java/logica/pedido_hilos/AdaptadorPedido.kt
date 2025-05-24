@@ -1,6 +1,7 @@
 package logica.pedido_hilos
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ class AdaptadorPedido(
 
         init {
             view.setOnClickListener {
+                Log.d("AdaptadorPedido", "Fila clicada en posición $adapterPosition")
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onItemClick(graficos[position])

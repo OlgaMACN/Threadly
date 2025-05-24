@@ -1,44 +1,39 @@
 package logica.pedido_hilos
 
-import android.Manifest
 import android.app.Dialog
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.icu.text.SimpleDateFormat
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import logica.almacen_pedidos.PedidoGuardado
+import logica.almacen_pedidos.PedidoSingleton
 import logica.grafico_pedido.GraficoPedido
-import utiles.ajustarDialog
-import utiles.ExportadorCSV
-import utiles.funcionToolbar
+import utiles.BaseActivity
+import utiles.funciones.ajustarDialog
+import utiles.funciones.funcionToolbar
+import java.util.Date
+import java.util.Locale
 
 private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada gráfico */
 
-class PedidoHilos : AppCompatActivity() {
+class PedidoHilos : BaseActivity() {
 
     private lateinit var adaptadorPedido: AdaptadorPedido
     private val listaGraficos = mutableListOf<Grafico>()
-
-    /* para descargar el pedido */
-    companion object {
-        private const val REQUEST_CODE_WRITE = 1001
-    }
-
-    private lateinit var btnDescargarPedido: Button
+    private var pedidoGuardado = false
+    private var nombrePedidoEditado: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,98 +41,56 @@ class PedidoHilos : AppCompatActivity() {
         setContentView(R.layout.pedido_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
+        /* para editar un pedido */
+        val pedidoRecibido = intent.getSerializableExtra("pedido_a_editar") as? PedidoGuardado
+        if (pedidoRecibido != null) {
+            listaGraficos.clear()
+            listaGraficos.addAll(
+                pedidoRecibido.graficos.map {
+                    it.copy(
+                        listaHilos = it.listaHilos?.map { hilo -> hilo.copy() }?.toMutableList()
+                            ?: mutableListOf()
+                    )
+                }
+            )
+            pedidoGuardado = true // así sabemos que este pedido ya estaba guardado
+            nombrePedidoEditado =
+                pedidoRecibido.nombre // NUEVA VARIABLE para saber a quién sobrescribir
+        }
+
+
         /* inicializar el adaptador y configurar el recycler view */
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
         tablaPedido.layoutManager = LinearLayoutManager(this)
-
-        /* inicializo el adaptador manejando los clics sobre la tabla */
-        adaptadorPedido = AdaptadorPedido(listaGraficos, onItemClick = { graficoSeleccionado ->
-            val position = listaGraficos.indexOf(graficoSeleccionado)
-            val intent = Intent(this, GraficoPedido::class.java).apply {
-                putExtra("grafico", graficoSeleccionado)
-                putExtra("position", position)
+        adaptadorPedido = AdaptadorPedido(listaGraficos,
+            onItemClick = { graficoSeleccionado ->
+                Log.d("PedidoHilos", "Click en gráfico: ${graficoSeleccionado.nombre}")
+                // Lanzamos GraficoPedido propagando sesión y pasando el gráfico
+                lanzar(GraficoPedido::class.java) {
+                    putExtra("grafico", graficoSeleccionado)
+                }
+            },
+            onLongClick = { index ->
+                dialogoEliminarGrafico(index)
             }
-            startActivityForResult(intent, REQUEST_CODE_GRAFICO_PEDIDO)
-        }, onLongClick = { index ->
-            dialogoEliminarGrafico(index)
-        })
-        /* asignación del adaptador */
+        )
         tablaPedido.adapter = adaptadorPedido
+
 
         /* declarar componentes*/
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
-        btnDescargarPedido = findViewById(R.id.btn_descargarPedido)
+        val btnGuardarPedido = findViewById<Button>(R.id.btn_guardarPedidoA)
         val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
+        btnGuardarPedido.setOnClickListener { guardarPedido() }
 
-        /* descargar pedido: al pulsar se comprueban permisos y se exporta */
-        btnDescargarPedido.setOnClickListener {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                if (ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                    != PackageManager.PERMISSION_GRANTED
-                ) {
-                    /* se pide permiso al usuario */
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        REQUEST_CODE_WRITE
-                    )
-                } else {
-                    exportarPedidoComoCSV()
-                }
-            } else {
-                /* si la versión de android es +10 no hace falta pedir permiso */
-                exportarPedidoComoCSV()
-            }
-        }
         /* funciones en continua ejecución durante la pantalla */
         buscadorGrafico()
         actualizarTotalMadejas()
     }
-
-    /* ahora en función de si el usuario ha dado permiso para la descarga o no... */
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permisos: Array<out String>,
-        concederPermisos: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permisos, concederPermisos)
-        if (requestCode == REQUEST_CODE_WRITE &&
-            concederPermisos.isNotEmpty() &&
-            concederPermisos[0] == PackageManager.PERMISSION_GRANTED
-        ) {
-            exportarPedidoComoCSV() /* es descarga */
-        } else {
-            Toast.makeText(
-                this,
-                "Permiso denegado :(, no se puede guardar el pedido.", /* o se interrumpe */
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-
-    /* método para guardar los hilos con sus madejas */
-    private fun exportarPedidoComoCSV() {
-        // Agrupar los hilos con suma de madejas
-        val hilosAgrupados = mutableMapOf<String, Int>()
-        for (grafico in listaGraficos) {
-            for (hiloGrafico in grafico.listaHilos) {
-                val nombre = hiloGrafico.hilo.trim()
-                val madejas = hiloGrafico.madejas
-                hilosAgrupados[nombre] = hilosAgrupados.getOrDefault(nombre, 0) + madejas
-            }
-        }
-
-        // Usar la utilidad
-        ExportadorCSV.exportarPedido(this, hilosAgrupados)
-    }
-
 
     /* buscar un gráfico dentro del pedido */
     private fun buscadorGrafico() {
@@ -280,6 +233,39 @@ class PedidoHilos : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun guardarPedido() {
+        val copiaGraficos = listaGraficos.map { grafico ->
+            grafico.copy(
+                listaHilos = grafico.listaHilos?.map { it.copy() }?.toMutableList()
+                    ?: mutableListOf()
+            )
+        }
+
+        val nombreFinal = nombrePedidoEditado ?: nombrePedido()
+
+        val nuevoPedido = PedidoGuardado(nombre = nombreFinal, graficos = copiaGraficos)
+
+        // Si estamos editando, reemplazamos el existente
+        PedidoSingleton.guardarPedido(nuevoPedido)
+
+        listaGraficos.clear()
+        adaptadorPedido.actualizarLista(listaGraficos)
+        pedidoGuardado = true
+        Toast.makeText(this, "Pedido guardado como $nombreFinal", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun nombrePedido(): String {
+        val fechaHoy = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        var baseNombre = "P$fechaHoy"
+        var nombreFinal = baseNombre
+        var contador = 1
+
+        while (PedidoSingleton.listaPedidos.any { it.nombre == nombreFinal }) {
+            nombreFinal = "$baseNombre($contador)"
+            contador++
+        }
+        return nombreFinal
+    }
     /* realizar pedido */
     private fun realizarPedido() {
         val dialog = Dialog(this)
@@ -352,4 +338,57 @@ class PedidoHilos : AppCompatActivity() {
             }
         }
     }
+
+    /* interceptar que se pulsa 'atrás' */
+    @Suppress("MissingSuperCall")
+    override fun onBackPressed() {
+        dialogGuardarPedido()
+    }
+
+    fun onSalirDePantalla(destino: () -> Unit) {
+        dialogGuardarPedido(salirDespues = false, destino = destino)
+    }
+
+    private fun dialogGuardarPedido(salirDespues: Boolean = true, destino: (() -> Unit)? = null) {
+        if (pedidoGuardado || listaGraficos.isEmpty()) {
+            if (destino != null) {
+                destino()
+            } else if (salirDespues) {
+                finish()
+            }
+            return
+        }
+
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.pedido_dialog_guardar_pedido)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        ajustarDialog(dialog)
+        dialog.setCancelable(false)
+
+        val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarPedido)
+        val btnVolver = dialog.findViewById<Button>(R.id.btn_volverSinGuardar)
+
+        btnGuardar.setOnClickListener {
+            guardarPedido()
+            dialog.dismiss()
+            if (destino != null) {
+                destino()
+            } else if (salirDespues) {
+                finish()
+            }
+        }
+
+        btnVolver.setOnClickListener {
+            dialog.dismiss()
+            if (destino != null) {
+                destino()
+            } else if (salirDespues) {
+                finish()
+            }
+        }
+
+        dialog.show()
+    }
+
+
 }

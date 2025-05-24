@@ -9,17 +9,14 @@
 
     <TextView
         android:id="@+id/txtVw_modificarHiloConsultaFinal"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginBottom="24dp"
         android:background="@drawable/reutilizable_borde_cabecera_dialog"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/modificarHiloConsulta"
-        android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
         android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@+id/edTxt_introducirNumHiloModificar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,27 +25,24 @@
         android:id="@+id/edTxt_introducirNumHiloModificar"
         android:layout_width="0dp"
         android:layout_height="55dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginEnd="36dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:hint="@string/introducirNumHiloModificar"
-        android:inputType="number"
+        android:inputType="text"
         android:textAlignment="center"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTxt_introducirNombreHiloModificar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtVw_modificarHiloConsultaFinal" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_modificarHiloConsultaFinal" />
+
 
     <EditText
         android:id="@+id/editTxt_introducirNombreHiloModificar"
         android:layout_width="0dp"
         android:layout_height="55dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
@@ -56,24 +50,22 @@
         android:inputType="text"
         android:textAlignment="center"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edTxt_introducirNumHiloModificar"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@id/edTxt_introducirNumHiloModificar" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="12dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTxt_introducirNombreHiloModificar">
+        app:layout_constraintTop_toBottomOf="@id/editTxt_introducirNombreHiloModificar">
 
         <Button
             android:id="@+id/btn_volverModificarHiloFinal"
@@ -102,8 +94,6 @@
             android:textColor="@color/textoCabecera_y_Botones"
             android:textSize="20sp"
             android:textStyle="bold" />
-
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
