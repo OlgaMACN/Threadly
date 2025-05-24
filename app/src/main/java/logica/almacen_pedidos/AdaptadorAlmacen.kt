@@ -1,5 +1,6 @@
 package logica.almacen_pedidos
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,6 +78,7 @@ class AdaptadorAlmacen(
     override fun getItemCount(): Int = listaPedidos.size
 
     fun actualizarLista(nuevaLista: List<PedidoGuardado>) {
+        Log.d("Adaptador", "Actualizando lista. Tamaño nuevo: ${nuevaLista.size}")
         listaPedidos = nuevaLista
         notifyDataSetChanged()
     }

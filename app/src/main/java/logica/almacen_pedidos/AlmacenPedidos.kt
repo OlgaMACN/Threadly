@@ -12,6 +12,7 @@ import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -80,6 +81,13 @@ class AlmacenPedidos : BaseActivity() {
 
         tablaAlmacen.layoutManager = LinearLayoutManager(this)
         tablaAlmacen.adapter = adaptador
+
+        Log.d("AlmacenPedidos", "Cantidad de pedidos inicial: ${PedidoSingleton.listaPedidos.size}")
+        PedidoSingleton.listaPedidos.forEach {
+            Log.d("AlmacenPedidos", "Pedido: ${it.nombre}")
+        }
+
+
         buscadorPedido()
     }
 
@@ -97,12 +105,24 @@ class AlmacenPedidos : BaseActivity() {
 
         btnLupa.setOnClickListener {
             val texto = edtBuscador.text.toString().trim().uppercase()
-            val coincidencia = PedidoSingleton.listaPedidos.find {
-                it.nombre.uppercase().contains(texto)
+            Log.d("Buscador", "Texto introducido: '$texto'")
+            if (texto.isEmpty()) {
+                Log.d("Buscador", "Campo vacío, mostrando todos los pedidos")
+                // Si el usuario hace clic en la lupa sin escribir, se muestra todo
+                adaptador.actualizarLista(PedidoSingleton.listaPedidos)
+                txtNoResultados.visibility = View.GONE
+                return@setOnClickListener
             }
 
-            if (coincidencia != null) {
-                val listaFiltrada = listOf(coincidencia)
+            val listaFiltrada = PedidoSingleton.listaPedidos.filter {
+                val nombrePedido = it.nombre.uppercase()
+                val contiene = nombrePedido.contains(texto)
+                Log.d("Buscador", "¿'${nombrePedido}' contiene '$texto'? -> $contiene")
+                contiene
+            }
+            Log.d("Buscador", "Pedidos encontrados: ${listaFiltrada.size}")
+
+            if (listaFiltrada.isNotEmpty()) {
                 adaptador.actualizarLista(listaFiltrada)
                 txtNoResultados.visibility = View.GONE
             } else {
@@ -114,6 +134,7 @@ class AlmacenPedidos : BaseActivity() {
         edtBuscador.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
+                    Log.d("Buscador", "Texto borrado, restaurando lista completa")
                     adaptador.actualizarLista(PedidoSingleton.listaPedidos)
                     txtNoResultados.visibility = View.GONE
                 }
