@@ -25,8 +25,7 @@ import utiles.funciones.leerXML
 import utiles.funciones.ValidarFormatoHilos
 import utiles.funciones.ordenarHilos
 import utiles.funciones.funcionToolbar
-
-
+/* lógica de validaciones y diálogos */
 class CatalogoHilos : BaseActivity() {
 
     private lateinit var tablaCatalogo: RecyclerView
@@ -42,11 +41,11 @@ class CatalogoHilos : BaseActivity() {
         funcionToolbar(this)
 
         tablaCatalogo = findViewById(R.id.tabla_catalogo)
+        listaCatalogo = CatalogoSingleton.listaCatalogo
         adaptadorCatalogo = AdaptadorCatalogo(listaCatalogo, ::dialogEliminarHiloCatalogo)
         tablaCatalogo.layoutManager = LinearLayoutManager(this)
         tablaCatalogo.adapter = adaptadorCatalogo
 
-        // Cargar lista desde XML raw (ejemplo: R.raw.catalogo_hilos)
         cargarCatalogoDesdeXML(this, R.raw.catalogo_hilos)
 
         val btn_AgregarHilo = findViewById<Button>(R.id.btn_agregarHiloConsulta)
@@ -62,11 +61,10 @@ class CatalogoHilos : BaseActivity() {
 
     private fun cargarCatalogoDesdeXML(context: Context, resourceId: Int) {
         val catalogoDesdeXML: List<HiloCatalogo> = leerXML(context, resourceId)
-        listaCatalogo = ordenarHilos(catalogoDesdeXML) { it.numHilo }.toMutableList()
-        CatalogoSingleton.listaCatalogo = listaCatalogo // guardamos en el singleton
+        CatalogoSingleton.cargarLista(catalogoDesdeXML)
+        listaCatalogo = CatalogoSingleton.listaCatalogo
         adaptadorCatalogo.actualizarLista(listaCatalogo)
     }
-
 
     private fun buscadorHilo() {
         val editTextBuscar = findViewById<EditText>(R.id.txtVw_buscarHiloConsulta)
@@ -140,24 +138,17 @@ class CatalogoHilos : BaseActivity() {
                 return@setOnClickListener
             }
 
-            if (listaCatalogo.any { it.numHilo == numHiloString }) {
-                Toast.makeText(
-                    this,
-                    "El número de hilo ya existe en el catálogo",
-                    Toast.LENGTH_LONG
-                ).show()
+            val exito = CatalogoSingleton.agregarHilo(HiloCatalogo(numHiloString, nombreHilo, null))
+            if (!exito) {
+                Toast.makeText(this, "El número de hilo ya existe en el catálogo", Toast.LENGTH_LONG)
+                    .show()
                 return@setOnClickListener
             }
 
-            val nuevoHilo = HiloCatalogo(numHiloString, nombreHilo, null)
-            listaCatalogo.add(nuevoHilo)
-
-            listaCatalogo = ordenarHilos(listaCatalogo) { it.numHilo }.toMutableList()
-            CatalogoSingleton.listaCatalogo = listaCatalogo
+            listaCatalogo = CatalogoSingleton.listaCatalogo
             adaptadorCatalogo.actualizarLista(listaCatalogo)
 
-            Toast.makeText(this, "Hilo añadido al catálogo correctamente", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(this, "Hilo añadido al catálogo correctamente", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
 
@@ -198,11 +189,8 @@ class CatalogoHilos : BaseActivity() {
             }
 
             if (!modificarNum && !modificarNombre) {
-                Toast.makeText(
-                    this,
-                    "Selecciona al menos un campo para modificar",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Selecciona al menos un campo para modificar", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
@@ -243,52 +231,31 @@ class CatalogoHilos : BaseActivity() {
         }
 
         btnModificar.setOnClickListener {
-            if (modificarNum) {
-                val nuevoNum = inputNumHilo.text.toString().uppercase().trim()
-                if (nuevoNum.isEmpty()) {
-                    Toast.makeText(
-                        this,
-                        "El número de hilo no puede estar vacío",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
+            val nuevoNum = if (modificarNum) inputNumHilo.text.toString().uppercase().trim() else null
+            val nuevoNombre = if (modificarNombre) inputNombreHilo.text.toString().uppercase().trim() else null
 
-                if (!ValidarFormatoHilos.formatoValidoHilo(nuevoNum)) {
-                    Toast.makeText(
-                        this,
-                        "Formato de hilo inválido (solo letras y números)",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
-
-                val existe = listaCatalogo.withIndex().any { (index, hilo) ->
-                    hilo.numHilo.equals(nuevoNum, ignoreCase = true) && index != posicion
-                }
-                if (existe) {
-                    Toast.makeText(this, "Ya existe un hilo con ese número", Toast.LENGTH_SHORT)
-                        .show()
-                    return@setOnClickListener
-                }
-                hiloActual.numHilo = nuevoNum
+            if (modificarNum && (nuevoNum == null || nuevoNum.isEmpty())) {
+                Toast.makeText(this, "El número de hilo no puede estar vacío", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            if (modificarNombre) {
-                val nuevoNombre = inputNombreHilo.text.toString().uppercase().trim()
-                if (nuevoNombre.isEmpty()) {
-                    Toast.makeText(
-                        this,
-                        "El nombre de hilo no puede estar vacío",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
-                hiloActual.nombreHilo = nuevoNombre
+            if (modificarNum && !ValidarFormatoHilos.formatoValidoHilo(nuevoNum!!)) {
+                Toast.makeText(this, "Formato de hilo inválido (solo letras y números)", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            listaCatalogo = ordenarHilos(listaCatalogo) { it.numHilo }.toMutableList()
-            CatalogoSingleton.listaCatalogo = listaCatalogo
+            if (modificarNombre && (nuevoNombre == null || nuevoNombre.isEmpty())) {
+                Toast.makeText(this, "El nombre de hilo no puede estar vacío", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val exito = CatalogoSingleton.modificarHilo(posicion, nuevoNum, nuevoNombre)
+            if (!exito) {
+                Toast.makeText(this, "Ya existe un hilo con ese número", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            listaCatalogo = CatalogoSingleton.listaCatalogo
             adaptadorCatalogo.actualizarLista(listaCatalogo)
 
             Toast.makeText(this, "Hilo modificado correctamente", Toast.LENGTH_SHORT).show()
@@ -333,9 +300,9 @@ class CatalogoHilos : BaseActivity() {
         btnVolver.setOnClickListener { dialog.dismiss() }
 
         btnEliminar.setOnClickListener {
-            listaCatalogo.removeAt(posicion)
+            CatalogoSingleton.eliminarHilo(posicion)
             adaptadorCatalogo.notifyItemRemoved(posicion)
-            CatalogoSingleton.listaCatalogo = listaCatalogo
+            listaCatalogo = CatalogoSingleton.listaCatalogo
             Toast.makeText(this, "Hilo $numHilo eliminado del catálogo", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }

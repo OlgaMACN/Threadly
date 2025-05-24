@@ -165,7 +165,7 @@ class GraficoPedido : BaseActivity() {
                 if (!hiloEnCatalogo) {
                     Toast.makeText(
                         this,
-                        "El hilo no se encuentra en el catálogo. Añádelo ahí primero.",
+                        "El hilo no se encuentra en el catálogo. Añádelo primero.",
                         Toast.LENGTH_LONG
                     ).show()
                     return@setOnClickListener
