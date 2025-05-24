@@ -64,11 +64,8 @@ class LoginUserExiste : AppCompatActivity() {
     private fun configurarCrearCuenta() {
         val crearCuenta = findViewById<TextView>(R.id.txtVw_crearCuenta)
         crearCuenta.setOnClickListener {
-            val crearCuenta = findViewById<TextView>(R.id.txtVw_crearCuenta)
-            crearCuenta.setOnClickListener {
-                val intent = Intent(this, LoginUserNoExiste::class.java)
-                startActivity(intent)
-            }
+            val intent = Intent(this, LoginUserNoExiste::class.java)
+            startActivity(intent)
         }
     }
 
