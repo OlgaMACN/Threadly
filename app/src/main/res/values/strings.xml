@@ -36,7 +36,7 @@
     <!-- Dialog Eliminar Cuenta de Usuario (pantalla_dialog_eliminar_cuenta) -->
     <string name="cabeceraEliminarCuenta">ELIMINAR CUENTA</string>
     <string name="mensajeConfirmacionEliminar">¿De verdad quieres eliminar tu cuenta de Threadly?</string>
-    <string name="btnArrepentimiento">¡No, me he arrepentido!</string>
+    <string name="btnArrepentimiento">¡No,era broma!</string>
     <string name="btnEliminarCuenta">Sí...Hasta pronto</string>
     <!-- Pantalla Datos Personales (pantalla_modificar_datos) -->
     <string name="modificarDatos">Modificar Datos</string>
@@ -188,6 +188,8 @@
     <string name="cabeceraAlmacen">ALMACÉN PEDIDOS</string>
     <string name="no_hay_resultadosAlmacen">No tienes ese pedido en tu almacén :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
     <string name="columnaNombrePedido">NOMBRE</string>
+    <string name="columnaDescargarPedido">DESCARGAR</string>
+    <string name="columnarRealizarPedido">REALIZADO</string>
     <string name="contenidoNombrePedido">nombre</string>
     <!--Dialog Eliminar Pedido (almacen_dialog_eliminar_pedido) -->
     <string name="cabeceraDialogEliminarPedido">ELIMINAR PEDIDO</string>

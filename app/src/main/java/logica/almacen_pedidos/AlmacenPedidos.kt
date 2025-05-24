@@ -51,8 +51,7 @@ class AlmacenPedidos : BaseActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
-                        Toast.makeText(this, "Error al descargar :(", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(this, "Error al descargar :(", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(
@@ -62,8 +61,12 @@ class AlmacenPedidos : BaseActivity() {
                     ).show()
                 }
             },
-            onItemClick = { pedido ->
+            onEditarClick = { pedido ->  // Antes: onEditarClick
                 dialogEditarPedido(pedido)
+            },
+            onPedidoRealizadoClick = { pedido ->
+                pedido.realizado = true
+                Toast.makeText(this, "Pedido marcado como realizado", Toast.LENGTH_SHORT).show()
             }
         )
 

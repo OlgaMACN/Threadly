@@ -5,7 +5,8 @@ import java.io.Serializable
 
 data class PedidoGuardado(
     val nombre: String,
-    val graficos: List<Grafico>
+    val graficos: List<Grafico>,
+    var realizado: Boolean = false
 ) : Serializable
 
 data class GraficoGuardado(

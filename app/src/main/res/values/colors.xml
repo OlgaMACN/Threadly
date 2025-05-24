@@ -17,5 +17,6 @@
     <color name="colorSplash">#EBDFE3</color>
     <color name="filaResaltadaBusqueda">#BDB0B1</color>
     <color name="referenciaImparseable">#928A8A</color>
+    <color name="grisPedidoRealizado">#808080</color>
 
 </resources>
