@@ -62,9 +62,8 @@ class CatalogoHilos : BaseActivity() {
 
     private fun cargarCatalogoDesdeXML(context: Context, resourceId: Int) {
         val catalogoDesdeXML: List<HiloCatalogo> = leerXML(context, resourceId)
-
         listaCatalogo = ordenarHilos(catalogoDesdeXML) { it.numHilo }.toMutableList()
-
+        CatalogoSingleton.listaCatalogo = listaCatalogo // guardamos en el singleton
         adaptadorCatalogo.actualizarLista(listaCatalogo)
     }
 
@@ -154,6 +153,7 @@ class CatalogoHilos : BaseActivity() {
             listaCatalogo.add(nuevoHilo)
 
             listaCatalogo = ordenarHilos(listaCatalogo) { it.numHilo }.toMutableList()
+            CatalogoSingleton.listaCatalogo = listaCatalogo
             adaptadorCatalogo.actualizarLista(listaCatalogo)
 
             Toast.makeText(this, "Hilo añadido al catálogo correctamente", Toast.LENGTH_SHORT)
@@ -288,6 +288,7 @@ class CatalogoHilos : BaseActivity() {
             }
 
             listaCatalogo = ordenarHilos(listaCatalogo) { it.numHilo }.toMutableList()
+            CatalogoSingleton.listaCatalogo = listaCatalogo
             adaptadorCatalogo.actualizarLista(listaCatalogo)
 
             Toast.makeText(this, "Hilo modificado correctamente", Toast.LENGTH_SHORT).show()
@@ -334,6 +335,7 @@ class CatalogoHilos : BaseActivity() {
         btnEliminar.setOnClickListener {
             listaCatalogo.removeAt(posicion)
             adaptadorCatalogo.notifyItemRemoved(posicion)
+            CatalogoSingleton.listaCatalogo = listaCatalogo
             Toast.makeText(this, "Hilo $numHilo eliminado del catálogo", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }

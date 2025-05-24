@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import logica.catalogo_hilos.CatalogoSingleton
 import logica.pedido_hilos.Grafico
 import logica.stock_personal.StockSingleton
 import utiles.BaseActivity
@@ -159,6 +160,16 @@ class GraficoPedido : BaseActivity() {
         btnGuardar.setOnClickListener {
             try {
                 val nombreHilo = hiloGrafico.text.toString().trim().uppercase()
+                val hiloEnCatalogo =
+                    CatalogoSingleton.listaCatalogo.any { it.numHilo == nombreHilo }
+                if (!hiloEnCatalogo) {
+                    Toast.makeText(
+                        this,
+                        "El hilo no se encuentra en el catálogo. Añádelo ahí primero.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@setOnClickListener
+                }
                 val stringPuntadas = puntadasGrafico.text.toString().trim()
                 /* comprobar que los campos estén rellenos */
                 if (nombreHilo.isEmpty() || stringPuntadas.isEmpty() ||
