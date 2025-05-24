@@ -95,6 +95,7 @@ class StockPersonal : BaseActivity() {
                     txtNoResultados.visibility = View.GONE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -124,7 +125,8 @@ class StockPersonal : BaseActivity() {
             }
 
             if (!ValidarFormatoHilos.formatoValidoHilo(hilo)) {
-                Toast.makeText(this, "Formato inválido: solo letras y números", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Formato inválido: solo letras y números", Toast.LENGTH_LONG)
+                    .show()
                 return@setOnClickListener
             }
 
@@ -134,14 +136,17 @@ class StockPersonal : BaseActivity() {
                 return@setOnClickListener
             }
 
-            if (StockSingleton.listaStock.any { it.hiloId == hilo }) {
-                Toast.makeText(this, "El hilo '$hilo' ya existe", Toast.LENGTH_LONG).show()
+            if (!StockSingleton.agregarHilo(hilo, madejas)) {
+                Toast.makeText(
+                    this,
+                    "El hilo '$hilo' ya existe o datos inválidos",
+                    Toast.LENGTH_LONG
+                ).show()
                 return@setOnClickListener
             }
 
-            val hiloNuevo = HiloStock(hilo, madejas)
-            StockSingleton.listaStock.add(hiloNuevo)
-            StockSingleton.listaStock = ordenarHilos(StockSingleton.listaStock) { it.hiloId }.toMutableList()
+            StockSingleton.listaStock =
+                ordenarHilos(StockSingleton.listaStock) { it.hiloId }.toMutableList()
             adaptadorStock.actualizarLista(StockSingleton.listaStock)
 
             dialog.dismiss()
@@ -195,12 +200,15 @@ class StockPersonal : BaseActivity() {
                 return@setOnClickListener
             }
 
-            val item = StockSingleton.listaStock.find { it.hiloId == hilo }
-            if (item != null) {
-                item.madejas += cantidad
-                adaptadorStock.actualizarHilo(item)
-                dialog.dismiss()
+            if (!StockSingleton.agregarMadejas(hilo, cantidad)) {
+                Toast.makeText(this, "Hilo no encontrado o cantidad inválida", Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
             }
+
+            val item = StockSingleton.listaStock.find { it.hiloId == hilo }!!
+            adaptadorStock.actualizarHilo(item)
+            dialog.dismiss()
         }
         btnVolver.setOnClickListener { dialog.dismiss() }
         dialog.show()
@@ -214,7 +222,8 @@ class StockPersonal : BaseActivity() {
         dialog.setCancelable(false)
 
         val idHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirNumHiloMadejasEliminarStk)
-        val cantidadEliminar = dialog.findViewById<EditText>(R.id.edTxt_edTxt_introducirNumMadejasEliminarStk)
+        val cantidadEliminar =
+            dialog.findViewById<EditText>(R.id.edTxt_edTxt_introducirNumMadejasEliminarStk)
         val txtMadejasActuales = dialog.findViewById<TextView>(R.id.txtVw_madejasActualesStk)
         val btnEliminar = dialog.findViewById<Button>(R.id.btn_eliminarMadejaConfirmarStk)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_eliminarMadeja)
@@ -250,8 +259,10 @@ class StockPersonal : BaseActivity() {
             }
 
             if (hiloEncontrado != null) {
-                hiloEncontrado!!.madejas = maxOf(0, hiloEncontrado!!.madejas - cantidad)
-                adaptadorStock.actualizarHilo(hiloEncontrado!!)
+                val nuevaCantidad = maxOf(0, hiloEncontrado!!.madejas - cantidad)
+                if (StockSingleton.modificarMadejas(hiloEncontrado!!.hiloId, nuevaCantidad)) {
+                    adaptadorStock.actualizarHilo(hiloEncontrado!!)
+                }
                 dialog.dismiss()
             }
         }
@@ -279,18 +290,28 @@ class StockPersonal : BaseActivity() {
         val end = start + hiloEliminado.length
 
         if (start != -1) {
-            spannable.setSpan(ForegroundColorSpan(Color.RED), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(
+                ForegroundColorSpan(Color.RED),
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         }
         hiloABorrar.text = spannable
 
         btnVolver.setOnClickListener { dialog.dismiss() }
 
         btnEliminar.setOnClickListener {
-            StockSingleton.listaStock.removeAt(posicion)
-            adaptadorStock.actualizarLista(StockSingleton.listaStock)
-            Toast.makeText(this, "Hilo '$hiloEliminado' eliminado", Toast.LENGTH_SHORT).show()
+            val eliminado = StockSingleton.eliminarHilo(hiloEliminado)
+            if (eliminado) {
+                adaptadorStock.actualizarLista(StockSingleton.listaStock)
+                Toast.makeText(this, "Hilo '$hiloEliminado' eliminado", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "No se pudo eliminar el hilo", Toast.LENGTH_SHORT).show()
+            }
             dialog.dismiss()
         }
         dialog.show()
     }
+
 }
