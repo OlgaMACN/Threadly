@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import logica.pedido_hilos.PedidoHilos
+import logica.stock_personal.StockSingleton
 import utiles.BaseActivity
 import utiles.funciones.ajustarDialog
 import utiles.funciones.exportarPedidoCSV
@@ -65,8 +66,15 @@ class AlmacenPedidos : BaseActivity() {
                 dialogEditarPedido(pedido)
             },
             onPedidoRealizadoClick = { pedido ->
+                pedido.graficos.forEach { grafico ->
+                    grafico.listaHilos.forEach { hiloGrafico ->
+                        // Suma las madejas pedidas a las madejas que ya tienes en stock
+                        StockSingleton.agregarMadejas(hiloGrafico.hilo, hiloGrafico.madejas)
+                    }
+                }
                 pedido.realizado = true
-                Toast.makeText(this, "Pedido marcado como realizado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Pedido realizado y stock actualizado", Toast.LENGTH_SHORT)
+                    .show()
             }
         )
 

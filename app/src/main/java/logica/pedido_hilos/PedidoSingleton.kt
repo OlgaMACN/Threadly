@@ -12,5 +12,4 @@ object PedidoSingleton {
             listaPedidos.add(pedido)
         }
     }
-
 }
