@@ -40,7 +40,7 @@ class AlmacenPedidos : BaseActivity() {
         tablaAlmacen = findViewById(R.id.tabla_almacen)
 
         adaptador = AdaptadorAlmacen(
-            RepositorioPedidos.listaPedidos,
+            PedidoSingleton.listaPedidos,
             onDescargarClick = { pedido ->
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val resultado = exportarPedidoCSV(this, pedido)
@@ -77,7 +77,7 @@ class AlmacenPedidos : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        adaptador.actualizarLista(RepositorioPedidos.listaPedidos)
+        adaptador.actualizarLista(PedidoSingleton.listaPedidos)
     }
 
     private fun buscadorPedido() {
@@ -89,7 +89,7 @@ class AlmacenPedidos : BaseActivity() {
 
         btnLupa.setOnClickListener {
             val texto = edtBuscador.text.toString().trim().uppercase()
-            val coincidencia = RepositorioPedidos.listaPedidos.find {
+            val coincidencia = PedidoSingleton.listaPedidos.find {
                 it.nombre.uppercase().contains(texto)
             }
 
@@ -106,7 +106,7 @@ class AlmacenPedidos : BaseActivity() {
         edtBuscador.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
-                    adaptador.actualizarLista(RepositorioPedidos.listaPedidos)
+                    adaptador.actualizarLista(PedidoSingleton.listaPedidos)
                     txtNoResultados.visibility = View.GONE
                 }
             }
@@ -127,7 +127,7 @@ class AlmacenPedidos : BaseActivity() {
         val txtMensaje = dialog.findViewById<TextView>(R.id.txtVw_confirmarEliminarPedido)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_almacen)
 
-        val pedido = RepositorioPedidos.listaPedidos[posicion]
+        val pedido = PedidoSingleton.listaPedidos[posicion]
         val nombrePedido = pedido.nombre
         val textoOriginal = getString(R.string.confirmarEliminarPedido)
         val textoConPedido = textoOriginal.replace("%s", nombrePedido)
@@ -150,8 +150,8 @@ class AlmacenPedidos : BaseActivity() {
         btnVolver.setOnClickListener { dialog.dismiss() }
 
         btnEliminar.setOnClickListener {
-            RepositorioPedidos.listaPedidos.removeAt(posicion)
-            adaptador.actualizarLista(RepositorioPedidos.listaPedidos)
+            PedidoSingleton.listaPedidos.removeAt(posicion)
+            adaptador.actualizarLista(PedidoSingleton.listaPedidos)
             Toast.makeText(this, "Pedido '$nombrePedido' eliminado", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }

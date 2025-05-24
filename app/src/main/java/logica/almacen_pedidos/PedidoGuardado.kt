@@ -9,12 +9,3 @@ data class PedidoGuardado(
     var realizado: Boolean = false
 ) : Serializable
 
-data class GraficoGuardado(
-    val nombre: String,
-    val listaHilos: MutableList<Hilo>
-)
-
-data class Hilo(
-    val codigo: String,
-    val madejas: Int
-)

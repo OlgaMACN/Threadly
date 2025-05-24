@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import logica.almacen_pedidos.PedidoGuardado
-import logica.almacen_pedidos.RepositorioPedidos
+import logica.almacen_pedidos.PedidoSingleton
 import logica.grafico_pedido.GraficoPedido
 import utiles.BaseActivity
 import utiles.funciones.ajustarDialog
@@ -246,16 +246,10 @@ class PedidoHilos : BaseActivity() {
         val nuevoPedido = PedidoGuardado(nombre = nombreFinal, graficos = copiaGraficos)
 
         // Si estamos editando, reemplazamos el existente
-        val indexExistente =
-            RepositorioPedidos.listaPedidos.indexOfFirst { it.nombre == nombreFinal }
-        if (indexExistente != -1) {
-            RepositorioPedidos.listaPedidos[indexExistente] = nuevoPedido
-        } else {
-            RepositorioPedidos.listaPedidos.add(nuevoPedido)
-        }
+        PedidoSingleton.guardarPedido(nuevoPedido)
 
         listaGraficos.clear()
-        adaptadorPedido.notifyDataSetChanged()
+        adaptadorPedido.actualizarLista(listaGraficos)
         pedidoGuardado = true
         Toast.makeText(this, "Pedido guardado como $nombreFinal", Toast.LENGTH_SHORT).show()
     }
@@ -266,13 +260,12 @@ class PedidoHilos : BaseActivity() {
         var nombreFinal = baseNombre
         var contador = 1
 
-        while (RepositorioPedidos.listaPedidos.any { it.nombre == nombreFinal }) {
+        while (PedidoSingleton.listaPedidos.any { it.nombre == nombreFinal }) {
             nombreFinal = "$baseNombre($contador)"
             contador++
         }
         return nombreFinal
     }
-
     /* realizar pedido */
     private fun realizarPedido() {
         val dialog = Dialog(this)
