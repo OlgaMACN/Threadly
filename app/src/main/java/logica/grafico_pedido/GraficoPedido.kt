@@ -18,11 +18,24 @@ import logica.stock_personal.StockSingleton
 import utiles.BaseActivity
 import utiles.funciones.*
 
+/**
+ * Actividad que gestiona la visualización y edición de un gráfico individual dentro de un pedido.
+ * Permite mostrar la lista de hilos asociados al gráfico, agregar nuevos hilos,
+ * eliminar hilos existentes, buscar hilos en la lista y mostrar el stock disponible.
+ *
+ * Además, devuelve el gráfico modificado al activity que lo llamó.
+ *
+ * @author Olga y Sandra Macías Aragón
+ */
 class GraficoPedido : BaseActivity() {
 
     private lateinit var adaptadorGrafico: AdaptadorGrafico
     private var countTelaGlobal: Int? = null
 
+    /**
+     * Método llamado al crear la actividad.
+     * Inicializa la UI, carga el gráfico recibido y configura el RecyclerView y buscador.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedidob_aa_principal)
@@ -38,14 +51,18 @@ class GraficoPedido : BaseActivity() {
             return
         }
 
+        /* establece el gráfico recibido en el singleton para manipularlo */
         GraficoSingleton.setGrafico(graficoRecibido)
 
+        /* actualiza la cabecera con el nombre del gráfico */
         findViewById<TextView>(R.id.txtVw_cabeceraGrafico).text = GraficoSingleton.grafico?.nombre
 
+        /* configura RecyclerView y su adaptador con la lista de hilos del gráfico */
         val recyclerView = findViewById<RecyclerView>(R.id.tabla_grafico)
         adaptadorGrafico = AdaptadorGrafico(
             GraficoSingleton.getListaHilos().toMutableList(),
             onClickHilo = { hilo ->
+                /* al pulsar un hilo muestra su stock actual */
                 val txtVwStock = findViewById<TextView>(R.id.txtVw_stockHiloActual)
                 val stock = StockSingleton.obtenerMadejas(hilo.hilo.uppercase())?.toString() ?: "-"
                 txtVwStock.text = getString(R.string.stockHiloActual, stock)
@@ -53,6 +70,7 @@ class GraficoPedido : BaseActivity() {
             onLongClickHilo = ::dialogBorrarHilo,
             hiloResaltado = null,
             onTotalChanged = { total ->
+                /* actualiza el total de madejas en la UI */
                 txtTotal.text = "Total Madejas: $total"
             }
         )
@@ -60,16 +78,24 @@ class GraficoPedido : BaseActivity() {
         recyclerView.adapter = adaptadorGrafico
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        /* configura botón para agregar nuevo hilo */
         findViewById<Button>(R.id.btn_agregarHiloGraficoIndividual).setOnClickListener {
             dialogAgregarHiloGrafico()
         }
+        /* botón para volver y devolver resultado al activity anterior */
         findViewById<Button>(R.id.btn_volver_pedido_desde_grafico).setOnClickListener {
             devolverResultadoYSalir()
         }
 
+        /* configura buscador de hilos en el gráfico */
         buscadorHilo()
     }
 
+    /**
+     * Configura la funcionalidad del buscador de hilos en la lista del gráfico.
+     * Permite buscar un hilo exacto por su código y resaltar el resultado,
+     * o mostrar mensaje de "sin resultados" si no se encuentra.
+     */
     private fun buscadorHilo() {
         val buscarGrafico = findViewById<EditText>(R.id.edTxt_buscadorGrafico)
         val btnLupaGrafico = findViewById<ImageView>(R.id.imgVw_lupaGrafico)
@@ -111,6 +137,11 @@ class GraficoPedido : BaseActivity() {
         })
     }
 
+    /**
+     * Muestra un diálogo personalizado para agregar un nuevo hilo al gráfico.
+     * Valida que el hilo exista en el catálogo y que los campos sean correctos,
+     * calcula las madejas necesarias y actualiza la lista y el adaptador.
+     */
     private fun dialogAgregarHiloGrafico() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pedidob_dialog_agregar_hilo)
@@ -162,6 +193,13 @@ class GraficoPedido : BaseActivity() {
         dialog.show()
     }
 
+    /**
+     * Muestra un diálogo de confirmación para borrar un hilo del gráfico.
+     * Resalta el código del hilo en rojo en el mensaje para advertir.
+     * Si se confirma, elimina el hilo y actualiza la lista.
+     *
+     * @param hilo Hilo a eliminar.
+     */
     private fun dialogBorrarHilo(hilo: HiloGrafico) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pedidob_dialog_borrar_hilo)
@@ -192,6 +230,10 @@ class GraficoPedido : BaseActivity() {
         dialog.show()
     }
 
+    /**
+     * Devuelve el gráfico actualizado al activity que lo llamó y finaliza esta actividad.
+     * Incluye el gráfico modificado y la posición original para identificarlo.
+     */
     private fun devolverResultadoYSalir() {
         GraficoSingleton.actualizarTotalMadejas()
         val resultIntent = Intent().apply {
