@@ -8,23 +8,45 @@ import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import logica.almacen_pedidos.PedidoGuardado
 
+/**
+ * Exporta un pedido a un archivo CSV en la carpeta de descargas del dispositivo,
+ * dentro de un subdirectorio llamado "Threadly".
+ *
+ * Esta función está disponible solo para Android 10 (API 29) o superior,
+ * ya que usa `MediaStore.Downloads` y escritura en almacenamiento externo gestionado.
+ *
+ * El archivo CSV generado contiene la lista de hilos y el número total de madejas necesarias,
+ * combinando los datos de todos los gráficos del pedido.
+ *
+ * @param context Contexto de la aplicación necesario para acceder al `ContentResolver`.
+ * @param pedido Objeto [PedidoGuardado] que contiene los gráficos y sus hilos.
+ * @return `true` si el archivo se exportó correctamente, `false` en caso de error.
+ *
+ * ### Formato del archivo generado:
+ * ```
+ * Hilo,Madejas
+ * 310,2
+ * 321,5
+ * ...
+ * ```
+ */
 @RequiresApi(Build.VERSION_CODES.Q)
 fun exportarPedidoCSV(context: Context, pedido: PedidoGuardado): Boolean {
-    val resolver = context.contentResolver /* para poder acceder a las carpetas de android */
-    val nombreArchivo = "${pedido.nombre}.csv" /* nombre del archivo */
+    val resolver = context.contentResolver /* para acceder a las carpetas del dispositivo */
+    val nombreArchivo = "${pedido.nombre}.csv"
 
-    /* metadatos del archivo (nombre, tipo MIME, carpeta destino) */
+    /* metadatos del archivo: nombre, tipo de contenido (CSV), y carpeta destino */
     val contentValues = ContentValues().apply {
         put(MediaStore.Downloads.DISPLAY_NAME, nombreArchivo)
-        put(MediaStore.Downloads.MIME_TYPE, "text/csv") /* mime = tipo de contenido (csv) */
+        put(MediaStore.Downloads.MIME_TYPE, "text/csv")
         put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/Threadly")
     }
 
-    /* se inserta el archivo en MediaStore */
+    /* se inserta el archivo en el sistema de almacenamiento gestionado por Android */
     val itemUri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
         ?: return false
 
-    /* mapea de todos los hilos del pedido a un mapa (código -> cantidad total) */
+    /* se crea un mapa de hilos (clave: código del hilo, valor: cantidad total de madejas) */
     val mapaHilos = mutableMapOf<String, Int>()
     for (grafico in pedido.graficos) {
         for (hilo in grafico.listaHilos) {
@@ -34,7 +56,7 @@ fun exportarPedidoCSV(context: Context, pedido: PedidoGuardado): Boolean {
         }
     }
 
-    /* se escribe el archivo CSV, con sus cabeceras */
+    /* escritura del contenido CSV en el archivo */
     try {
         resolver.openOutputStream(itemUri)?.use { outputStream ->
             outputStream.writer().use { writer ->
@@ -51,4 +73,3 @@ fun exportarPedidoCSV(context: Context, pedido: PedidoGuardado): Boolean {
         return false
     }
 }
-
