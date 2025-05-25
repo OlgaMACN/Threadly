@@ -2,6 +2,7 @@ package persistencia.relaciones
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import persistencia.entidades.Grafico
 import persistencia.entidades.Pedido
 
 /**

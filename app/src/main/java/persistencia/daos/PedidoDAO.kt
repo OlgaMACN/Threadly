@@ -4,8 +4,10 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import persistencia.entidades.Pedido
+import persistencia.relaciones.PedidoConGraficosYHilos
 
 /**
  * DAO para la entidad [Pedido].
@@ -57,4 +59,22 @@ interface PedidoDAO {
      */
     @Query("SELECT * FROM Pedido WHERE pedidoId = :id")
     suspend fun obtenerPorId(id: Int): Pedido?
+
+    /**
+     * Obtiene un pedido con todos sus gráficos y los hilos asociados a cada gráfico.
+     *
+     * Esta consulta recupera la entidad [Pedido] junto con la lista de [GraficoConHilos]
+     * que contienen los gráficos relacionados y sus respectivos hilos.
+     *
+     * La operación se ejecuta dentro de una transacción para asegurar la integridad
+     * y consistencia de los datos al cargar relaciones anidadas.
+     *
+     * @param pedidoId El identificador único del pedido a obtener.
+     * @return Un objeto [PedidoConGraficosYHilos] que contiene el pedido con sus gráficos e hilos,
+     *         o null si no existe ningún pedido con ese ID.
+     */
+    @Transaction
+    @Query("SELECT * FROM Pedido WHERE pedidoId = :pedidoId")
+    suspend fun obtenerPedidoConGraficosYHilos(pedidoId: Int): PedidoConGraficosYHilos?
+
 }
