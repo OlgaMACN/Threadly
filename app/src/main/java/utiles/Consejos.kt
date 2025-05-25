@@ -1,8 +1,16 @@
 package utiles
 
-/* no es una entidad persistente (no se va a guardar ni modificar en la base de datos), no necesita data class ni DAO.
-De esta manera estará disponible de forma global y accesible desde cualquier parte de la app.*/
+/**
+ * Objeto singleton que contiene una lista fija de consejos útiles para el bordado.
+ *
+ * No es una entidad persistente, por lo que no se guarda ni modifica en la base de datos.
+ * Está diseñado para estar disponible globalmente y accesible desde cualquier parte de la aplicación.
+ */
 object Consejos {
+
+    /**
+     * Lista inmutable de consejos relacionados con la práctica del bordado.
+     */
     val lista = listOf(
         "Elige una aguja adecuada para tu hilo.",
         "Mantén el bastidor bien tenso.",
@@ -11,6 +19,11 @@ object Consejos {
         "Descansa cada cierto tiempo para no forzar la vista."
     )
 
+    /**
+     * Devuelve un consejo aleatorio de la lista.
+     *
+     * @return Un String con un consejo seleccionado al azar.
+     */
     fun obtenerAleatorio(): String {
         return lista.random()
     }
