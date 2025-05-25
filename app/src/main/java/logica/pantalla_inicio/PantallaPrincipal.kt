@@ -97,12 +97,11 @@ class PantallaPrincipal : BaseActivity() {
      */
     private fun obtenerConsejoAleatorio(): String {
         val consejos = listOf(
-            "Organiza tus hilos por colores.",
-            "Etiqueta tus madejas para no perder el número.",
-            "Guarda tus gráficos en carpetas por dificultad.",
-            "Usa una luz blanca al bordar de noche.",
-            "Haz pausas para evitar cansancio visual.",
-            "Consejo no disponible"
+            "Organiza tus hilos por colores",
+            "Etiqueta tus madejas para no perder el número",
+            "Guarda tus gráficos en carpetas por dificultad",
+            "Usa una luz blanca al bordar de noche",
+            "Haz pausas para evitar cansancio visual",
         )
         return consejos.random()
     }

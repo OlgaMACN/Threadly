@@ -20,7 +20,7 @@ data class PedidoConGraficosYHilos(
     @Embedded val pedido: Pedido,
 
     @Relation(
-        entity = persistencia.entidades.GraficoEntidad::class,
+        entity = GraficoEntidad::class,
         parentColumn = "pedidoId",
         entityColumn = "pedidoId"
     )
