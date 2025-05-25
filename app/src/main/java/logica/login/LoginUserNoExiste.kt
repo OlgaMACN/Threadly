@@ -11,6 +11,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.threadly.R
 import logica.pantalla_inicio.PantallaPrincipal
 
+/**
+ * Actividad que permite a un nuevo usuario registrarse en Threadly.
+ * La validación es local y simula la creación de usuarios en memoria.
+ * No hay persistencia real, solo lógica de ejemplo.
+ */
 class LoginUserNoExiste : AppCompatActivity() {
 
     private lateinit var usuario: EditText
@@ -19,10 +24,16 @@ class LoginUserNoExiste : AppCompatActivity() {
     private var contrasenaVisible = false
 
     companion object {
-        // Simulamos usuarios en memoria (nombre, contraseña)
+        /**
+         * Lista que simula una base de datos en memoria con pares (usuario, contraseña).
+         * Se comparte entre instancias mediante un companion object.
+         */
         private val usuariosRegistrados = mutableListOf<Pair<String, String>>()
     }
 
+    /**
+     * Método llamado al iniciar la actividad. Configura las vistas y eventos.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_user_no_existe)
@@ -32,12 +43,18 @@ class LoginUserNoExiste : AppCompatActivity() {
         configurarBotonCrearCuenta()
     }
 
+    /**
+     * Inicializa las vistas desde el layout XML.
+     */
     private fun inicializarVistas() {
         usuario = findViewById(R.id.edTxt_ingresarNombreNewUser)
         contrasena = findViewById(R.id.edTxt_ingresarConstrasenaNewUser)
         botonOjo = findViewById(R.id.imgVw_eye_closed)
     }
 
+    /**
+     * Configura el botón para mostrar u ocultar la contraseña escrita.
+     */
     private fun configurarBotonOjo() {
         botonOjo.setOnClickListener {
             contrasenaVisible = !contrasenaVisible
@@ -53,11 +70,18 @@ class LoginUserNoExiste : AppCompatActivity() {
         }
     }
 
+    /**
+     * Configura el botón de "crear cuenta" para registrar un nuevo usuario simulado.
+     */
     private fun configurarBotonCrearCuenta() {
         val btnEntrar = findViewById<Button>(R.id.btn_ingresarThreadly)
         btnEntrar.setOnClickListener { intentarCrearCuenta() }
     }
 
+    /**
+     * Intenta registrar un nuevo usuario validando los campos.
+     * Si el nombre está disponible, se guarda en la lista simulada y se inicia la sesión.
+     */
     private fun intentarCrearCuenta() {
         val usuarioEntrada = usuario.text.toString().trim()
         val contrasenaEntrada = contrasena.text.toString().trim()
@@ -80,10 +104,12 @@ class LoginUserNoExiste : AppCompatActivity() {
             }
 
             else -> {
+                /* verifica si el usuario ya existe (ignorando mayúsculas/minúsculas) */
                 val existe = usuariosRegistrados.any { it.first.equals(usuarioEntrada, ignoreCase = true) }
                 if (existe) {
                     mostrarToast("Nombre en uso :( Tienes que escoger otro")
                 } else {
+                    /* agrega nuevo usuario y genera un ID basado en el tamaño de la lista */
                     usuariosRegistrados.add(usuarioEntrada to contrasenaEntrada)
 
                     val idGenerado = usuariosRegistrados.size
@@ -99,6 +125,11 @@ class LoginUserNoExiste : AppCompatActivity() {
         }
     }
 
+    /**
+     * Muestra un mensaje Toast corto en pantalla.
+     *
+     * @param mensaje Texto del mensaje a mostrar.
+     */
     private fun mostrarToast(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
     }
