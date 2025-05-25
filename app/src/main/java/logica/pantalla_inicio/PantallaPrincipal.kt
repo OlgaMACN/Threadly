@@ -4,42 +4,58 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.lifecycleScope
 import com.threadly.R
-import kotlinx.coroutines.launch
 import logica.stock_personal.StockSingleton
 import utiles.BaseActivity
 import utiles.funciones.funcionToolbar
 
+/**
+ * Pantalla principal de bienvenida de la aplicación Threadly.
+ * Muestra el nombre del usuario, la cantidad de madejas en stock,
+ * un consejo aleatorio y permite navegar a la configuración personal.
+ *
+ * Esta clase extiende de [BaseActivity] para aprovechar la funcionalidad común.
+ *
+ * @ author Olga y Sandra Macías Aragón
+ */
 class PantallaPrincipal : BaseActivity() {
 
+    /**
+     * Se ejecuta al crear la actividad. Inicializa el toolbar, carga el usuario,
+     * muestra el stock actual, un consejo aleatorio y permite ir a la pantalla de configuración.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pantalla_aa_inicio)
 
-        funcionToolbar(this) /* llamada a la función para usar el toolbar */
-        cargarUsuario()
+        funcionToolbar(this) /* carga el toolbar personalizado */
 
-        /* obtener número de madejas del stock */
+        cargarUsuario() /* muestra imagen y nombre del usuario */
+
+        /* inicializa el stock si es necesario y muestra el total de madejas */
         StockSingleton.inicializarStockSiNecesario(this)
         val totalMadejas = StockSingleton.mostrarTotalStock()
 
         val txtStock = findViewById<TextView>(R.id.txtVw_contenidoStock)
         txtStock.text = "$totalMadejas"
 
-        /* mostrar nombre del usuario */
+        /* muestra el nombre del usuario registrado (por seguridad si cargó antes de tiempo) */
         findViewById<TextView>(R.id.txtVw_nombreUsuario).text = nombreUsuario
 
-        /* mostrar tip aleatorio (sin Room) */
+        /* muestra un consejo aleatorio en la parte inferior de la pantalla */
         val txtTip = findViewById<TextView>(R.id.txtVw_contenidoTip)
         txtTip.text = obtenerConsejoAleatorio()
 
-        /* ir a datos personales */
+        /* abre la pantalla de configuración (datos personales) */
         findViewById<ImageButton>(R.id.imgBtn_configuracion).setOnClickListener {
             irAActividad(DatosPersonales::class.java)
         }
     }
 
+    /**
+     * Método que se ejecuta cada vez que la pantalla vuelve a estar visible.
+     * Refresca los datos del usuario y el stock en pantalla.
+     */
     override fun onResume() {
         super.onResume()
         cargarUsuario()
@@ -49,9 +65,14 @@ class PantallaPrincipal : BaseActivity() {
         findViewById<TextView>(R.id.txtVw_contenidoStock).text = "$total"
     }
 
+    /**
+     * Carga el usuario en memoria (imagen y nombre) y actualiza la interfaz.
+     * Si no hay usuario cargado, no realiza ninguna acción.
+     */
     private fun cargarUsuario() {
         val usuario = DatosPersonales.usuarioEnMemoria
         usuario?.let {
+            /* asigna la imagen de perfil según el id guardado */
             findViewById<ImageView>(R.id.imgVw_imagenPerfil).setImageResource(
                 when (it.idImagen) {
                     1 -> R.drawable.img_avatar2
@@ -63,10 +84,17 @@ class PantallaPrincipal : BaseActivity() {
                     else -> R.drawable.img_avatar_defecto
                 }
             )
+            /* muestra el nombre del usuario en pantalla */
             findViewById<TextView>(R.id.txtVw_nombreUsuario).text = it.nombre
         }
     }
 
+    /**
+     * Devuelve un consejo aleatorio para bordado y organización.
+     * Estos consejos son fijos y no están persistidos en la base de datos.
+     *
+     * @return Un [String] con el consejo elegido aleatoriamente.
+     */
     private fun obtenerConsejoAleatorio(): String {
         val consejos = listOf(
             "Organiza tus hilos por colores.",
