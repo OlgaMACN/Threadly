@@ -5,10 +5,11 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import logica.pedido_hilos.Grafico
+import persistencia.entidades.GraficoEntidad
+
 
 /**
- * Interfaz DAO para la entidad [Grafico].
+ * Interfaz DAO para la entidad [GraficoEntidad].
  *
  * Define las operaciones de acceso a la base de datos relacionadas con los gráficos,
  * incluyendo inserción, actualización, eliminación y consultas específicas.
@@ -19,27 +20,27 @@ interface GraficoDAO {
     /**
      * Inserta un nuevo gráfico en la base de datos.
      *
-     * @param grafico El objeto [Grafico] a insertar.
+     * @param grafico El objeto [GraficoEntidad] a insertar.
      * @return El ID generado para el gráfico insertado.
      */
     @Insert
-    suspend fun insertar(grafico: Grafico): Long
+    suspend fun insertar(grafico: GraficoEntidad): Long
 
     /**
      * Actualiza un gráfico existente en la base de datos.
      *
-     * @param grafico El objeto [Grafico] con los datos actualizados.
+     * @param grafico El objeto [GraficoEntidad] con los datos actualizados.
      */
     @Update
-    suspend fun actualizar(grafico: Grafico)
+    suspend fun actualizar(grafico: GraficoEntidad)
 
     /**
      * Elimina un gráfico de la base de datos.
      *
-     * @param grafico El objeto [Grafico] a eliminar.
+     * @param grafico El objeto [GraficoEntidad] a eliminar.
      */
     @Delete
-    suspend fun eliminar(grafico: Grafico)
+    suspend fun eliminar(grafico: GraficoEntidad)
 
     /**
      * Obtiene todos los gráficos asociados a un pedido específico.
@@ -47,8 +48,8 @@ interface GraficoDAO {
      * @param pedidoId El ID del pedido cuyos gráficos se desean obtener.
      * @return Lista de gráficos que pertenecen al pedido especificado.
      */
-    @Query("SELECT * FROM Grafico WHERE pedidoId = :pedidoId")
-    suspend fun obtenerPorPedido(pedidoId: Int): List<Grafico>
+    @Query("SELECT * FROM GraficoEntidad WHERE pedidoId = :pedidoId")
+    suspend fun obtenerPorPedido(pedidoId: Int): List<GraficoEntidad>
 
     /**
      * Obtiene un gráfico por su ID.
@@ -56,6 +57,6 @@ interface GraficoDAO {
      * @param id El ID del gráfico.
      * @return El gráfico correspondiente, o null si no existe.
      */
-    @Query("SELECT * FROM Grafico WHERE graphicId = :id")
-    suspend fun obtenerPorId(id: Int): Grafico?
+    @Query("SELECT * FROM GraficoEntidad WHERE graphicId = :id")
+    suspend fun obtenerPorId(id: Int): GraficoEntidad?
 }

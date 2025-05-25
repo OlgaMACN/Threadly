@@ -10,7 +10,7 @@ import persistencia.daos.HiloDAO
 import persistencia.daos.PedidoDAO
 import persistencia.daos.StockDAO
 import persistencia.daos.UsuarioDAO
-import persistencia.entidades.Grafico
+import persistencia.entidades.GraficoEntidad
 import persistencia.entidades.GraficoHilo
 import persistencia.entidades.Hilo
 import persistencia.entidades.Pedido
@@ -37,7 +37,7 @@ import persistencia.entidades.Usuario
         Hilo::class,
         Stock::class,
         Pedido::class,
-        Grafico::class,
+        GraficoEntidad::class,
         GraficoHilo::class,
     ],
     version = 1,
@@ -66,7 +66,7 @@ abstract class ThreadlyDatabase : RoomDatabase() {
     abstract fun pedidoDAO(): PedidoDAO
 
     /**
-     * Devuelve el DAO para acceder a los datos de la entidad [Grafico].
+     * Devuelve el DAO para acceder a los datos de la entidad [GraficoEntidad].
      */
     abstract fun graficoDAO(): GraficoDAO
 

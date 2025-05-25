@@ -2,11 +2,11 @@ package persistencia.relaciones
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import persistencia.entidades.Grafico
+import persistencia.entidades.GraficoEntidad
 import persistencia.entidades.Pedido
 
 /**
- * Representa la relación entre un [Pedido], sus [Grafico] asociados
+ * Representa la relación entre un [Pedido], sus [GraficoEntidad] asociados
  * y los [GraficoHilo] relacionados con cada gráfico.
  *
  * Esta clase permite obtener un pedido junto con todos sus gráficos,
@@ -20,7 +20,7 @@ data class PedidoConGraficosYHilos(
     @Embedded val pedido: Pedido,
 
     @Relation(
-        entity = persistencia.entidades.Grafico::class,
+        entity = persistencia.entidades.GraficoEntidad::class,
         parentColumn = "pedidoId",
         entityColumn = "pedidoId"
     )

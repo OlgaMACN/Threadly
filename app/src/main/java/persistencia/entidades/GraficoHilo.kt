@@ -13,18 +13,18 @@ import androidx.room.ForeignKey
  * - Un gráfico puede requerir varios hilos distintos.
  * - Un hilo puede ser utilizado en múltiples gráficos.
  *
- * @property graphicId ID del gráfico asociado (clave foránea hacia [Grafico]).
+ * @property graphicId ID del gráfico asociado (clave foránea hacia [GraficoEntidad]).
  * @property threadId ID del hilo necesario (clave foránea hacia [Hilo]).
  * @property madejas Número de madejas requeridas de ese hilo para el gráfico.
  *
- * @see Grafico
+ * @see GraficoEntidad
  * @see Hilo
  */
 @Entity(
     primaryKeys = ["graphicId", "threadId"], /* clave compuesta para evitar duplicados */
     foreignKeys = [
         ForeignKey(
-            entity = Grafico::class,
+            entity = GraficoEntidad::class,
             parentColumns = ["graphicId"],
             childColumns = ["graphicId"],
             onDelete = ForeignKey.CASCADE /* si se borra un gráfico, se eliminan sus asociaciones */

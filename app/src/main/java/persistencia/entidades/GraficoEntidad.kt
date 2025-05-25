@@ -29,7 +29,7 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-data class Grafico(
+data class GraficoEntidad(
     @PrimaryKey(autoGenerate = true) val graphicId: Int = 0,
     val pedidoId: Int,
     val name: String,
