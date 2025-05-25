@@ -13,8 +13,7 @@ import com.threadly.R
 class AdaptadorAlmacen(
     private var listaPedidos: List<PedidoGuardado>,
     private val onDescargarClick: (PedidoGuardado) -> Unit,
-    private val onEditarClick: (PedidoGuardado) -> Unit,
-    private val onPedidoRealizadoClick: (PedidoGuardado) -> Unit
+        private val onPedidoRealizadoClick: (PedidoGuardado) -> Unit
 ) : RecyclerView.Adapter<AdaptadorAlmacen.PedidoViewHolder>() {
 
     inner class PedidoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -60,11 +59,6 @@ class AdaptadorAlmacen(
                 onPedidoRealizadoClick(pedido)
                 notifyItemChanged(holder.adapterPosition)
             }
-        }
-
-        // Click para editar pedido
-        holder.itemView.setOnClickListener {
-            onEditarClick(pedido)
         }
 
         // Long press para eliminar pedido

@@ -63,9 +63,6 @@ class AlmacenPedidos : BaseActivity() {
                     ).show()
                 }
             },
-            onEditarClick = { pedido ->  // Antes: onEditarClick
-                dialogEditarPedido(pedido)
-            },
             onPedidoRealizadoClick = { pedido ->
                 pedido.graficos.forEach { grafico ->
                     grafico.listaHilos.forEach { hiloGrafico ->
@@ -188,50 +185,7 @@ class AlmacenPedidos : BaseActivity() {
         dialog.show()
     }
 
-    fun dialogEditarPedido(pedido: PedidoGuardado) {
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.almacen_dialog_editar_pedido)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        ajustarDialog(dialog)
-        dialog.setCancelable(false)
 
-        val btnEditar = dialog.findViewById<Button>(R.id.btn_botonEditarPedido)
-        val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_almacen)
-        val txtMensaje = dialog.findViewById<TextView>(R.id.txtVw_confirmarEditarPedido)
-
-        val nombrePedido = pedido.nombre
-        val textoOriginal = getString(R.string.confirmarEditarPedido)
-        val textoConPedido = textoOriginal.replace("%s", nombrePedido)
-
-        val spannable = SpannableString(textoConPedido)
-        val start = textoConPedido.indexOf(nombrePedido)
-        val end = start + nombrePedido.length
-
-        if (start != -1) {
-            spannable.setSpan(
-                StyleSpan(Typeface.BOLD),
-                start,
-                end,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
-
-        txtMensaje.text = spannable
-
-        txtMensaje.text = textoConPedido
-        btnEditar.setOnClickListener {
-            val intent = Intent(this, PedidoHilos::class.java)
-            intent.putExtra("pedido_a_editar", pedido)
-            startActivity(intent)
-            dialog.dismiss()
-        }
-
-        btnVolver.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
 
 
 }
