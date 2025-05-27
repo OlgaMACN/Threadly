@@ -4,9 +4,16 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import com.threadly.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import logica.stock_personal.StockSingleton
+import persistencia.bbdd.ThreadlyDatabase
 import utiles.BaseActivity
+import utiles.Consejos
+import utiles.SesionUsuario
 import utiles.funciones.funcionToolbar
 
 /**
@@ -20,6 +27,10 @@ import utiles.funciones.funcionToolbar
  */
 class PantallaPrincipal : BaseActivity() {
 
+    private lateinit var txtTip: TextView
+    private lateinit var txtNombreUser: TextView
+    private lateinit var imgPerfil: ImageView
+
     /**
      * Se ejecuta al crear la actividad. Inicializa el toolbar, carga el usuario,
      * muestra el stock actual, un consejo aleatorio y permite ir a la pantalla de configuración.
@@ -31,6 +42,9 @@ class PantallaPrincipal : BaseActivity() {
         funcionToolbar(this) /* carga el toolbar personalizado */
 
         cargarUsuario() /* muestra imagen y nombre del usuario */
+        txtNombreUser = findViewById(R.id.txtVw_nombreUsuario)
+        imgPerfil = findViewById(R.id.imgVw_imagenPerfil)
+        txtTip = findViewById(R.id.txtVw_contenidoTip)
 
         /* inicializa el stock si es necesario y muestra el total de madejas */
         StockSingleton.inicializarStockSiNecesario(this)
@@ -38,13 +52,6 @@ class PantallaPrincipal : BaseActivity() {
 
         val txtStock = findViewById<TextView>(R.id.txtVw_contenidoStock)
         txtStock.text = "$totalMadejas"
-
-        /* muestra el nombre del usuario registrado (por seguridad si cargó antes de tiempo) */
-        findViewById<TextView>(R.id.txtVw_nombreUsuario).text = nombreUsuario
-
-        /* muestra un consejo aleatorio en la parte inferior de la pantalla */
-        val txtTip = findViewById<TextView>(R.id.txtVw_contenidoTip)
-        txtTip.text = obtenerConsejoAleatorio()
 
         /* abre la pantalla de configuración (datos personales) */
         findViewById<ImageButton>(R.id.imgBtn_configuracion).setOnClickListener {
@@ -58,11 +65,15 @@ class PantallaPrincipal : BaseActivity() {
      */
     override fun onResume() {
         super.onResume()
-        cargarUsuario()
-
+        /* cartelito stock */
         StockSingleton.inicializarStockSiNecesario(this)
         val total = StockSingleton.mostrarTotalStock()
         findViewById<TextView>(R.id.txtVw_contenidoStock).text = "$total"
+        /* cartelito consejo */
+        consejoAleatorio()
+        /* cargar el usuario logueado */
+        cargarUsuario()
+
     }
 
     /**
@@ -70,22 +81,28 @@ class PantallaPrincipal : BaseActivity() {
      * Si no hay usuario cargado, no realiza ninguna acción.
      */
     private fun cargarUsuario() {
-        val usuario = DatosPersonales.usuarioEnMemoria
-        usuario?.let {
-            /* asigna la imagen de perfil según el id guardado */
-            findViewById<ImageView>(R.id.imgVw_imagenPerfil).setImageResource(
-                when (it.idImagen) {
-                    1 -> R.drawable.img_avatar2
-                    2 -> R.drawable.img_avatar3
-                    3 -> R.drawable.img_avatar4
-                    4 -> R.drawable.img_avatar5
-                    5 -> R.drawable.img_avatar6
-                    6 -> R.drawable.img_avatar_defecto
-                    else -> R.drawable.img_avatar_defecto
-                }
-            )
-            /* muestra el nombre del usuario en pantalla */
-            findViewById<TextView>(R.id.txtVw_nombreUsuario).text = it.nombre
+        val userId = SesionUsuario.obtenerSesion(this)
+        if (userId < 0) return
+
+        lifecycleScope.launch {
+            val usuario = withContext(Dispatchers.IO) {
+                ThreadlyDatabase.getDatabase(applicationContext)
+                    .usuarioDAO()
+                    .obtenerPorId(userId)
+            }
+            usuario?.let {
+                txtNombreUser.text = it.username
+                imgPerfil.setImageResource(
+                    when (it.profilePic) {
+                        1 -> R.drawable.img_avatar2
+                        2 -> R.drawable.img_avatar3
+                        3 -> R.drawable.img_avatar4
+                        4 -> R.drawable.img_avatar5
+                        5 -> R.drawable.img_avatar6
+                        else -> R.drawable.img_avatar_defecto
+                    }
+                )
+            }
         }
     }
 
@@ -95,14 +112,9 @@ class PantallaPrincipal : BaseActivity() {
      *
      * @return Un [String] con el consejo elegido aleatoriamente.
      */
-    private fun obtenerConsejoAleatorio(): String {
-        val consejos = listOf(
-            "Organiza tus hilos por colores",
-            "Etiqueta tus madejas para no perder el número",
-            "Guarda tus gráficos en carpetas por dificultad",
-            "Usa una luz blanca al bordar de noche",
-            "Haz pausas para evitar cansancio visual",
-        )
-        return consejos.random()
+    private fun consejoAleatorio() {
+        val consejo = Consejos.obtenerAleatorio()
+        this.txtTip.text = consejo
     }
+
 }
