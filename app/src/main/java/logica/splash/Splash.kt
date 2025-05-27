@@ -24,7 +24,7 @@ import java.util.TimerTask
  * Características:
  * - Forzar modo claro.
  * - Ocultar la barra de título.
- * - Mostrar logo con efecto de desvanecimiento (fade-in).
+ * - Mostrar logo con efecto de desvanecimiento (fade-in)
  * - Transición automática a la pantalla siguiente tras el splash.
  *
  * @author Olga y Sandra Macías Aragón
