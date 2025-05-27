@@ -8,8 +8,15 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.threadly.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import logica.pantalla_inicio.PantallaPrincipal
+import persistencia.bbdd.ThreadlyDatabase
+import persistencia.entidades.Usuario
+import utiles.SesionUsuario
 
 /**
  * Actividad que permite a un nuevo usuario registrarse en Threadly.
@@ -22,14 +29,6 @@ class LoginUserNoExiste : AppCompatActivity() {
     private lateinit var contrasena: EditText
     private lateinit var botonOjo: ImageView
     private var contrasenaVisible = false
-
-    companion object {
-        /**
-         * Lista que simula una base de datos en memoria con pares (usuario, contraseña).
-         * Se comparte entre instancias mediante un companion object.
-         */
-        private val usuariosRegistrados = mutableListOf<Pair<String, String>>()
-    }
 
     /**
      * Método llamado al iniciar la actividad. Configura las vistas y eventos.
@@ -88,7 +87,7 @@ class LoginUserNoExiste : AppCompatActivity() {
 
         when {
             usuarioEntrada.isEmpty() || contrasenaEntrada.isEmpty() -> {
-                mostrarToast("Por favor, rellena los campos.")
+                mostrarToast("Por favor, rellena todos los campos")
                 contrasena.text.clear()
             }
 
@@ -99,27 +98,43 @@ class LoginUserNoExiste : AppCompatActivity() {
             }
 
             contrasenaEntrada.length < 8 -> {
-                mostrarToast("Mínimo contraseña: 8 caracteres.")
+                mostrarToast("Mínimo contraseña: 8 caracteres")
                 contrasena.text.clear()
             }
 
             else -> {
                 /* verifica si el usuario ya existe (ignorando mayúsculas/minúsculas) */
-                val existe = usuariosRegistrados.any { it.first.equals(usuarioEntrada, ignoreCase = true) }
-                if (existe) {
-                    mostrarToast("Nombre en uso :( Tienes que escoger otro")
-                } else {
-                    /* agrega nuevo usuario y genera un ID basado en el tamaño de la lista */
-                    usuariosRegistrados.add(usuarioEntrada to contrasenaEntrada)
+                lifecycleScope.launch {
+                    val usuarioDAO = ThreadlyDatabase.getDatabase(applicationContext).usuarioDAO()
 
-                    val idGenerado = usuariosRegistrados.size
-
-                    val intent = Intent(this@LoginUserNoExiste, PantallaPrincipal::class.java).apply {
-                        putExtra("nombre_usuario", usuarioEntrada)
-                        putExtra("usuario_id", idGenerado)
+                    val yaExiste = withContext(Dispatchers.IO) {
+                        usuarioDAO.getPorNombre(usuarioEntrada)
                     }
-                    startActivity(intent)
-                    finish()
+
+                    if (yaExiste != null) {
+                        mostrarToast("Nombre en uso :( Tienes que escoger otro")
+                    } else {
+                        val nuevoUsuario = Usuario(
+                            username = usuarioEntrada,
+                            password = contrasenaEntrada,
+                            profilePic = R.drawable.img_avatar_defecto
+                        )
+
+                        val userId = withContext(Dispatchers.IO) {
+                            usuarioDAO.insertar(nuevoUsuario)
+                        }
+
+                        /* guarda la sesión a través del id del usuario */
+                        SesionUsuario.guardarSesion(applicationContext, userId.toInt())
+
+                        val intent =
+                            Intent(this@LoginUserNoExiste, PantallaPrincipal::class.java).apply {
+                                putExtra("nombre_usuario", usuarioEntrada)
+                                putExtra("usuario_id", userId.toInt())
+                            }
+                        startActivity(intent)
+                        finish()
+                    }
                 }
             }
         }

@@ -9,8 +9,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.threadly.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import logica.pantalla_inicio.PantallaPrincipal
+import persistencia.bbdd.ThreadlyDatabase
+import utiles.SesionUsuario
 
 /**
  * Actividad de inicio de sesión para un usuario ya existente.
@@ -108,26 +114,43 @@ class LoginUserExiste : AppCompatActivity() {
             contrasena.text.clear()
             return
         }
+        lifecycleScope.launch {
+            val usuarioDAO = ThreadlyDatabase.getDatabase(applicationContext).usuarioDAO()
 
-        if (userEntrada != usuarioValido) {
-            Toast.makeText(this, "El usuario introducido no existe.", Toast.LENGTH_SHORT).show()
-            usuario.text.clear()
-            contrasena.text.clear()
-            return
-        }
+            val usuarioBD = withContext(Dispatchers.IO) {
+                usuarioDAO.login(userEntrada, contrasenaEntrada)
+            }
 
-        if (contrasenaEntrada != contrasenaValida) {
-            Toast.makeText(this, "Contraseña incorrecta.", Toast.LENGTH_SHORT).show()
-            contrasena.text.clear()
-            return
-        }
+            if (usuarioBD == null) {
+                /* no existe usuario o la contraseña es incorrecta */
+                val existeUsuario = withContext(Dispatchers.IO) {
+                    usuarioDAO.getPorNombre(userEntrada)
+                }
+                if (existeUsuario == null) {
+                    Toast.makeText(
+                        this@LoginUserExiste,
+                        "El usuario introducido no existe",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Toast.makeText(
+                        this@LoginUserExiste,
+                        "Contraseña incorrecta",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                return@launch
+            }
 
-        /* si la autenticación es correcta, el usuario accede a la pantalla principal */
-        val intent = Intent(this@LoginUserExiste, PantallaPrincipal::class.java).apply {
-            putExtra("nombre_usuario", userEntrada)
-            putExtra("usuario_id", 1) /* id ficticio */
+            /* guardar sesión y continuar */
+            SesionUsuario.guardarSesion(applicationContext, usuarioBD.userId)
+
+            val intent = Intent(this@LoginUserExiste, PantallaPrincipal::class.java).apply {
+                putExtra("nombre_usuario", usuarioBD.username)
+                putExtra("usuario_id", usuarioBD.userId)
+            }
+            startActivity(intent)
+            finish()
         }
-        startActivity(intent)
-        finish()
     }
 }

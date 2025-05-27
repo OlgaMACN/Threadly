@@ -26,6 +26,9 @@ interface UsuarioDAO {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertar(usuario: Usuario): Long
 
+    @Query("SELECT * FROM usuario WHERE username = :nombre")
+    suspend fun getPorNombre(nombre: String): Usuario?
+
     /**
      * Actualiza los datos de un usuario existente.
      *

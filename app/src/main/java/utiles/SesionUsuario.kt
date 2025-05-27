@@ -7,6 +7,9 @@ import android.content.Context
  *
  * Proporciona métodos para guardar, obtener, comprobar y cerrar la sesión
  * mediante el almacenamiento del ID del usuario en preferencias privadas.
+ *
+ * Evita acceder a la BdD cada vez que se abra la app.
+ *
  */
 object SesionUsuario {
 
