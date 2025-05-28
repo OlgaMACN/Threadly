@@ -5,11 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import persistencia.daos.UsuarioDAO
-import persistencia.entidades.GraficoEntidad
-import persistencia.entidades.GraficoHilo
-import persistencia.entidades.Hilo
-import persistencia.entidades.Pedido
-import persistencia.entidades.Stock
 import persistencia.entidades.Usuario
 
 /**
