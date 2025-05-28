@@ -4,11 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import persistencia.daos.GraficoDAO
-import persistencia.daos.GraficoHiloDAO
-import persistencia.daos.HiloDAO
-import persistencia.daos.PedidoDAO
-import persistencia.daos.StockDAO
 import persistencia.daos.UsuarioDAO
 import persistencia.entidades.GraficoEntidad
 import persistencia.entidades.GraficoHilo
@@ -34,13 +29,9 @@ import persistencia.entidades.Usuario
 @Database(
     entities = [
         Usuario::class,
-        Hilo::class,
-        Stock::class,
-        Pedido::class,
-        GraficoEntidad::class,
-        GraficoHilo::class,
+
     ],
-    version = 1,
+    version = 2,
     exportSchema = false /* evita que Room genere archivos de esquema para esta base de datos */
 )
 abstract class ThreadlyDatabase : RoomDatabase() {
@@ -50,30 +41,6 @@ abstract class ThreadlyDatabase : RoomDatabase() {
      */
     abstract fun usuarioDAO(): UsuarioDAO
 
-    /**
-     * Devuelve el DAO para acceder a los datos de la entidad [Hilo].
-     */
-    abstract fun hiloDAO(): HiloDAO
-
-    /**
-     * Devuelve el DAO para acceder a los datos de la entidad [Stock].
-     */
-    abstract fun stockDAO(): StockDAO
-
-    /**
-     * Devuelve el DAO para acceder a los datos de la entidad [Pedido].
-     */
-    abstract fun pedidoDAO(): PedidoDAO
-
-    /**
-     * Devuelve el DAO para acceder a los datos de la entidad [GraficoEntidad].
-     */
-    abstract fun graficoDAO(): GraficoDAO
-
-    /**
-     * Devuelve el DAO para acceder a los datos de la relación entre gráficos e hilos ([GraficoHilo]).
-     */
-    abstract fun graficoHiloDAO(): GraficoHiloDAO
 
     companion object {
         @Volatile

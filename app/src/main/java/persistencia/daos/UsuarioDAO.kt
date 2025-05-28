@@ -15,6 +15,8 @@ import persistencia.entidades.Usuario
  */
 @Dao
 interface UsuarioDAO {
+    @Query("DELETE FROM usuario WHERE userId = :id")
+    suspend fun eliminarPorId(id: Int)
 
     /**
      * Inserta un nuevo usuario en la base de datos.
@@ -25,6 +27,13 @@ interface UsuarioDAO {
      */
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertar(usuario: Usuario): Long
+
+    @Query("DELETE FROM usuario WHERE userId = :id")
+    suspend fun eliminarUsuarioPorId(id: Int)
+
+    @Update
+    suspend fun actualizarUsuario(usuario: Usuario)
+
 
     @Query("SELECT * FROM usuario WHERE username = :nombre")
     suspend fun getPorNombre(nombre: String): Usuario?
