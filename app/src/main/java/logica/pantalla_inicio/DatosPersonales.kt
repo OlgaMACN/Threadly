@@ -7,12 +7,17 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.threadly.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import logica.login.LoginUserExiste
+import persistencia.bbdd.ThreadlyDatabase
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
-
+/*** @author Olga y Sandra Macías Aragón*/
 class DatosPersonales : BaseActivity() {
 
     private lateinit var txtNombreUsuario: TextView
@@ -20,17 +25,6 @@ class DatosPersonales : BaseActivity() {
 
     private lateinit var btnModificarDatos: Button
     private lateinit var btnVolverInicio: Button
-
-    companion object {
-        // Simulación de usuario en memoria
-        var usuarioEnMemoria: UsuarioEnMemoria? = null
-    }
-
-    data class UsuarioEnMemoria(
-        val id: Int,
-        val nombre: String,
-        val idImagen: Int
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,18 +37,10 @@ class DatosPersonales : BaseActivity() {
         val btnCerrarSesion = findViewById<Button>(R.id.btn_CerrarSesion)
         val btnEliminarCuenta = findViewById<Button>(R.id.btn_EliminarCuenta)
 
+        usuarioId = SesionUsuario.obtenerSesion(this)
         if (usuarioId < 0) {
             finish()
             return
-        }
-
-        // Inicializar usuario en memoria si es null (simulación)
-        if (usuarioEnMemoria == null) {
-            usuarioEnMemoria = UsuarioEnMemoria(
-                id = usuarioId,
-                nombre = intent.getStringExtra("nombre_usuario") ?: "Usuario",
-                idImagen = 6 // avatar por defecto
-            )
         }
 
         btnModificarDatos.setOnClickListener {
@@ -77,6 +63,37 @@ class DatosPersonales : BaseActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        cargarDatosUsuario()
+    }
+
+    private fun cargarDatosUsuario() {
+        lifecycleScope.launch {
+            val usuario = withContext(Dispatchers.IO) {
+                ThreadlyDatabase.getDatabase(applicationContext)
+                    .usuarioDAO()
+                    .obtenerPorId(usuarioId)
+            }
+
+            usuario?.let {
+                txtNombreUsuario.text = it.username
+                imgPerfil.setImageResource(avatarSeleccionado(it.profilePic))
+            } ?: finish()
+        }
+    }
+
+    private fun avatarSeleccionado(id: Int): Int {
+        return when (id) {
+            1 -> R.drawable.img_avatar2
+            2 -> R.drawable.img_avatar3
+            3 -> R.drawable.img_avatar4
+            4 -> R.drawable.img_avatar5
+            5 -> R.drawable.img_avatar6
+            else -> R.drawable.img_avatar_defecto
+        }
+    }
+
     private fun dialogEliminarCuenta() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pantalla_dialog_eliminar_cuenta)
@@ -88,53 +105,35 @@ class DatosPersonales : BaseActivity() {
         val btnConfirmar = dialog.findViewById<Button>(R.id.btn_EliminarCuentaThreadly)
 
         btnCancelar.setOnClickListener {
-            Toast.makeText(this, "¡Uff qué susto...! Qué bien que te quedes \uD83E\uDD70", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "¡Uff qué susto...! Qué bien que te quedes 🥰", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
 
         btnConfirmar.setOnClickListener {
             dialog.dismiss()
 
-            // Simulamos borrar el usuario en memoria
-            usuarioEnMemoria = null
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    ThreadlyDatabase.getDatabase(applicationContext)
+                        .usuarioDAO()
+                        .eliminarPorId(usuarioId)
+                }
 
-            Toast.makeText(this@DatosPersonales, "Tu cuenta se ha eliminado \uD83D\uDE22 ¡Hasta pronto!", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this@DatosPersonales,
+                    "Tu cuenta se ha eliminado 😢 ¡Hasta pronto!",
+                    Toast.LENGTH_LONG
+                ).show()
 
-            SesionUsuario.cerrarSesion(this@DatosPersonales)
+                SesionUsuario.cerrarSesion(this@DatosPersonales)
 
-            val intent = Intent(this@DatosPersonales, LoginUserExiste::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
+                val intent = Intent(this@DatosPersonales, LoginUserExiste::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
         }
 
         dialog.show()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        cargarDatosUsuario()
-    }
-
-    private fun cargarDatosUsuario() {
-        usuarioEnMemoria?.let {
-            txtNombreUsuario.text = it.nombre
-            imgPerfil.setImageResource(obtenerAvatarDrawable(it.idImagen))
-        } ?: run {
-            // Si no hay usuario en memoria, cerrar pantalla o manejar error
-            finish()
-        }
-    }
-
-    private fun obtenerAvatarDrawable(id: Int): Int {
-        return when (id) {
-            1 -> R.drawable.img_avatar2
-            2 -> R.drawable.img_avatar3
-            3 -> R.drawable.img_avatar4
-            4 -> R.drawable.img_avatar5
-            5 -> R.drawable.img_avatar6
-            6 -> R.drawable.img_avatar_defecto
-            else -> R.drawable.img_avatar_defecto
-        }
     }
 }

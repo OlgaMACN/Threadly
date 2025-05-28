@@ -27,11 +27,22 @@ import utiles.funciones.ajustarDialog
 import utiles.funciones.funcionToolbar
 import utiles.funciones.ordenarHilos
 
+/**
+ * Actividad que gestiona el inventario personal de hilos del usuario.
+ * Permite visualizar, agregar, eliminar hilos y modificar el número de madejas disponibles.
+ * También incluye un buscador por código de hilo.
+ *
+ * @author Olga y Sandra Macías Aragón
+ *
+ */
 class StockPersonal : BaseActivity() {
 
     private lateinit var tablaStock: RecyclerView
     private lateinit var adaptadorStock: AdaptadorStock
 
+    /**
+     * Método llamado al crear la actividad. Inicializa la interfaz, carga datos y configura eventos.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.stock_aa_principal)
@@ -43,6 +54,7 @@ class StockPersonal : BaseActivity() {
         tablaStock.layoutManager = LinearLayoutManager(this)
         tablaStock.adapter = adaptadorStock
 
+        /* cargar datos iniciales del catálogo si es la primera vez que se abre */
         if (esPrimeraVez(this)) {
             val listaInicial = LeerXMLCodigo(this, R.raw.catalogo_hilos)
             StockSingleton.listaStock.addAll(listaInicial)
@@ -52,6 +64,7 @@ class StockPersonal : BaseActivity() {
 
         StockSingleton.inicializarStockSiNecesario(this)
 
+        /* configurar botones de acción */
         val btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloStk)
         val btnAgregarMadeja = findViewById<Button>(R.id.btn_agregarMadejaStk)
         val btnEliminarMadeja = findViewById<Button>(R.id.btn_eliminarMadejaStk)
@@ -63,6 +76,10 @@ class StockPersonal : BaseActivity() {
         buscadorHilo()
     }
 
+    /**
+     * Configura el buscador de hilos por código.
+     * Resalta el hilo encontrado o muestra mensaje si no se encuentra.
+     */
     private fun buscadorHilo() {
         val hiloBuscado = findViewById<EditText>(R.id.edTxt_buscadorHilo)
         val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaStock)
@@ -101,6 +118,9 @@ class StockPersonal : BaseActivity() {
         })
     }
 
+    /**
+     * Muestra un diálogo para agregar un nuevo hilo al stock.
+     */
     private fun dialogAgregarHilo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_agregar_hilo)
@@ -119,6 +139,7 @@ class StockPersonal : BaseActivity() {
             val hilo = inputHilo.text.toString().uppercase().trim()
             val madejasString = inputMadejas.text.toString().trim()
 
+            /* validaciones de campos */
             if (hilo.isEmpty() || madejasString.isEmpty()) {
                 Toast.makeText(this, "Ningún campo puede estar vacío", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
@@ -136,6 +157,7 @@ class StockPersonal : BaseActivity() {
                 return@setOnClickListener
             }
 
+            /* intentar agregar hilo */
             if (!StockSingleton.agregarHilo(hilo, madejas)) {
                 Toast.makeText(
                     this,
@@ -148,12 +170,14 @@ class StockPersonal : BaseActivity() {
             StockSingleton.listaStock =
                 ordenarHilos(StockSingleton.listaStock) { it.hiloId }.toMutableList()
             adaptadorStock.actualizarLista(StockSingleton.listaStock)
-
             dialog.dismiss()
         }
         dialog.show()
     }
 
+    /**
+     * Muestra un diálogo para agregar madejas a un hilo existente.
+     */
     private fun dialogAgregarMadeja() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_agregar_madeja)
@@ -214,6 +238,9 @@ class StockPersonal : BaseActivity() {
         dialog.show()
     }
 
+    /**
+     * Muestra un diálogo para eliminar una cierta cantidad de madejas de un hilo existente.
+     */
     private fun dialogEliminarMadeja() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_eliminar_madeja)
@@ -271,6 +298,10 @@ class StockPersonal : BaseActivity() {
         dialog.show()
     }
 
+    /**
+     * Muestra un diálogo de confirmación para eliminar completamente un hilo del inventario.
+     * @param posicion Posición del hilo en la lista del RecyclerView.
+     */
     private fun dialogEliminarHilo(posicion: Int) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_eliminar_hilo)
@@ -289,6 +320,7 @@ class StockPersonal : BaseActivity() {
         val start = textoConHilo.indexOf(hiloEliminado)
         val end = start + hiloEliminado.length
 
+        /* resaltar en rojo el ID del hilo a eliminar */
         if (start != -1) {
             spannable.setSpan(
                 ForegroundColorSpan(Color.RED),
@@ -313,5 +345,4 @@ class StockPersonal : BaseActivity() {
         }
         dialog.show()
     }
-
 }

@@ -26,6 +26,17 @@ import utiles.funciones.funcionToolbar
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Clase principal para la pantalla de creación y edición de pedidos en Threadly.
+ *
+ * Permite al usuario agregar gráficos a un pedido, editar sus hilos, buscar gráficos,
+ * eliminar gráficos del pedido, guardar el pedido actual o realizar el pedido en tiendas externas.
+ *
+ * La pantalla se adapta para edición si se recibe un pedido ya guardado como extra.
+ *
+ * @author Olga y Sandra Macías Aragón
+ */
+
 private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada gráfico */
 
 class PedidoHilos : BaseActivity() {
@@ -35,29 +46,14 @@ class PedidoHilos : BaseActivity() {
     private var pedidoGuardado = false
     private var nombrePedidoEditado: String? = null
 
-
+    /**
+     * Método principal al crear la actividad. Inicializa la vista, carga un pedido si se va a editar
+     * y configura los listeners y elementos visuales.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
-
-        /* para editar un pedido */
-        val pedidoRecibido = intent.getSerializableExtra("pedido_a_editar") as? PedidoGuardado
-        if (pedidoRecibido != null) {
-            listaGraficos.clear()
-            listaGraficos.addAll(
-                pedidoRecibido.graficos.map {
-                    it.copy(
-                        listaHilos = it.listaHilos?.map { hilo -> hilo.copy() }?.toMutableList()
-                            ?: mutableListOf()
-                    )
-                }
-            )
-            pedidoGuardado = true // así sabemos que este pedido ya estaba guardado
-            nombrePedidoEditado =
-                pedidoRecibido.nombre // NUEVA VARIABLE para saber a quién sobrescribir
-        }
-
 
         /* inicializar el adaptador y configurar el recycler view */
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
@@ -70,7 +66,7 @@ class PedidoHilos : BaseActivity() {
                     putExtra("grafico", graficoSeleccionado)
                 }
             },
-            onLongClick = { index ->
+            onEliminarGrafico = { index ->
                 dialogoEliminarGrafico(index)
             }
         )
@@ -92,7 +88,10 @@ class PedidoHilos : BaseActivity() {
         actualizarTotalMadejas()
     }
 
-    /* buscar un gráfico dentro del pedido */
+    /**
+     * Muestra un buscador para filtrar gráficos por nombre.
+     * Permite al usuario escribir y resaltar coincidencias.
+     */
     private fun buscadorGrafico() {
         val buscarPedido = findViewById<EditText>(R.id.edTxt_buscadorPedido)
         val btnLupaPedido = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
@@ -136,14 +135,20 @@ class PedidoHilos : BaseActivity() {
         })
     }
 
-    /* sumar el total de madejas del pedido */
+    /**
+     * Actualiza el total de madejas mostradas en la interfaz.
+     */
     private fun actualizarTotalMadejas() {
         val txtTotal = findViewById<TextView>(R.id.txtVw_madejasTotalPedido)
         val total = adaptadorPedido.obtenerTotalMadejas()
         txtTotal.text = "Total madejas: $total"
     }
 
-    /* agregar un gráfico al pedido */
+
+    /**
+     * Muestra un diálogo para agregar un nuevo gráfico al pedido.
+     * Valida que no haya duplicados y que el nombre no esté vacío.
+     */
     private fun dialogAgregarGrafico() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pedido_dialog_agregar_grafico)
@@ -198,7 +203,11 @@ class PedidoHilos : BaseActivity() {
         dialog.show()
     }
 
-    /* eliminar un gráfico del pedido */
+    /**
+     * Muestra un diálogo de confirmación para eliminar un gráfico del pedido.
+     *
+     * @param index Índice del gráfico en la lista.
+     */
     private fun dialogoEliminarGrafico(index: Int) {
         val grafico = listaGraficos[index]
         val dialog = Dialog(this)
@@ -233,6 +242,10 @@ class PedidoHilos : BaseActivity() {
         dialog.show()
     }
 
+    /**
+     * Guarda el pedido actual en memoria (singleton) y limpia la lista de gráficos.
+     * Si se está editando un pedido, lo sobrescribe.
+     */
     private fun guardarPedido() {
         val copiaGraficos = listaGraficos.map { grafico ->
             grafico.copy(
@@ -254,6 +267,11 @@ class PedidoHilos : BaseActivity() {
         Toast.makeText(this, "Pedido guardado como $nombreFinal", Toast.LENGTH_SHORT).show()
     }
 
+    /**
+     * Genera un nombre único para un nuevo pedido con el formato "Pyyyymmdd" o "Pyyyymmdd(n)".
+     *
+     * @return Nombre único del pedido.
+     */
     private fun nombrePedido(): String {
         val fechaHoy = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
         var baseNombre = "P$fechaHoy"
@@ -266,7 +284,10 @@ class PedidoHilos : BaseActivity() {
         }
         return nombreFinal
     }
-    /* realizar pedido */
+
+    /**
+     * Muestra un diálogo con opciones para realizar el pedido en tiendas externas (Amazon, AliExpress, Temu).
+     */
     private fun realizarPedido() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pedido_dialog_realizar_pedido)
@@ -307,7 +328,12 @@ class PedidoHilos : BaseActivity() {
         dialog.show()
     }
 
-    /* función auxiliar para abrir la aplicación o la web de cada tienda */
+    /**
+     * Lanza la app de una tienda si está instalada, o su web si no lo está.
+     *
+     * @param paquete Nombre del paquete de la aplicación.
+     * @param urlWeb URL de la tienda online.
+     */
     private fun abrirTienda(paquete: String, urlWeb: String) {
         try {
             val intent = packageManager.getLaunchIntentForPackage(paquete)
@@ -322,7 +348,9 @@ class PedidoHilos : BaseActivity() {
         }
     }
 
-    /* recoger el dato del total de madejas */
+    /**
+     * Recibe un gráfico actualizado desde la actividad GraficoPedido y actualiza su información.
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_GRAFICO_PEDIDO && resultCode == RESULT_OK && data != null) {
@@ -339,16 +367,30 @@ class PedidoHilos : BaseActivity() {
         }
     }
 
-    /* interceptar que se pulsa 'atrás' */
+    /**
+     * Muestra un diálogo para confirmar si se desea guardar antes de salir.
+     * Si ya está guardado o no hay gráficos, sale directamente.
+     */
     @Suppress("MissingSuperCall")
     override fun onBackPressed() {
         dialogGuardarPedido()
     }
 
+    /**
+     * Llamada auxiliar para navegar desde esta pantalla, mostrando el diálogo de guardar si es necesario.
+     *
+     * @param destino Acción a ejecutar tras confirmar guardar o salir.
+     */
     fun onSalirDePantalla(destino: () -> Unit) {
         dialogGuardarPedido(salirDespues = false, destino = destino)
     }
 
+    /**
+     * Muestra el diálogo de guardar pedido si hay cambios pendientes.
+     *
+     * @param salirDespues Indica si se debe cerrar la pantalla tras guardar o cancelar.
+     * @param destino Acción opcional a ejecutar si no se cancela.
+     */
     private fun dialogGuardarPedido(salirDespues: Boolean = true, destino: (() -> Unit)? = null) {
         if (pedidoGuardado || listaGraficos.isEmpty()) {
             if (destino != null) {
@@ -389,6 +431,5 @@ class PedidoHilos : BaseActivity() {
 
         dialog.show()
     }
-
 
 }
