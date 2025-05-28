@@ -5,6 +5,8 @@ package utiles
  *
  * No es una entidad persistente, por lo que no se guarda ni modifica en la base de datos.
  * Está diseñado para estar disponible globalmente y accesible desde cualquier parte de la aplicación.
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 object Consejos {
 

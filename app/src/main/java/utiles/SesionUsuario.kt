@@ -10,6 +10,8 @@ import android.content.Context
  *
  * Evita acceder a la BdD cada vez que se abra la app.
  *
+ * * @author Olga y Sandra Macías Aragón
+ *
  */
 object SesionUsuario {
 

@@ -1,9 +1,12 @@
 package persistencia.bbdd
 
+
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import persistencia.daos.HiloCatalogoDao
+import persistencia.entidades.HiloCatalogoEntity
 import persistencia.daos.UsuarioDAO
 import persistencia.entidades.Usuario
 
@@ -23,10 +26,10 @@ import persistencia.entidades.Usuario
  */
 @Database(
     entities = [
-        Usuario::class,
+        Usuario::class, HiloCatalogoEntity::class
 
     ],
-    version = 2,
+    version = 4,
     exportSchema = false /* evita que Room genere archivos de esquema para esta base de datos */
 )
 abstract class ThreadlyDatabase : RoomDatabase() {
@@ -35,6 +38,7 @@ abstract class ThreadlyDatabase : RoomDatabase() {
      * Devuelve el DAO para acceder a los datos de la entidad [Usuario].
      */
     abstract fun usuarioDAO(): UsuarioDAO
+    abstract fun hiloCatalogoDao(): HiloCatalogoDao
 
 
     companion object {
@@ -48,6 +52,8 @@ abstract class ThreadlyDatabase : RoomDatabase() {
          * @param context Contexto necesario para construir la base de datos.
          * @return Instancia de [ThreadlyDatabase].
          */
+
+
         fun getDatabase(context: Context): ThreadlyDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -55,8 +61,10 @@ abstract class ThreadlyDatabase : RoomDatabase() {
                     ThreadlyDatabase::class.java,
                     "threadly_database" /* nombre del archivo de la base de datos */
                 )
-                    .fallbackToDestructiveMigration(false) /* no borra datos si hay un cambio de versión */
+                    // TODO: Quitar esto para producción y usar .addMigrations(...)
+                    .fallbackToDestructiveMigration() /* modo desarrollo */
                     .build()
+                /*  .fallbackToDestructiveMigration(false)  no borra datos si hay un cambio de versión  .build()*/
                 INSTANCE = instance
                 instance
             }

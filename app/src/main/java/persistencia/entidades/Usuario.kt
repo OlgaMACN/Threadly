@@ -13,6 +13,8 @@ import androidx.room.PrimaryKey
  * @property username Nombre de usuario único para el login.
  * @property password Contraseña del usuario (en texto plano, se recomienda cifrarla antes de almacenar).
  * @property profilePic Identificador del recurso de imagen para el perfil del usuario.
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 @Entity
 data class Usuario(

@@ -10,6 +10,8 @@ package logica.stock_personal
  *
  * @property hiloId Identificador único del hilo (por ejemplo, su código en el catálogo).
  * @property madejas Número de madejas disponibles del hilo.
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 data class HiloStock(
     val hiloId: String,

@@ -12,6 +12,7 @@ import persistencia.entidades.Usuario
  * DAO para la entidad [Usuario].
  *
  * Define las operaciones para insertar, actualizar, eliminar y consultar usuarios en la base de datos.
+ * * @author Olga y Sandra Macías Aragón
  */
 @Dao
 interface UsuarioDAO {

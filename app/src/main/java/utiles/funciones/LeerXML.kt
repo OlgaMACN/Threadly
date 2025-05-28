@@ -29,6 +29,8 @@ import javax.xml.parsers.DocumentBuilderFactory
  * ```
  *
  * - Si la etiqueta `<color>` está vacía, se interpretará como `null`.
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 fun leerXML(context: Context, resourceId: Int): List<HiloCatalogo> {
     val listaHilos = mutableListOf<HiloCatalogo>()

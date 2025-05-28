@@ -29,6 +29,8 @@ private var ultimoClick = 0L
  * - `botonStock`: Navega al inventario personal.
  * - `botonPedido`: Navega al pedido actual.
  * - `botonAlmacenPedido`: Navega al almacén de pedidos guardados.
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 fun funcionToolbar(activity: BaseActivity) {
     /* inicialización de los botones del toolbar */

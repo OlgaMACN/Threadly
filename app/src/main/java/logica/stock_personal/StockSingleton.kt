@@ -12,6 +12,8 @@ import utiles.funciones.LeerXMLCodigo
  * Además, permite manejar un estado persistente para saber si es la primera vez que se accede al stock.
  *
  * El stock se representa como una lista mutable de objetos [HiloStock].
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 object StockSingleton {
 

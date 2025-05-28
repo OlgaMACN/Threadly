@@ -16,6 +16,8 @@ package utiles.funciones
  * ```
  * val madejas = calcularMadejas(puntadas = 1200, countTela = 16)
  * ```
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 fun calcularMadejas(puntadas: Int, countTela: Int): Int {
     /* se define la longitud media consumida por puntada según el count de la tela */

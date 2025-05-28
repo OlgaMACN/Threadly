@@ -30,7 +30,8 @@ object ValidarFormatoHilos {
      * ### Ejemplos inválidos:
      * - "123*"
      * - "abc 123"
-     * - "C-310"
+     * - "C-310"ç
+     * * @author Olga y Sandra Macías Aragón
      */
     fun formatoValidoHilo(hilo: String): Boolean {
         return hilo.matches(regexValido)

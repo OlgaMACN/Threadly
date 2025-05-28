@@ -12,6 +12,7 @@ package logica.almacen_pedidos
  *
  * Nota: Esta implementación es volátil y los datos se perderán al cerrar la app,
  * por lo que se recomienda complementar con persistencia en base de datos.
+ * * @author Olga y Sandra Macías Aragón
  */
 object PedidoSingleton {
 

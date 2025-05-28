@@ -14,6 +14,9 @@ import java.io.Serializable
  *                              Si es null, se usará la cantidad original [madejas].
  *
  * Implementa [Serializable] para poder ser enviada entre actividades mediante Intents.
+ *
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 data class HiloGrafico(
     val hilo: String,

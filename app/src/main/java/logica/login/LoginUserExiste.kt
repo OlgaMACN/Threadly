@@ -20,10 +20,6 @@ import utiles.SesionUsuario
 
 /**
  * Actividad de inicio de sesión para un usuario ya existente.
- * Simula un sistema básico de autenticación con validación local.
- *
- * Esta clase no utiliza persistencia real, por lo que solo sirve como ejemplo
- * de flujo de login. El usuario válido está codificado de forma fija.
  *
  * @author Olga y Sandra Macías Aragón
  *

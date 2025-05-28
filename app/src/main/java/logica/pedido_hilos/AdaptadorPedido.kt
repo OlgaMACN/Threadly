@@ -19,6 +19,8 @@ import com.threadly.R
  * @property graficos Lista mutable de objetos [Grafico] que representan los gráficos en el pedido.
  * @property onItemClick Lambda que se ejecuta al pulsar un gráfico (para editarlo).
  * @property onEliminarGrafico Lambda que se ejecuta al mantener pulsado un gráfico (para eliminarlo).
+ * * @author Olga y Sandra Macías Aragón
+ *
  */
 class AdaptadorPedido(
     private var graficos: MutableList<Grafico>,

@@ -11,6 +11,8 @@ package logica.catalogo_hilos
  * @property numHilo Número identificador del hilo, representado como cadena (puede incluir ceros iniciales).
  * @property nombreHilo Nombre o descripción asociada al hilo (por ejemplo, "Rojo Carmesí").
  * @property color Código de color en formato hexadecimal (por ejemplo, "#FF5733"), o null si no se especifica.
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 data class HiloCatalogo(
     var numHilo: String,

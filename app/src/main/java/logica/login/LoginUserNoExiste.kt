@@ -20,8 +20,8 @@ import utiles.SesionUsuario
 
 /**
  * Actividad que permite a un nuevo usuario registrarse en Threadly.
- * La validación es local y simula la creación de usuarios en memoria.
- * No hay persistencia real, solo lógica de ejemplo.
+ * * @author Olga y Sandra Macías Aragón
+ *
  */
 class LoginUserNoExiste : AppCompatActivity() {
 

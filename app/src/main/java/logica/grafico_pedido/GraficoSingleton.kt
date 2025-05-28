@@ -10,6 +10,8 @@ import logica.pedido_hilos.Grafico
  * de pasarlo continuamente entre actividades o fragmentos.
  *
  * Este singleton se reinicia solo si se sobrescribe con un nuevo gráfico.
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 object GraficoSingleton {
 

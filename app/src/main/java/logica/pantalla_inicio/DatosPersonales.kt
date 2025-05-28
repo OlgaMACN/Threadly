@@ -17,7 +17,7 @@ import persistencia.bbdd.ThreadlyDatabase
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
-
+/*** @author Olga y Sandra Macías Aragón*/
 class DatosPersonales : BaseActivity() {
 
     private lateinit var txtNombreUsuario: TextView
@@ -37,6 +37,7 @@ class DatosPersonales : BaseActivity() {
         val btnCerrarSesion = findViewById<Button>(R.id.btn_CerrarSesion)
         val btnEliminarCuenta = findViewById<Button>(R.id.btn_EliminarCuenta)
 
+        usuarioId = SesionUsuario.obtenerSesion(this)
         if (usuarioId < 0) {
             finish()
             return
@@ -77,12 +78,12 @@ class DatosPersonales : BaseActivity() {
 
             usuario?.let {
                 txtNombreUsuario.text = it.username
-                imgPerfil.setImageResource(obtenerAvatarDrawable(it.profilePic))
+                imgPerfil.setImageResource(avatarSeleccionado(it.profilePic))
             } ?: finish()
         }
     }
 
-    private fun obtenerAvatarDrawable(id: Int): Int {
+    private fun avatarSeleccionado(id: Int): Int {
         return when (id) {
             1 -> R.drawable.img_avatar2
             2 -> R.drawable.img_avatar3

@@ -16,6 +16,8 @@ import java.io.Serializable
  * @property nombre Nombre único e identificador del pedido guardado.
  * @property graficos Lista de gráficos incluidos en el pedido.
  * @property realizado Indica si el pedido ha sido marcado como completado o no.
+ * * @author Olga y Sandra Macías Aragón
+ *
  */
 data class PedidoGuardado(
     val nombre: String,

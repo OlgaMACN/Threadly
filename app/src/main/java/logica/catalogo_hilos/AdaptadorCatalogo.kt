@@ -17,6 +17,8 @@ import com.threadly.R
  * @param items Lista mutable de objetos [HiloCatalogo] que representa los hilos a mostrar.
  * @param onEliminarClick Función lambda que se ejecuta al mantener pulsado un ítem (ej. para editar o eliminar); recibe la posición del ítem.
  * @param hiloResaltado Número del hilo a resaltar (por ejemplo, si se ha buscado mediante el buscador).
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 class AdaptadorCatalogo(
     private var items: MutableList<HiloCatalogo> = mutableListOf(),

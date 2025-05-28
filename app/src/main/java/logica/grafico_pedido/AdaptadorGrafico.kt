@@ -21,6 +21,9 @@ import com.threadly.R
  * @property onLongClickHilo Función lambda opcional para pulsación larga sobre un hilo (para borrar, por ejemplo).
  * @property hiloResaltado Identificador del hilo que debe mostrarse resaltado (por defecto, ninguno).
  * @property onTotalChanged Función lambda que recibe la suma total actualizada de madejas, llamada tras cada cambio.
+ *
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 class AdaptadorGrafico(
     private val hilos: MutableList<HiloGrafico>,

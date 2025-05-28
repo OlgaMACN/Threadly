@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import persistencia.bbdd.ThreadlyDatabase
 import utiles.BaseActivity
-
+/*** @author Olga y Sandra Macías Aragón*/
 class ModificarDatos : BaseActivity() {
 
     private lateinit var imgOpciones: List<ImageView>

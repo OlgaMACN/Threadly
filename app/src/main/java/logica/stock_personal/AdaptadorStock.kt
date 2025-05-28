@@ -16,6 +16,8 @@ import com.threadly.R
  * @param items Lista mutable de hilos en el stock personal.
  * @param onLongClick Función lambda que se ejecuta al mantener pulsado un elemento.
  * @param hiloResaltado ID del hilo que debe mostrarse resaltado en la tabla.
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 class AdaptadorStock(
     private var items: MutableList<HiloStock> = mutableListOf(),

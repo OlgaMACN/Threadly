@@ -15,6 +15,8 @@ import java.io.Serializable
  * @property countTela Número de hilos por pulgada (count) de la tela usada en el gráfico.
  * @property madejas Total de madejas necesarias para completar el gráfico (calculado posteriormente).
  * @property listaHilos Lista mutable de objetos [HiloGrafico] que representan los hilos requeridos para el gráfico.
+ * * @author Olga y Sandra Macías Aragón
+ *
  */
 data class Grafico(
     val nombre: String,

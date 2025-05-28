@@ -8,6 +8,8 @@ import utiles.funciones.ordenarHilos
  * agregar, modificar y eliminar hilos, manteniendo la lista ordenada por número de hilo.
  *
  * Esta clase sólo maneja datos y operaciones en la lista, sin interacción directa con la UI.
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 object CatalogoSingleton {
 

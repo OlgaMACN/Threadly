@@ -28,6 +28,8 @@ import javax.xml.parsers.DocumentBuilderFactory
  *
  * - Sólo se utiliza el contenido de la etiqueta `<codigo>`.
  * - Los códigos se transforman a mayúsculas automáticamente.
+ *
+ * * @author Olga y Sandra Macías Aragón
  */
 fun LeerXMLCodigo(context: Context, resourceId: Int): MutableList<HiloStock> {
     val lista = mutableListOf<HiloStock>()
