@@ -9,16 +9,7 @@
 
 
     <!-- Al poner 'weight' todos pesan lo mismo, así se distribuyen igualitariamente-->
-    <ImageButton
-        android:id="@+id/botonInicio"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_weight="1"
-        android:background="@drawable/reutilizable_efecto_pulsar_toolbar"
-        android:scaleType="centerInside"
-        app:srcCompat="@drawable/img_toolbar_home"
-        app:tint="@color/white" />
-    <!-- app:tint en vez de android:tint por la versión antigua que usamos -->
+
 
     <ImageButton
         android:id="@+id/botonCatalogo"
@@ -41,13 +32,13 @@
         app:tint="@color/white" />
 
     <ImageButton
-        android:id="@+id/botonForo"
+        android:id="@+id/botonInicio"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_weight="1"
         android:background="@drawable/reutilizable_efecto_pulsar_toolbar"
         android:scaleType="centerInside"
-        app:srcCompat="@drawable/img_toolbar_foro"
+        app:srcCompat="@drawable/img_toolbar_home"
         app:tint="@color/white" />
 
     <ImageButton
@@ -59,4 +50,16 @@
         android:scaleType="centerInside"
         app:srcCompat="@drawable/img_toolbar_pedido"
         app:tint="@color/white" />
+
+    <ImageButton
+        android:id="@+id/botonAlmacenPedido"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:background="@drawable/reutilizable_efecto_pulsar_toolbar"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/img_toolbar_almacen_pedidos"
+        app:tint="@color/white" />
+
+
 </LinearLayout>

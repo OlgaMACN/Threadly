@@ -2,9 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permisos necesarios para poder descargar el pedido en el dispositivo -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -20,7 +17,7 @@
 
         <!-- Splash: será la que dará inicio a la ejecución -->
         <activity
-            android:name="splash.Splash"
+            android:name="logica.splash.Splash"
             android:exported="true"
             android:theme="@style/Base.Theme.Threadly">
             <intent-filter>
@@ -32,55 +29,48 @@
 
         <!-- Login -->
         <activity
-            android:name="login.LoginUserExiste"
+            android:name="logica.login.LoginUserExiste"
             android:exported="true" />
         <activity
-            android:name="login.LoginUserNoExiste"
+            android:name="logica.login.LoginUserNoExiste"
             android:exported="true" />
 
         <!-- Pantalla Inicio -->
         <activity
-            android:name="PantallaInicio.PantallaPrincipal"
+            android:name="logica.pantalla_inicio.PantallaPrincipal"
             android:exported="true" />
 
         <activity
-            android:name="PantallaInicio.DatosPersonales"
+            android:name="logica.pantalla_inicio.DatosPersonales"
             android:exported="true" />
 
         <activity
-            android:name="PantallaInicio.ModificarDatos"
+            android:name="logica.pantalla_inicio.ModificarDatos"
             android:exported="true" />
 
         <!-- Catálogo -->
         <activity
-            android:name="CatalogoHilos.CatalogoHilos"
+            android:name="logica.catalogo_hilos.CatalogoHilos"
             android:exported="true" />
-        <activity android:name="CatalogoHilos.AgregarHilo" />
-        <activity android:name="CatalogoHilos.ModificarHilo" />
-        <activity android:name="CatalogoHilos.ModificarHiloFinal" />
 
         <!-- Stock Personal -->
         <activity
-            android:name="stock_personal.StockPersonal"
+            android:name="logica.stock_personal.StockPersonal"
             android:exported="true" />
-
-        <!-- Foro -->
-        <activity
-            android:name="Foro.Foro"
-            android:exported="true" />
-
-        <activity android:name="Foro.CrearTema" />
-        <activity android:name="Foro.ResponderTema" />
-        <activity android:name="Foro.VisualizarTema" />
 
         <!-- Pedido -->
         <activity
-            android:name="pedido_hilos.PedidoHilos"
+            android:name="logica.pedido_hilos.PedidoHilos"
             android:exported="true" />
 
         <!-- Gráfico Pedidos -->
         <activity
-            android:name="grafico_pedido.GraficoPedido"
+            android:name="logica.grafico_pedido.GraficoPedido"
+            android:exported="true" />
+
+        <!-- Almacén Pedidos -->
+        <activity
+            android:name="logica.almacen_pedidos.AlmacenPedidos"
             android:exported="true" />
     </application>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="450dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/reutilizable_marco_dialog"
     android:elevation="10dp"
@@ -11,16 +11,16 @@
         android:id="@+id/txtVw_cabeceraDialogAgregarGrafico"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:background="@drawable/reutilizable_cabecera"
+        android:background="@drawable/reutilizable_borde_cabecera_dialog"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/cabeceraDialogAgregarGrafico"
         android:textAlignment="center"
         android:textColor="@color/textoCabecera_y_Botones"
-        android:textSize="25sp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/edTxt_pedirNombreGrafico"
@@ -29,41 +29,25 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
+        android:gravity="center"
         android:hint="@string/pedirNombreGrafico"
-        android:textSize="20sp"
         android:inputType="text"
-        android:gravity="center"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraDialogAgregarGrafico"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <EditText
-        android:id="@+id/edTxt_pedirCountTela"
-        android:layout_width="0dp"
-        android:layout_height="65dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/reutilizable_campo_texto_redondeado"
-        android:fontFamily="@font/catchy_mager"
-        android:hint="@string/pedirCountTela"
-        android:inputType="number"
         android:textSize="20sp"
-        android:gravity="center"
-        android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_pedirNombreGrafico"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraDialogAgregarGrafico" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/edTxt_pedirCountTela"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edTxt_pedirNombreGrafico">
 
         <Button
             android:id="@+id/btn_volver_pedido_dialog_agregarGrafico"
@@ -73,8 +57,8 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/volver_pedido"
-            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <Space
@@ -89,8 +73,8 @@
             android:backgroundTint="@color/fondoBoton"
             android:fontFamily="@font/catchy_mager"
             android:text="@string/guardarGrafico"
-            android:textSize="20sp"
             android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
 

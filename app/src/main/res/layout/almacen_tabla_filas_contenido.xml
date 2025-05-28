@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:background="@color/fondoPantallas"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/txtVw_contenidoNombrePedido"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/contenidoNombrePedido"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:fontFamily="@font/catchy_mager" />
+
+    <ImageButton
+        android:id="@+id/imgBtn_descargaPedido"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:background="@drawable/reutilizable_efecto_pulsar_toolbar"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/img_descargar"
+        app:tint="@color/Cabeceras_y_Toolbar" />
+
+    <ImageButton
+        android:id="@+id/imgBtn_pedidoRealizado"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:background="@drawable/reutilizable_efecto_pulsar_toolbar"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/img_tick_pedido"
+        app:tint="@color/Cabeceras_y_Toolbar" />
+</LinearLayout>

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="450dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/reutilizable_marco_dialog"
     android:elevation="10dp"
@@ -13,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/reutilizable_cabecera"
+        android:background="@drawable/reutilizable_borde_cabecera_dialog"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:text="@string/agregarHiloConsulta"
@@ -27,14 +26,14 @@
 
     <EditText
         android:id="@+id/edTxt_agregarNumHilo"
-        android:layout_width="350dp"
+        android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginBottom="11dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
         android:hint="@string/agregarNumHilo"
-        android:inputType="number"
+        android:inputType="text"
         android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/editTxt_agregarNombreHilo"
@@ -44,7 +43,7 @@
 
     <EditText
         android:id="@+id/editTxt_agregarNombreHilo"
-        android:layout_width="350dp"
+        android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginBottom="54dp"
         android:background="@drawable/reutilizable_campo_texto_redondeado"
@@ -61,7 +60,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="411dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:gravity="center"
@@ -70,6 +69,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTxt_agregarNombreHilo">
+
+        <Button
+            android:id="@+id/btn_volverAgregarHilo"
+            android:layout_width="0dp"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/fondoBoton"
+            android:fontFamily="@font/catchy_mager"
+            android:text="@string/volver_agregarHilo"
+            android:textColor="@color/textoCabecera_y_Botones"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
 
         <Button
             android:id="@+id/btn_guardarAgregarHilo"
@@ -83,21 +98,7 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <Space
-            android:layout_width="16dp"
-            android:layout_height="0dp" />
 
-        <Button
-            android:id="@+id/btn_volverAgregarHilo"
-            android:layout_width="0dp"
-            android:layout_height="47dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/fondoBoton"
-            android:fontFamily="@font/catchy_mager"
-            android:text="@string/volver_agregarHilo"
-            android:textColor="@color/textoCabecera_y_Botones"
-            android:textSize="20sp"
-            android:textStyle="bold" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
