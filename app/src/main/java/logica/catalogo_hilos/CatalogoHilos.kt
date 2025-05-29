@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import persistencia.bbdd.ThreadlyDatabase
 import persistencia.daos.HiloCatalogoDao
-
 import persistencia.entidades.HiloCatalogoEntity
 import utiles.BaseActivity
 import utiles.SesionUsuario
@@ -26,6 +25,8 @@ import utiles.funciones.ValidarFormatoHilos
 import utiles.funciones.ajustarDialog
 import utiles.funciones.funcionToolbar
 import utiles.funciones.leerXML
+import utiles.funciones.ordenarHilos
+
 /*** @author Olga y Sandra Macías Aragón*/
 class CatalogoHilos : BaseActivity() {
 
@@ -84,17 +85,20 @@ class CatalogoHilos : BaseActivity() {
         buscadorHilo()
     }
 
-    private suspend fun refrescarUI() {
-        entidades = dao.obtenerHilosPorUsuario(userId)
+    private fun refrescarUI() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            entidades = dao.obtenerHilosPorUsuario(userId)
 
-        listaCatalogo = entidades.map { e ->
-            HiloCatalogo(e.numHilo, e.nombreHilo, e.color)
-        }.toMutableList()
+            listaCatalogo = ordenarHilos(entidades.map { e ->
+                HiloCatalogo(e.numHilo, e.nombreHilo, e.color)
+            }) { it.numHilo }.toMutableList()
 
-        withContext(Dispatchers.Main) {
-            adaptadorCatalogo.actualizarLista(listaCatalogo)
+            withContext(Dispatchers.Main) {
+                adaptadorCatalogo.actualizarLista(listaCatalogo)
+            }
         }
     }
+
 
     private fun buscadorHilo() {
         val editText = findViewById<EditText>(R.id.txtVw_buscarHiloConsulta)
@@ -139,6 +143,7 @@ class CatalogoHilos : BaseActivity() {
     private fun dialogAgregarHiloCatalogo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_agregar_hilo)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
@@ -187,6 +192,7 @@ class CatalogoHilos : BaseActivity() {
     private fun dialogModificarHiloCatalogo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_modificar)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
@@ -228,6 +234,7 @@ class CatalogoHilos : BaseActivity() {
     ) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_modificar_final)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
@@ -280,6 +287,7 @@ class CatalogoHilos : BaseActivity() {
     private fun dialogEliminarHiloCatalogo(pos: Int) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_eliminar_hilo)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 

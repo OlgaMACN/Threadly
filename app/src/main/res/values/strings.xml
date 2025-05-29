@@ -110,7 +110,7 @@
     <string name="eliminarHiloCabeceraCat">ELIMINAR HILO</string>
     <string name="confirmarEliminarHiloCat">¿Seguro que quieres eliminar el hilo "%s" del catálogo?</string>
     <string name="botonVolverEliminarCat">Volver</string>
-    <string name="botonEliminarHiloCat">Sí, eliminar</string>
+    <string name="botonEliminarHiloCat">Sí</string>
     <string name="volver_modificarHiloFinal">Volver</string>
     <!-- tabla stock cabecera (stock_tabla_filas_cabecera) -->
     <string name="NumHiloConsulta">HILO</string>

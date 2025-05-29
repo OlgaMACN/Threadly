@@ -1,70 +1,65 @@
 package persistencia.bbdd
 
-
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import persistencia.daos.HiloCatalogoDao
-import persistencia.entidades.HiloCatalogoEntity
 import persistencia.daos.UsuarioDAO
+import persistencia.entidades.HiloCatalogoEntity
 import persistencia.entidades.Usuario
+import utiles.SesionUsuario
+import com.threadly.R
 
-/**
- * Clase que define la base de datos de Room para la aplicación Threadly.
- *
- * Esta base de datos contiene todas las entidades relacionadas con el sistema de gestión de hilos,
- * usuarios, gráficos, pedidos y el stock personal. Proporciona acceso a los DAOs que permiten
- * realizar operaciones de persistencia sobre dichas entidades.
- *
- * Se implementa como un singleton para asegurar que exista una única instancia
- * de la base de datos en toda la aplicación.
- *
- * @see RoomDatabase
- *
- * @author Olga y Sandra Macías Aragón
- */
+
+// TODO cambiar todo esto a producción, ahora está en desarrollo hasta que termine de añadir entidades
 @Database(
     entities = [
         Usuario::class, HiloCatalogoEntity::class
-
     ],
-    version = 4,
-    exportSchema = false /* evita que Room genere archivos de esquema para esta base de datos */
+    version = 3,
+    exportSchema = false
 )
 abstract class ThreadlyDatabase : RoomDatabase() {
 
-    /**
-     * Devuelve el DAO para acceder a los datos de la entidad [Usuario].
-     */
     abstract fun usuarioDAO(): UsuarioDAO
     abstract fun hiloCatalogoDao(): HiloCatalogoDao
-
 
     companion object {
         @Volatile
         private var INSTANCE: ThreadlyDatabase? = null
-
-        /**
-         * Devuelve la instancia única de la base de datos [ThreadlyDatabase].
-         * Si no existe, la crea utilizando el contexto de aplicación.
-         *
-         * @param context Contexto necesario para construir la base de datos.
-         * @return Instancia de [ThreadlyDatabase].
-         */
-
 
         fun getDatabase(context: Context): ThreadlyDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     ThreadlyDatabase::class.java,
-                    "threadly_database" /* nombre del archivo de la base de datos */
+                    "threadly_database"
                 )
-                    // TODO: Quitar esto para producción y usar .addMigrations(...)
-                    .fallbackToDestructiveMigration() /* modo desarrollo */
+                    .fallbackToDestructiveMigration()
+                    .addCallback(object : Callback() {
+                        override fun onCreate(db: SupportSQLiteDatabase) {
+                            super.onCreate(db)
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val dao = getDatabase(context).usuarioDAO()
+                                val usuarios = dao.obtenerTodos()
+                                if (usuarios.isEmpty()) {
+                                    val usuarioPrueba = Usuario(
+                                        username = "prueba",
+                                        password = "1234",
+                                        profilePic = R.drawable.img_avatar_defecto
+                                    )
+                                    val id = dao.insertar(usuarioPrueba).toInt()
+                                    SesionUsuario.guardarSesion(context, id)
+                                }
+                            }
+                        }
+                    })
                     .build()
-                /*  .fallbackToDestructiveMigration(false)  no borra datos si hay un cambio de versión  .build()*/
                 INSTANCE = instance
                 instance
             }
