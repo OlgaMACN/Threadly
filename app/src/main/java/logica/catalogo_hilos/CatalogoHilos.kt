@@ -159,7 +159,7 @@ class CatalogoHilos : BaseActivity() {
         btnVolver.setOnClickListener { dialog.dismiss() }
         btnSave.setOnClickListener {
             val num = inpNum.text.toString().uppercase().trim()
-            val nom = inpNombre.text.toString().uppercase().trim()
+            val nom = inpNombre.text.toString().trim() /* para respetar el formato que ponga el usuario */
             if (num.isEmpty() || nom.isEmpty()) {
                 Toast.makeText(this, "Ningún campo puede estar vacío", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
@@ -276,8 +276,8 @@ class CatalogoHilos : BaseActivity() {
         btnSave.setOnClickListener {
             val nuevoNum =
                 if (modNum) inpNum.text.toString().uppercase().trim() else entidadVieja.numHilo
-            val nuevoNom = if (modNom) inpNombre.text.toString().uppercase()
-                .trim() else entidadVieja.nombreHilo
+            val nuevoNom = if (modNom) inpNombre.text.toString()
+                .trim() else entidadVieja.nombreHilo /* para respetar el formato que ponga el usuario */
 
             if ((modNum && nuevoNum.isEmpty()) || (modNom && nuevoNom.isEmpty())) {
                 Toast.makeText(this, "Ningún campo vacío", Toast.LENGTH_SHORT).show()
