@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
@@ -10,11 +9,11 @@
     <TextView
         android:id="@+id/txtVw_numHiloConsulta"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_weight="1.2"
+        android:gravity="center"
         android:textAlignment="center"
         android:fontFamily="@font/catchy_mager"
-        android:gravity="center"
         android:text="@string/numHiloCat"
         android:textColor="@color/black"
         android:textSize="15sp" />
@@ -22,36 +21,39 @@
     <TextView
         android:id="@+id/txtVw_nombreHiloConsulta"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:fontFamily="@font/catchy_mager"
+        android:layout_height="match_parent"
+        android:layout_weight="1.8"
         android:gravity="center"
-        android:text="@string/nombreHiloCat"
         android:textAlignment="center"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/nombreHiloCat"
         android:textColor="@color/black"
         android:textSize="15sp" />
 
-    <View
-        android:id="@+id/view_ColorHilo"
+    <!-- Contenedor para el color o texto alternativo -->
+    <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@color/fondoPantallas" />
-
-
-    <!-- texto en caso de no encontrar el color -->
-    <TextView
-        android:id="@+id/txtVw_colorImparseable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_weight="1"
-        android:textAlignment="center"
-        android:fontFamily="@font/catchy_mager"
-        android:text="S/R"
-        android:textColor="@color/referenciaImparseable"
-        android:textSize="15sp"
-        android:visibility="gone" />
+        android:layout_marginEnd="8dp">
+
+        <View
+            android:id="@+id/view_ColorHilo"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:background="@color/fondoPantallas" />
+
+        <TextView
+            android:id="@+id/txtVw_colorImparseable"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:fontFamily="@font/catchy_mager"
+            android:text="S/R"
+            android:textColor="@color/referenciaImparseable"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </FrameLayout>
 </LinearLayout>
