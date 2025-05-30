@@ -21,7 +21,7 @@ import com.threadly.R
     entities = [
         Usuario::class, HiloCatalogoEntity::class
     ],
-    version = 3,
+    version = 5,
     exportSchema = false
 )
 abstract class ThreadlyDatabase : RoomDatabase() {
