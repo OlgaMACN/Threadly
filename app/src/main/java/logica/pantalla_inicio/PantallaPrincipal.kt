@@ -9,7 +9,6 @@ import com.threadly.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import logica.stock_personal.StockSingleton
 import persistencia.bbdd.ThreadlyDatabase
 import utiles.BaseActivity
 import utiles.Consejos
@@ -47,11 +46,11 @@ class PantallaPrincipal : BaseActivity() {
         txtTip = findViewById(R.id.txtVw_contenidoTip)
 
         /* inicializa el stock si es necesario y muestra el total de madejas */
-        StockSingleton.inicializarStockSiNecesario(this)
+      /*  StockSingleton.inicializarStockSiNecesario(this)
         val totalMadejas = StockSingleton.mostrarTotalStock()
 
         val txtStock = findViewById<TextView>(R.id.txtVw_contenidoStock)
-        txtStock.text = "$totalMadejas"
+        txtStock.text = "$totalMadejas"*/
 
         /* abre la pantalla de configuración (datos personales) */
         findViewById<ImageButton>(R.id.imgBtn_configuracion).setOnClickListener {
@@ -66,9 +65,9 @@ class PantallaPrincipal : BaseActivity() {
     override fun onResume() {
         super.onResume()
         /* cartelito stock */
-        StockSingleton.inicializarStockSiNecesario(this)
+       /* StockSingleton.inicializarStockSiNecesario(this)
         val total = StockSingleton.mostrarTotalStock()
-        findViewById<TextView>(R.id.txtVw_contenidoStock).text = "$total"
+        findViewById<TextView>(R.id.txtVw_contenidoStock).text = "$total"*/
         /* cartelito consejo */
         consejoAleatorio()
         /* cargar el usuario logueado */

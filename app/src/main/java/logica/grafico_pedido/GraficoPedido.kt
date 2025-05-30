@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 import logica.catalogo_hilos.CatalogoSingleton
 import logica.pedido_hilos.Grafico
-import logica.stock_personal.StockSingleton
 import utiles.BaseActivity
 import utiles.funciones.*
 
@@ -64,8 +63,8 @@ class GraficoPedido : BaseActivity() {
             onClickHilo = { hilo ->
                 /* al pulsar un hilo muestra su stock actual */
                 val txtVwStock = findViewById<TextView>(R.id.txtVw_stockHiloActual)
-                val stock = StockSingleton.obtenerMadejas(hilo.hilo.uppercase())?.toString() ?: "-"
-                txtVwStock.text = getString(R.string.stockHiloActual, stock)
+               // val stock = StockSingleton.obtenerMadejas(hilo.hilo.uppercase())?.toString() ?: "-"
+                //txtVwStock.text = getString(R.string.stockHiloActual, stock)
             },
             onLongClickHilo = ::dialogBorrarHilo,
             hiloResaltado = null,
