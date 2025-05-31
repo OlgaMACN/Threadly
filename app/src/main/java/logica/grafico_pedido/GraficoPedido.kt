@@ -1,5 +1,6 @@
 package logica.grafico_pedido
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
@@ -43,6 +44,7 @@ import utiles.funciones.ordenarHilos
  *
  * * @author Olga y Sandra Macías Aragón
  */
+
 class GraficoPedido : BaseActivity() {
 
     private lateinit var adaptadorGrafico: AdaptadorGrafico
@@ -61,17 +63,17 @@ class GraficoPedido : BaseActivity() {
         setContentView(R.layout.pedidob_aa_principal)
         funcionToolbar(this)
 
-        // Inicializa DAOs y sesión
+        // 1) Inicializa DAOs y sesión
         daoGrafico = ThreadlyDatabase.getDatabase(applicationContext).hiloGraficoDao()
-        daoStock = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
-        userId = SesionUsuario.obtenerSesion(this)
+        daoStock   = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
+        userId     = SesionUsuario.obtenerSesion(this)
         if (userId < 0) finish()
 
-        // Referencias de vistas
-        txtTotal = findViewById(R.id.txtVw_totalMadejasGraficoIndividual)
+        // 2) Recupera las referencias a los TextView
+        txtTotal       = findViewById(R.id.txtVw_totalMadejasGraficoIndividual)
         txtStockActual = findViewById(R.id.txtVw_stockHiloActual)
 
-        // Recibimos el nombre del gráfico desde el Intent
+        // 3) Recibimos el nombre del gráfico desde el Intent
         val graficoRecibido = intent.getSerializableExtra("grafico") as? logica.pedido_hilos.Grafico
         if (graficoRecibido == null) {
             Toast.makeText(this, "Error: gráfico no recibido", Toast.LENGTH_LONG).show()
@@ -81,25 +83,27 @@ class GraficoPedido : BaseActivity() {
         graficoNombre = graficoRecibido.nombre
         findViewById<TextView>(R.id.txtVw_cabeceraGrafico).text = graficoNombre
 
-        // Inicializamos o recuperamos el gráfico en la BBDD
+        // 4) Inicializa o recupera el gráfico en la BBDD
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 var existingId = daoGrafico.obtenerIdPorNombre(graficoNombre)
                 if (existingId == null) {
-                    // Insertar nueva fila en tabla "graficos"
-                    val nuevo = GraficoEntity(nombre = graficoNombre)
-                    val newRowId = daoGrafico.insertarGrafico(nuevo).toInt()
-                    existingId = newRowId
+                    // Inserta nueva fila en la tabla "graficos"
+                    val nuevoId = daoGrafico.insertarGrafico(
+                        GraficoEntity(nombre = graficoNombre)
+                    ).toInt()
+                    existingId = nuevoId
                 }
                 graficoId = existingId ?: -1
             }
+
             if (graficoId < 0) {
                 Toast.makeText(this@GraficoPedido, "Error cargando gráfico", Toast.LENGTH_SHORT).show()
                 finish()
                 return@launch
             }
 
-            // Una vez tenemos graficoId, configuramos RecyclerView y botones
+            // 5) Una vez tenemos graficoId, configuramos RecyclerView y botones
             configurarRecycler()
             configurarBotones()
         }
@@ -109,6 +113,7 @@ class GraficoPedido : BaseActivity() {
      * Configura el RecyclerView con el Adaptador, cargando los hilos existentes en este gráfico.
      * También inicializa el texto del total de madejas.
      */
+    @SuppressLint("SetTextI18n")
     private fun configurarRecycler() {
         val recyclerView = findViewById<RecyclerView>(R.id.tabla_grafico)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -127,20 +132,23 @@ class GraficoPedido : BaseActivity() {
                 .let { ordenarHilos(it) { h -> h.hilo } }
                 .toMutableList()
 
-            // 4) Inicializar AdaptadorGrafico con listener de clic para mostrar stock
+            // 4) Inicializar AdaptadorGrafico con listener de clic para mostrar stock y resaltar fila
             adaptadorGrafico = AdaptadorGrafico(
                 listaDominio,
                 onClickHilo = { hiloGrafico ->
-                    // Al hacer clic sobre el nombre, mostramos stock actual en txtStockActual:
+                    // Al hacer clic sobre el nombre:
+                    // (a) Resalta la fila en azul
+                    adaptadorGrafico.resaltarHiloClick(hiloGrafico.hilo)
+
+                    // (b) Muestra el stock actual
                     lifecycleScope.launch {
                         val stock = withContext(Dispatchers.IO) {
                             daoStock.obtenerMadejas(userId, hiloGrafico.hilo)
                         }
-                        txtStockActual.text = stock?.toString() ?: "-"
+                        txtStockActual.text = "Stock: ${stock ?: 0}"
                     }
                 },
                 onLongClickHilo = ::dialogBorrarHilo,
-                hiloResaltado = null
             ) { total ->
                 // Actualiza el total de madejas cada vez que cambie
                 txtTotal.text = "Total Madejas: $total"
@@ -150,7 +158,8 @@ class GraficoPedido : BaseActivity() {
             recyclerView.adapter = adaptadorGrafico
 
             // 6) Mostrar total inicial
-            txtTotal.text = "Total Madejas: ${listaDominio.sumOf { it.madejas }}"
+            val totalInicial = listaDominio.sumOf { it.madejas }
+            txtTotal.text = "Total Madejas: $totalInicial"
 
             // 7) Inicializar buscador (se apoya en adaptador)
             buscadorHilo()
@@ -175,33 +184,33 @@ class GraficoPedido : BaseActivity() {
     private fun buscadorHilo() {
         val edt = findViewById<EditText>(R.id.edTxt_buscadorGrafico)
         val btn = findViewById<ImageView>(R.id.imgVw_lupaGrafico)
-        val rv = findViewById<RecyclerView>(R.id.tabla_grafico)
+        val rv  = findViewById<RecyclerView>(R.id.tabla_grafico)
         val txtNo = findViewById<TextView>(R.id.txtVw_sinResultadosGrafico)
         txtNo.visibility = View.GONE
 
         btn.setOnClickListener {
-            val code = edt.text.toString().trim().uppercase()
-            val listaAct = adaptadorGrafico.obtenerLista()
-            val found = listaAct.find { it.hilo == code }
+            val code   = edt.text.toString().trim().uppercase()
+            val listaA = adaptadorGrafico.obtenerLista()
+            val found  = listaA.find { it.hilo == code }
             if (found != null) {
-                adaptadorGrafico.resaltarHilo(found.hilo)
-                adaptadorGrafico.actualizarLista(listaAct)
-                rv.scrollToPosition(listaAct.indexOf(found))
+                adaptadorGrafico.resaltarHiloBusqueda(found.hilo)
+                adaptadorGrafico.actualizarLista(listaA)
+                rv.scrollToPosition(listaA.indexOf(found))
                 txtNo.visibility = View.GONE
-                rv.visibility = View.VISIBLE
+                rv.visibility  = View.VISIBLE
             } else {
                 txtNo.visibility = View.VISIBLE
-                rv.visibility = View.GONE
+                rv.visibility  = View.GONE
             }
         }
 
         edt.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
-                    adaptadorGrafico.resaltarHilo(null)
+                    adaptadorGrafico.resaltarHiloBusqueda(null)
                     adaptadorGrafico.actualizarLista(adaptadorGrafico.obtenerLista())
                     txtNo.visibility = View.GONE
-                    rv.visibility = View.VISIBLE
+                    rv.visibility  = View.VISIBLE
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -211,7 +220,7 @@ class GraficoPedido : BaseActivity() {
 
     /**
      * Muestra un diálogo para agregar un nuevo hilo al gráfico.
-     * - Solo permite agregar si el hilo existe en el catálogo del usuario.
+     * - Sólo permite agregar si el hilo existe en el catálogo del usuario.
      * - Pide "puntadas" y "count de tela" la primera vez; luego oculta count.
      */
     private fun dialogAgregarHiloGrafico() {
@@ -236,8 +245,8 @@ class GraficoPedido : BaseActivity() {
 
         btnG.setOnClickListener {
             val hiloCode = inpH.text.toString().trim().uppercase()
-            val punt = inpP.text.toString().trim().toIntOrNull()
-            val count = countTelaGlobal
+            val punt     = inpP.text.toString().trim().toIntOrNull()
+            val count    = countTelaGlobal
                 ?: inpC.text.toString().trim().toIntOrNull()
                     ?.takeIf { it in listOf(14, 16, 18, 20, 25) }
                     ?.also { countTelaGlobal = it }
@@ -251,7 +260,7 @@ class GraficoPedido : BaseActivity() {
             val madejas = calcularMadejas(punt, count)
 
             lifecycleScope.launch {
-                // Antes de insertar, validamos que el hilo esté en el catálogo del usuario
+                // 1) Validamos que el hilo esté en el catálogo del usuario
                 val existeEnCatalogo = withContext(Dispatchers.IO) {
                     ThreadlyDatabase.getDatabase(applicationContext)
                         .hiloCatalogoDao()
@@ -268,17 +277,17 @@ class GraficoPedido : BaseActivity() {
                     return@launch
                 }
 
-                // Insertamos en Room la nueva fila en hilos_grafico
+                // 2) Insertamos en Room la nueva fila en hilos_grafico
                 withContext(Dispatchers.IO) {
                     daoGrafico.insertarHiloEnGrafico(
                         HiloGraficoEntity(
                             graficoId = graficoId,
-                            hilo = hiloCode,
-                            madejas = madejas
+                            hilo      = hiloCode,
+                            madejas   = madejas
                         )
                     )
                 }
-                // Volvemos a recargar la lista
+                // 3) Volvemos a recargar la lista
                 withContext(Dispatchers.Main) {
                     configurarRecycler()
                     dialog.dismiss()
@@ -300,15 +309,15 @@ class GraficoPedido : BaseActivity() {
             ajustarDialog(this)
         }
         val btnConf = dialog.findViewById<Button>(R.id.btn_guardarHilo_dialog_deleteHilo)
-        val btnVol = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_deleteHilo)
-        val txtMsg = dialog.findViewById<TextView>(R.id.txtVw_textoInfo_dialog_deleteHilo)
+        val btnVol  = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_deleteHilo)
+        val txtMsg  = dialog.findViewById<TextView>(R.id.txtVw_textoInfo_dialog_deleteHilo)
 
         // Construir mensaje resaltando en rojo el código del hilo
         val plantilla = getString(R.string.textoInfo_dialog_deleteHilo)
-        val texto = plantilla.replace("%s", h.hilo)
-        txtMsg.text = SpannableString(texto).apply {
+        val texto     = plantilla.replace("%s", h.hilo)
+        txtMsg.text   = SpannableString(texto).apply {
             val start = texto.indexOf(h.hilo)
-            val end = start + h.hilo.length
+            val end   = start + h.hilo.length
             setSpan(
                 ForegroundColorSpan(Color.RED),
                 start,
@@ -338,7 +347,7 @@ class GraficoPedido : BaseActivity() {
     private fun devolverResultadoYSalir() {
         val listaFinal = adaptadorGrafico.obtenerLista()
         val resultado = logica.pedido_hilos.Grafico(
-            nombre = graficoNombre,
+            nombre     = graficoNombre,
             listaHilos = listaFinal
         )
         setResult(RESULT_OK, Intent().apply {
