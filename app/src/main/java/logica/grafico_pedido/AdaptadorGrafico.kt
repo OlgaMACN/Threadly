@@ -13,36 +13,33 @@ import com.threadly.R
 
 /**
  * Adaptador para mostrar y gestionar la lista de hilos de un gráfico en un RecyclerView.
- * Permite modificar la cantidad de madejas para cada hilo, resaltar un hilo concreto,
- * y notificar cambios totales de madejas.
+ * Permite:
+ *  - Mostrar el código de cada hilo y sus madejas originales.
+ *  - Dejar al usuario introducir una nueva cantidad (cantidadModificar) para cada hilo.
+ *  - Resaltar un hilo especificado.
+ *  - Notificar, mediante [onTotalChanged], el total actual de madejas (sumando las modificadas).
  *
- * @property hilos Lista mutable de objetos [HiloGrafico] que representan los hilos del gráfico.
- * @property onClickHilo Función lambda que se ejecuta al pulsar un hilo (parámetro: hilo pulsado).
- * @property onLongClickHilo Función lambda opcional para pulsación larga sobre un hilo (para borrar, por ejemplo).
- * @property hiloResaltado Identificador del hilo que debe mostrarse resaltado (por defecto, ninguno).
- * @property onTotalChanged Función lambda que recibe la suma total actualizada de madejas, llamada tras cada cambio.
- *
- *
- * * @author Olga y Sandra Macías Aragón
+ * @param hilos Lista mutable de [HiloGrafico] que representa los hilos del gráfico.
+ * @param onClickHilo Lambda que se ejecuta al pulsar el TextView del hilo.
+ * @param onLongClickHilo Lambda opcional para pulsación larga (ej. eliminar).
+ * @param hiloResaltado Código del hilo que debe resaltarse (nombre), o null para ninguno.
+ * @param onTotalChanged Lambda que recibe el total de madejas (Int), se llama cuando cambia el total.
  */
 class AdaptadorGrafico(
     private val hilos: MutableList<HiloGrafico>,
     private val onClickHilo: (HiloGrafico) -> Unit,
     private val onLongClickHilo: ((HiloGrafico) -> Unit)? = null,
     private var hiloResaltado: String? = null,
-    private val onTotalChanged: ((Int) -> Unit)
+    private val onTotalChanged: (Int) -> Unit
 ) : RecyclerView.Adapter<AdaptadorGrafico.HiloViewHolder>() {
 
     /**
-     * ViewHolder que contiene los elementos visuales de cada fila para un hilo.
-     * Contiene un TextView para el nombre del hilo, otro para madejas y un EditText
-     * para modificar la cantidad de madejas pedidas.
-     *
-     * @property txtHilo TextView que muestra el código o nombre del hilo.
-     * @property txtMadejas TextView que muestra la cantidad total de madejas calculadas.
-     * @property edtModificar EditText para modificar la cantidad de madejas pedidas.
-     * @property filaLayout Vista raíz de la fila para cambiar el fondo (resaltado).
-     * @property textWatcher Listener que controla los cambios del EditText para evitar duplicados.
+     * ViewHolder que contiene las vistas de una fila:
+     *  - txtHilo: muestra el código/identificador del hilo.
+     *  - txtMadejas: muestra las madejas originales del hilo.
+     *  - edtModificar: EditText donde el usuario puede poner una nueva cantidad.
+     *  - filaLayout: root view de la fila, para cambiar el fondo (resaltar).
+     *  - textWatcher: referencia al TextWatcher para poder retirarlo antes de asignar uno nuevo.
      */
     inner class HiloViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtHilo: TextView = view.findViewById(R.id.txtVw_textoHiloGrafico)
@@ -61,78 +58,65 @@ class AdaptadorGrafico(
     override fun getItemCount(): Int = hilos.size
 
     override fun onBindViewHolder(holder: HiloViewHolder, position: Int) {
-        val hilo = hilos[position]
+        val hiloItem = hilos[position]
 
-        /* mostrar código y cantidad de madejas */
-        holder.txtHilo.text = hilo.hilo
-        holder.txtMadejas.text = hilo.madejas.toString()
+        // 1) Mostrar código y madejas originales
+        holder.txtHilo.text = hiloItem.hilo
+        holder.txtMadejas.text = hiloItem.madejas.toString()
 
-        /* eliminar TextWatcher previo para evitar llamadas múltiples */
+        // 2) Retirar cualquier TextWatcher previo para evitar duplicados
         holder.textWatcher?.let {
             holder.edtModificar.removeTextChangedListener(it)
         }
+        // 3) Mostrar, si existe, la cantidad modificada; si no, dejar vacío
+        holder.edtModificar.setText(hiloItem.cantidadModificar?.toString() ?: "")
 
-        /* cargar el valor editable: si se ha modificado, mostrar la cantidad modificada, sino vacío */
-        holder.edtModificar.setText(hilo.cantidadModificar?.toString() ?: "")
-
-        /* crear nuevo TextWatcher para actualizar la cantidad modificada */
+        // 4) Crear y asignar un nuevo TextWatcher que actualiza cantidadModificar y total
         holder.textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                val texto = s.toString()
-                val cantidad = when (texto) {
-                    "-" -> 0
-                    "" -> null
-                    else -> texto.toIntOrNull()
-                }
-                hilo.cantidadModificar = cantidad
-
-                /* notificar el cambio total tras editar una cantidad */
+                val texto = s?.toString().orEmpty()
+                hiloItem.cantidadModificar = texto.toIntOrNull()
+                // Notificar total sólo aquí, pues el usuario cambió la cantidad
                 onTotalChanged(calcularTotal())
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
-
-        /* añadir el nuevo TextWatcher al EditText */
         holder.edtModificar.addTextChangedListener(holder.textWatcher)
 
-        /* resaltar el hilo si coincide con el solicitado */
-        if (hilo.hilo == hiloResaltado) {
+        // 5) Resaltar fila si coincide con hiloResaltado
+        if (hiloItem.hilo == hiloResaltado) {
             holder.filaLayout.setBackgroundResource(R.drawable.reutilizable_resaltar_busqueda)
         } else {
             holder.filaLayout.setBackgroundResource(android.R.color.transparent)
         }
-        /* click simple llama a la función proporcionada */
+
+        // 6) Clic simple sobre el nombre del hilo
         holder.txtHilo.setOnClickListener {
-            onClickHilo(hilo)
+            onClickHilo(hiloItem)
         }
-        /* click largo llama a la función de borrar (si existe) */
+        // 7) Pulsación larga en toda la fila para invocar onLongClickHilo
         holder.itemView.setOnLongClickListener {
-            onLongClickHilo?.invoke(hilos[position])
+            onLongClickHilo?.invoke(hiloItem)
             true
         }
-        /* actualizar total al pintar cada fila (asegura total correcto) */
-        onTotalChanged(calcularTotal())
+
     }
 
     /**
-     * Actualiza la lista completa de hilos y notifica al adaptador para refrescar la vista.
-     *
-     * @param nuevaLista Nueva lista de hilos que sustituye a la actual.
+     * Reemplaza la lista interna de hilos por [nueva], notifica el cambio y recalcula total.
      */
     @SuppressLint("NotifyDataSetChanged")
-    fun actualizarLista(nuevaLista: List<HiloGrafico>) {
+    fun actualizarLista(nueva: List<HiloGrafico>) {
         hilos.clear()
-        hilos.addAll(nuevaLista)
+        hilos.addAll(nueva)
         notifyDataSetChanged()
+        // Recalcular el total inmediatamente tras cambiar la lista completa
         onTotalChanged(calcularTotal())
     }
 
     /**
-     * Establece el hilo que debe ser resaltado en la lista y refresca el adaptador.
-     *
-     * @param hiloId Identificador (nombre) del hilo a resaltar o null para quitar resaltado.
+     * Marca el [hiloId] para resaltarlo visualmente. Llama a notifyDataSetChanged().
      */
     @SuppressLint("NotifyDataSetChanged")
     fun resaltarHilo(hiloId: String?) {
@@ -141,12 +125,19 @@ class AdaptadorGrafico(
     }
 
     /**
-     * Calcula el total de madejas sumando las cantidades modificadas
-     * si existen, o la cantidad original si no.
-     *
-     * @return Total de madejas a pedido.
+     * Devuelve la lista interna de [HiloGrafico] que está mostrando el adaptador.
+     * Útil para que la actividad/fragmento lea la lista al devolver resultado o buscar.
+     */
+    fun obtenerLista(): MutableList<HiloGrafico> = hilos
+
+    /**
+     * Suma la cantidad final para cada hilo:
+     *   - Si [cantidadModificar] no es null, se usa ese valor.
+     *   - En caso contrario, se usa la propiedad [madejas].
      */
     private fun calcularTotal(): Int {
-        return hilos.sumOf { it.cantidadModificar ?: it.madejas }
+        return hilos.sumOf { hilo ->
+            hilo.cantidadModificar ?: hilo.madejas
+        }
     }
 }

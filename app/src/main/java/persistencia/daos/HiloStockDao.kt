@@ -23,6 +23,9 @@ interface HiloStockDao {
     @Query("SELECT * FROM hilo_stock WHERE usuarioId = :userId")
     suspend fun obtenerPorUsuario(userId: Int): List<HiloStockEntity>
 
+    @Query("SELECT SUM(madejas) FROM hilo_stock WHERE usuarioId = :userId AND hiloId = :hiloId")
+    suspend fun obtenerMadejas(userId: Int, hiloId: String): Int?
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertarStocks(list: List<HiloStockEntity>)
 

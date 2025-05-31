@@ -9,10 +9,14 @@ import com.threadly.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import persistencia.daos.GraficoDao
 import persistencia.daos.HiloCatalogoDao
+import persistencia.daos.HiloGraficoDao
 import persistencia.daos.HiloStockDao
 import persistencia.daos.UsuarioDAO
+import persistencia.entidades.GraficoEntity
 import persistencia.entidades.HiloCatalogoEntity
+import persistencia.entidades.HiloGraficoEntity
 import persistencia.entidades.HiloStockEntity
 import persistencia.entidades.Usuario
 import utiles.SesionUsuario
@@ -21,9 +25,9 @@ import utiles.SesionUsuario
 // TODO cambiar todo esto a producción, ahora está en desarrollo hasta que termine de añadir entidades
 @Database(
     entities = [
-        Usuario::class, HiloCatalogoEntity::class, HiloStockEntity::class
+        Usuario::class, HiloCatalogoEntity::class, HiloStockEntity::class, HiloGraficoEntity::class, GraficoEntity::class
     ],
-    version = 6,
+    version = 8,
     exportSchema = false
 )
 abstract class ThreadlyDatabase : RoomDatabase() {
@@ -31,6 +35,8 @@ abstract class ThreadlyDatabase : RoomDatabase() {
     abstract fun usuarioDAO(): UsuarioDAO
     abstract fun hiloCatalogoDao(): HiloCatalogoDao
     abstract fun hiloStockDao(): HiloStockDao
+    abstract fun hiloGraficoDao(): HiloGraficoDao
+    abstract fun graficoDao(): GraficoDao
 
     companion object {
         @Volatile
