@@ -132,9 +132,9 @@ class AdaptadorGrafico(
      */
     @SuppressLint("NotifyDataSetChanged")
     fun resaltarHiloClick(hiloId: String?) {
-        hiloResaltadoClick = hiloId
-        // Al clicar, borro cualquier resaltado por búsqueda previa
         hiloResaltadoBusqueda = null
+        /* con toggle para clicar y desmarcar jejeje */
+        hiloResaltadoClick = if (hiloResaltadoClick == hiloId) null else hiloId
         notifyDataSetChanged()
     }
 
