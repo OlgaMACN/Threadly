@@ -125,8 +125,16 @@ class GraficoPedido : BaseActivity() {
                 adaptadorGrafico = AdaptadorGrafico(
                     listaDominio,
                     onClickHilo = { hiloGrafico ->
-                        adaptadorGrafico.resaltarHiloClick(hiloGrafico.hilo)
-                        mostrarStock(hiloGrafico.hilo)
+                        val hiloActual = hiloGrafico.hilo
+                        val yaResaltado = adaptadorGrafico.obtenerHiloResaltadoClick() == hiloActual
+
+                        adaptadorGrafico.resaltarHiloClick(hiloActual)
+
+                        if (yaResaltado) {
+                            txtStockActual.text = "Stock: 0"
+                        } else {
+                            mostrarStock(hiloActual)
+                        }
                     },
                     onLongClickHilo = ::dialogBorrarHilo
                 ) { total ->

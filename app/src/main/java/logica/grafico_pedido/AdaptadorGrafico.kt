@@ -151,4 +151,6 @@ class AdaptadorGrafico(
             hilo.cantidadModificar ?: hilo.madejas
         }
     }
+    fun obtenerHiloResaltadoClick(): String? = hiloResaltadoClick
+
 }
