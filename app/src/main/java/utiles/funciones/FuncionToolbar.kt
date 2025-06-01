@@ -58,15 +58,8 @@ fun funcionToolbar(activity: BaseActivity) {
      */
     fun siNoEsActivityActual(target: Class<out BaseActivity>) {
         if (activity::class.java != target) {
-            if (activity is PedidoHilos) {
-                (activity as PedidoHilos).onSalirDePantalla {
-                    activity.irAActividad(target)
-                    activity.finish()
-                }
-            } else {
-                activity.irAActividad(target)
-                activity.finish()
-            }
+            activity.irAActividad(target)
+            activity.finish()
         }
     }
 

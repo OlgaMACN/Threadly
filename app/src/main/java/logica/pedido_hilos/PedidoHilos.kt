@@ -367,24 +367,6 @@ class PedidoHilos : BaseActivity() {
     }
 
     /**
-     * Muestra un diálogo para confirmar si se desea guardar antes de salir.
-     * Si ya está guardado o no hay gráficos, sale directamente.
-     */
-    @Suppress("MissingSuperCall")
-    override fun onBackPressed() {
-        dialogGuardarPedido()
-    }
-
-    /**
-     * Llamada auxiliar para navegar desde esta pantalla, mostrando el diálogo de guardar si es necesario.
-     *
-     * @param destino Acción a ejecutar tras confirmar guardar o salir.
-     */
-    fun onSalirDePantalla(destino: () -> Unit) {
-        dialogGuardarPedido(salirDespues = false, destino = destino)
-    }
-
-    /**
      * Muestra el diálogo de guardar pedido si hay cambios pendientes.
      *
      * @param salirDespues Indica si se debe cerrar la pantalla tras guardar o cancelar.
@@ -430,5 +412,4 @@ class PedidoHilos : BaseActivity() {
 
         dialog.show()
     }
-
 }

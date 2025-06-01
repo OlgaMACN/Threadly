@@ -25,9 +25,14 @@ import utiles.SesionUsuario
 // TODO cambiar todo esto a producción, ahora está en desarrollo hasta que termine de añadir entidades
 @Database(
     entities = [
-        Usuario::class, HiloCatalogoEntity::class, HiloStockEntity::class, HiloGraficoEntity::class, GraficoEntity::class
+        Usuario::class,
+        HiloCatalogoEntity::class,
+        HiloStockEntity::class,
+        HiloGraficoEntity::class,
+        GraficoEntity::class,
+
     ],
-    version = 8,
+    version = 10,
     exportSchema = false
 )
 abstract class ThreadlyDatabase : RoomDatabase() {
@@ -37,6 +42,7 @@ abstract class ThreadlyDatabase : RoomDatabase() {
     abstract fun hiloStockDao(): HiloStockDao
     abstract fun hiloGraficoDao(): HiloGraficoDao
     abstract fun graficoDao(): GraficoDao
+
 
     companion object {
         @Volatile
