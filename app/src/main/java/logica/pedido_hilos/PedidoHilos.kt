@@ -45,6 +45,8 @@ class PedidoHilos : BaseActivity() {
     private val listaGraficos = mutableListOf<Grafico>()
     private var pedidoGuardado = false
     private var nombrePedidoEditado: String? = null
+    private lateinit var btnGuardarPedido: Button
+
 
     /**
      * Método principal al crear la actividad. Inicializa la vista, carga un pedido si se va a editar
@@ -54,6 +56,7 @@ class PedidoHilos : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
+        btnGuardarPedido.isEnabled = false
 
         /* inicializar el adaptador y configurar el recycler view */
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
@@ -75,17 +78,23 @@ class PedidoHilos : BaseActivity() {
 
         /* declarar componentes*/
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
-        val btnGuardarPedido = findViewById<Button>(R.id.btn_guardarPedidoA)
+        btnGuardarPedido = findViewById(R.id.btn_guardarPedidoA)
         val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
         btnGuardarPedido.setOnClickListener { guardarPedido() }
+        btnGuardarPedido.setOnClickListener { guardarPedido() }
 
         /* funciones en continua ejecución durante la pantalla */
         buscadorGrafico()
         actualizarTotalMadejas()
+    }
+    private fun validarBotonGuardar() {
+        val habilitado = listaGraficos.isNotEmpty()
+        btnGuardarPedido.isEnabled = habilitado
+        btnGuardarPedido.alpha = if (habilitado) 1.0f else 0.5f
     }
 
     /**
@@ -195,6 +204,7 @@ class PedidoHilos : BaseActivity() {
             listaGraficos.sortBy { it.nombre.lowercase() }
             adaptadorPedido.actualizarLista(listaGraficos)
             actualizarTotalMadejas()
+            validarBotonGuardar()
             dialog.dismiss()
         }
         btnCancelar.setOnClickListener {
@@ -233,6 +243,7 @@ class PedidoHilos : BaseActivity() {
             listaGraficos.removeAt(index)
             adaptadorPedido.actualizarLista(listaGraficos)
             actualizarTotalMadejas()
+            validarBotonGuardar()
             dialog.dismiss()
         }
 
@@ -262,6 +273,7 @@ class PedidoHilos : BaseActivity() {
 
         listaGraficos.clear()
         adaptadorPedido.actualizarLista(listaGraficos)
+        validarBotonGuardar()
         pedidoGuardado = true
         Toast.makeText(this, "Pedido guardado como $nombreFinal", Toast.LENGTH_SHORT).show()
     }
@@ -362,6 +374,7 @@ class PedidoHilos : BaseActivity() {
                 adaptadorPedido.actualizarLista(listaGraficos)
                 /* y se actualiza */
                 actualizarTotalMadejas()
+                validarBotonGuardar()
             }
         }
     }
