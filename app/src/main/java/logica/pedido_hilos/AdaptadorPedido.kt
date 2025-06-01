@@ -38,7 +38,7 @@ class AdaptadorPedido(
      */
     inner class PedidoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtNombre: TextView = view.findViewById(R.id.txtVw_textoNombreGrafico)
-        val txtMadejas: TextView = view.findViewById(R.id.txtVw_textoMadejasPedido)
+        //val txtMadejas: TextView = view.findViewById(R.id.txtVw_textoMadejasPedido)
 
         init {
             /* manejo del clic corto para editar el gráfico */
@@ -76,7 +76,7 @@ class AdaptadorPedido(
     override fun onBindViewHolder(holder: PedidoViewHolder, position: Int) {
         val grafico = graficos[position]
         holder.txtNombre.text = grafico.nombre
-        holder.txtMadejas.text = grafico.madejas.toString()
+        // holder.txtMadejas.text = grafico.madejas.toString()
 
         /* resaltar si es el gráfico buscado */
         if (grafico.nombre.equals(graficoResaltado, ignoreCase = true)) {

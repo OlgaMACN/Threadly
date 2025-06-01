@@ -214,6 +214,7 @@ class GraficoPedido : BaseActivity() {
 
     /**
      * Dialog para añadir un hilo al gráfico. Solo pide “count de tela” la primera vez.
+     * Además, si el hilo ya existe en este gráfico, muestra un Toast y no lo inserta.
      */
     private fun dialogAgregarHiloGrafico() {
         val dialog = Dialog(this).apply {
@@ -231,7 +232,7 @@ class GraficoPedido : BaseActivity() {
         dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
             .setOnClickListener { dialog.dismiss() }
 
-        // 1) Si countTelaGlobal ya existe, ocultamos el campo completo (sólo se pide una vez)
+        // 1) Si countTelaGlobal ya existe, ocultamos el campo completo (solo se pide una vez)
         if (countTelaGlobal != null) {
             inpC.visibility = View.GONE
         } else {
@@ -246,6 +247,12 @@ class GraficoPedido : BaseActivity() {
             val count = countTelaGlobal ?: inpC.text.toString().trim().toIntOrNull()
                 ?.takeIf { it in listOf(14, 16, 18, 20, 25) }
                 ?.also { countTelaGlobal = it }
+
+            // 3) Si el hilo ya está en listaDominio, mostramos Toast y salimos
+            if (listaDominio.any { it.hilo == hiloCode }) {
+                Toast.makeText(this, "El hilo ya se ha añadido al gráfico", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             if (hiloCode.isEmpty() || punt == null || count == null) {
                 Toast.makeText(this, "Campos inválidos", Toast.LENGTH_SHORT).show()
@@ -280,7 +287,7 @@ class GraficoPedido : BaseActivity() {
                     )
                 }
 
-                // 3) Tras insertar, recargamos la lista y cerramos el diálogo
+                // 4) Tras insertar, recargamos la lista y cerramos el diálogo
                 configurarRecycler()
                 dialog.dismiss()
             }
