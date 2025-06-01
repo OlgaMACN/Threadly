@@ -24,7 +24,7 @@ import persistencia.daos.HiloGraficoDao
 import persistencia.daos.HiloStockDao
 import persistencia.entidades.GraficoEntity
 import persistencia.entidades.HiloGraficoEntity
-import persistencia.entidades.HiloStockEntity
+import logica.pedido_hilos.Grafico
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
@@ -37,14 +37,12 @@ import utiles.funciones.ordenarHilos
  * Permite mostrar la lista de hilos asociados al gráfico, agregar nuevos hilos,
  * eliminar hilos existentes, buscar hilos en la lista y mostrar el stock disponible.
  *
- * Además, devuelve el gráfico modificado al activity que lo llamó.
- *
- * - Se oculta el campo "count de tela" después de haberlo seleccionado una vez por gráfico.
+ * - Se oculta el campo "count de tela" después de haberlo introducido por primera vez.
  * - Al pulsar sobre el nombre de un hilo, se consulta el stock actual en Room y se muestra en pantalla.
  *
- * * @author Olga y Sandra Macías Aragón
+ * Cuando se pulsa “volver”, este activity devuelve al caller (PedidoHilos) un objeto Grafico
+ * con su lista de HiloGrafico (incluyendo madejas y lista actualizada).
  */
-
 class GraficoPedido : BaseActivity() {
 
     private lateinit var adaptadorGrafico: AdaptadorGrafico
@@ -54,13 +52,13 @@ class GraficoPedido : BaseActivity() {
     private lateinit var txtStockActual: TextView
     private lateinit var recyclerView: RecyclerView
 
-    // ✅ listaDominio es propiedad de la clase, no local
+    // Lista en memoria de HiloGrafico (dominio)
     private var listaDominio: MutableList<HiloGrafico> = mutableListOf()
 
     private var graficoNombre: String = ""
     private var graficoId: Int = -1
 
-    // ✅ countTelaGlobal persistente
+    // countTelaGlobal se mantiene para ocultar el campo tras la primera inserción
     private var countTelaGlobal: Int? = null
     private var userId: Int = -1
 
@@ -79,7 +77,8 @@ class GraficoPedido : BaseActivity() {
         recyclerView   = findViewById(R.id.tabla_grafico)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val graficoRecibido = intent.getSerializableExtra("grafico") as? logica.pedido_hilos.Grafico
+        // Recibimos el objeto Grafico desde PedidoHilos
+        val graficoRecibido = intent.getSerializableExtra("grafico") as? Grafico
         if (graficoRecibido == null) {
             Toast.makeText(this, "Error: gráfico no recibido", Toast.LENGTH_LONG).show()
             finish()
@@ -116,6 +115,7 @@ class GraficoPedido : BaseActivity() {
                 daoGrafico.obtenerHilosPorGrafico(graficoId)
             }
 
+            // Mapeamos entidades a dominio y ordenamos
             listaDominio = entidades.map { HiloGrafico(it.hilo, it.madejas) }
                 .let { ordenarHilos(it) { h -> h.hilo } }
                 .toMutableList()
@@ -140,10 +140,9 @@ class GraficoPedido : BaseActivity() {
                         txtTotal.text = "Total Madejas: $total"
                     },
                     onUpdateMadejas = { hilo ->
-                        // Actualiza madejas en BD en segundo plano
                         lifecycleScope.launch(Dispatchers.IO) {
-                            // Asumiendo que hiloDao tiene método actualizarMadejas(codigo: String, cantidad: Int)
-                            daoGrafico.actualizarMadejas(hilo.hilo, hilo.cantidadModificar ?: hilo.madejas)
+                            val nuevoValor = hilo.cantidadModificar ?: hilo.madejas
+                            daoGrafico.actualizarMadejas(hilo.hilo, nuevoValor)
                         }
                     }
                 )
@@ -152,12 +151,12 @@ class GraficoPedido : BaseActivity() {
                 adaptadorGrafico.actualizarLista(listaDominio)
             }
 
+            // Calculamos y mostramos el total inicial
             val total = listaDominio.sumOf { it.madejas }
             txtTotal.text = "Total Madejas: $total"
             buscadorHilo()
         }
     }
-
 
     private fun configurarBotones() {
         findViewById<Button>(R.id.btn_agregarHiloGraficoIndividual).setOnClickListener {
@@ -199,7 +198,6 @@ class GraficoPedido : BaseActivity() {
                     recyclerView.visibility = View.VISIBLE
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -214,6 +212,9 @@ class GraficoPedido : BaseActivity() {
         }
     }
 
+    /**
+     * Dialog para añadir un hilo al gráfico. Solo pide “count de tela” la primera vez.
+     */
     private fun dialogAgregarHiloGrafico() {
         val dialog = Dialog(this).apply {
             setContentView(R.layout.pedidob_dialog_agregar_hilo)
@@ -226,29 +227,27 @@ class GraficoPedido : BaseActivity() {
         val inpP = dialog.findViewById<EditText>(R.id.edTxt_introducirPuntadas_dialog_addHilo)
         val inpC = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
 
-
         val btnG = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
-        dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo).setOnClickListener {
-            dialog.dismiss()
-        }
+        dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
+            .setOnClickListener { dialog.dismiss() }
 
-        // Mostrar u ocultar countTela según global
+        // 1) Si countTelaGlobal ya existe, ocultamos el campo completo (sólo se pide una vez)
         if (countTelaGlobal != null) {
-
             inpC.visibility = View.GONE
         } else {
-
             inpC.visibility = View.VISIBLE
         }
 
         btnG.setOnClickListener {
             val hiloCode = inpH.text.toString().trim().uppercase()
             val punt = inpP.text.toString().trim().toIntOrNull()
+
+            // 2) Si countTelaGlobal es null, pedimos de inpC; si ya existe, lo volvemos a usar
             val count = countTelaGlobal ?: inpC.text.toString().trim().toIntOrNull()
                 ?.takeIf { it in listOf(14, 16, 18, 20, 25) }
                 ?.also { countTelaGlobal = it }
 
-            if (punt == null || count == null) {
+            if (hiloCode.isEmpty() || punt == null || count == null) {
                 Toast.makeText(this, "Campos inválidos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -281,6 +280,7 @@ class GraficoPedido : BaseActivity() {
                     )
                 }
 
+                // 3) Tras insertar, recargamos la lista y cerramos el diálogo
                 configurarRecycler()
                 dialog.dismiss()
             }
@@ -288,7 +288,6 @@ class GraficoPedido : BaseActivity() {
 
         dialog.show()
     }
-
 
     private fun dialogBorrarHilo(h: HiloGrafico) {
         val dialog = Dialog(this).apply {
@@ -322,17 +321,22 @@ class GraficoPedido : BaseActivity() {
         dialog.show()
     }
 
+    /**
+     * Devuelve al activity padre (PedidoHilos) el gráfico completo, con su lista de HiloGrafico.
+     */
     private fun devolverResultadoYSalir() {
         val listaFinal = adaptadorGrafico.obtenerLista()
-        val resultado = logica.pedido_hilos.Grafico(
+        val resultado = Grafico(
             nombre = graficoNombre,
             listaHilos = listaFinal
         )
-        setResult(RESULT_OK, Intent().apply {
-            putExtra("grafico", resultado)
-            putExtra("position", intent.getIntExtra("position", -1))
-        })
+        setResult(
+            RESULT_OK,
+            Intent().apply {
+                putExtra("grafico", resultado)
+                putExtra("position", intent.getIntExtra("position", -1))
+            }
+        )
         finish()
     }
 }
-
