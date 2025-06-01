@@ -255,7 +255,6 @@ class PedidoHilos : BaseActivity() {
         }
 
         val nombreFinal = nombrePedidoEditado ?: nombrePedido()
-
         val nuevoPedido = PedidoGuardado(nombre = nombreFinal, graficos = copiaGraficos)
 
         // Si estamos editando, reemplazamos el existente
