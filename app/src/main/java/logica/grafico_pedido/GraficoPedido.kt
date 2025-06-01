@@ -120,7 +120,6 @@ class GraficoPedido : BaseActivity() {
                 .let { ordenarHilos(it) { h -> h.hilo } }
                 .toMutableList()
 
-            // ✅ Evita reinicializar adaptador si ya está configurado
             if (!::adaptadorGrafico.isInitialized) {
                 adaptadorGrafico = AdaptadorGrafico(
                     listaDominio,
@@ -136,10 +135,18 @@ class GraficoPedido : BaseActivity() {
                             mostrarStock(hiloActual)
                         }
                     },
-                    onLongClickHilo = ::dialogBorrarHilo
-                ) { total ->
-                    txtTotal.text = "Total Madejas: $total"
-                }
+                    onLongClickHilo = ::dialogBorrarHilo,
+                    onTotalChanged = { total ->
+                        txtTotal.text = "Total Madejas: $total"
+                    },
+                    onUpdateMadejas = { hilo ->
+                        // Actualiza madejas en BD en segundo plano
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            // Asumiendo que hiloDao tiene método actualizarMadejas(codigo: String, cantidad: Int)
+                            daoGrafico.actualizarMadejas(hilo.hilo, hilo.cantidadModificar ?: hilo.madejas)
+                        }
+                    }
+                )
                 recyclerView.adapter = adaptadorGrafico
             } else {
                 adaptadorGrafico.actualizarLista(listaDominio)
@@ -150,6 +157,7 @@ class GraficoPedido : BaseActivity() {
             buscadorHilo()
         }
     }
+
 
     private fun configurarBotones() {
         findViewById<Button>(R.id.btn_agregarHiloGraficoIndividual).setOnClickListener {
@@ -217,14 +225,21 @@ class GraficoPedido : BaseActivity() {
         val inpH = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
         val inpP = dialog.findViewById<EditText>(R.id.edTxt_introducirPuntadas_dialog_addHilo)
         val inpC = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
-        val btnG = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
 
+
+        val btnG = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
         dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo).setOnClickListener {
             dialog.dismiss()
         }
 
-        // ✅ Oculta countTela si ya fue introducido antes
-        if (countTelaGlobal != null) inpC.visibility = View.GONE
+        // Mostrar u ocultar countTela según global
+        if (countTelaGlobal != null) {
+
+            inpC.visibility = View.GONE
+        } else {
+
+            inpC.visibility = View.VISIBLE
+        }
 
         btnG.setOnClickListener {
             val hiloCode = inpH.text.toString().trim().uppercase()
@@ -273,6 +288,7 @@ class GraficoPedido : BaseActivity() {
 
         dialog.show()
     }
+
 
     private fun dialogBorrarHilo(h: HiloGrafico) {
         val dialog = Dialog(this).apply {

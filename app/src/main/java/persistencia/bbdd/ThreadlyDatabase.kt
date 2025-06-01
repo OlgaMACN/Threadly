@@ -32,7 +32,7 @@ import utiles.SesionUsuario
         GraficoEntity::class,
 
     ],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 abstract class ThreadlyDatabase : RoomDatabase() {

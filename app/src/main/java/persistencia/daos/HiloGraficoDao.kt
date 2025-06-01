@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import persistencia.entidades.GraficoEntity
 import persistencia.entidades.HiloGraficoEntity
 
@@ -21,8 +22,14 @@ interface HiloGraficoDao {
     @Insert
     suspend fun insertarGrafico(grafico: GraficoEntity): Long
 
+    @Query("UPDATE hilos_grafico SET madejas = :nuevaCantidad WHERE hilo = :codigoHilo")
+    suspend fun actualizarMadejas(codigoHilo: String, nuevaCantidad: Int)
+
     @Query("SELECT * FROM hilos_grafico WHERE graficoId = :graficoId")
     fun obtenerHilosPorGrafico(graficoId: Int): List<HiloGraficoEntity>
+
+    @Update
+    suspend fun actualizarHilo(hilo: HiloGraficoEntity)
 
     @Query("DELETE FROM hilos_grafico WHERE graficoId = :graficoId AND hilo = :nombreHilo")
     fun eliminarHiloDeGrafico(graficoId: Int, nombreHilo: String)

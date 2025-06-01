@@ -56,17 +56,16 @@ class PedidoHilos : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
-        btnGuardarPedido.isEnabled = false
+
 
         /* inicializar el adaptador y configurar el recycler view */
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
         tablaPedido.layoutManager = LinearLayoutManager(this)
         adaptadorPedido = AdaptadorPedido(listaGraficos,
-            onItemClick = { graficoSeleccionado ->
-                Log.d("PedidoHilos", "Click en gráfico: ${graficoSeleccionado.nombre}")
-                // Lanzamos GraficoPedido propagando sesión y pasando el gráfico
-                lanzar(GraficoPedido::class.java) {
+            onItemClick = { graficoSeleccionado ->  val index = listaGraficos.indexOf(graficoSeleccionado)
+                lanzarConResultado(GraficoPedido::class.java, REQUEST_CODE_GRAFICO_PEDIDO) {
                     putExtra("grafico", graficoSeleccionado)
+                    putExtra("position", index)
                 }
             },
             onEliminarGrafico = { index ->
@@ -80,20 +79,52 @@ class PedidoHilos : BaseActivity() {
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
         btnGuardarPedido = findViewById(R.id.btn_guardarPedidoA)
         val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
+        btnGuardarPedido.isEnabled = true
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
-        btnGuardarPedido.setOnClickListener { guardarPedido() }
-        btnGuardarPedido.setOnClickListener { guardarPedido() }
+        btnGuardarPedido.setOnClickListener { mostrarDialogoConfirmarGuardado() }
+
 
         /* funciones en continua ejecución durante la pantalla */
         buscadorGrafico()
         actualizarTotalMadejas()
     }
+
+    /**
+     * Muestra un diálogo de confirmación antes de guardar el pedido actual.
+     * Si el usuario confirma, guarda el pedido y lo elimina de memoria.
+     */
+    private fun mostrarDialogoConfirmarGuardado() {
+        if (listaGraficos.isEmpty()) {
+            Toast.makeText(this, "El pedido está vacío", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.pedido_dialog_guardar_pedido)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        ajustarDialog(dialog)
+        dialog.setCancelable(false)
+
+        val btnConfirmar = dialog.findViewById<Button>(R.id.btn_guardarPedido)
+        val btnCancelar = dialog.findViewById<Button>(R.id.btn_volverSinGuardar)
+
+        btnConfirmar.setOnClickListener {
+            guardarPedido()
+            dialog.dismiss()
+        }
+
+        btnCancelar.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
     private fun validarBotonGuardar() {
         val habilitado = listaGraficos.isNotEmpty()
-        btnGuardarPedido.isEnabled = habilitado
         btnGuardarPedido.alpha = if (habilitado) 1.0f else 0.5f
     }
 
@@ -364,65 +395,18 @@ class PedidoHilos : BaseActivity() {
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         if (requestCode == REQUEST_CODE_GRAFICO_PEDIDO && resultCode == RESULT_OK && data != null) {
-            val updatedGrafico = data.getSerializableExtra("grafico") as? Grafico ?: return
-            val position = data.getIntExtra("position", -1)
-            if (position in listaGraficos.indices) {
-                /* reemplaza el gráfico con su versión actualizada */
-                listaGraficos[position] = updatedGrafico
-                /* se notifica al adaptador */
-                adaptadorPedido.actualizarLista(listaGraficos)
-                /* y se actualiza */
+            val graficoEditado = data.getSerializableExtra("grafico") as? Grafico
+            val posicion = data.getIntExtra("position", -1)
+
+            if (graficoEditado != null && posicion in listaGraficos.indices) {
+                listaGraficos[posicion] = graficoEditado
+                adaptadorPedido.notifyItemChanged(posicion)
                 actualizarTotalMadejas()
-                validarBotonGuardar()
             }
         }
     }
 
-    /**
-     * Muestra el diálogo de guardar pedido si hay cambios pendientes.
-     *
-     * @param salirDespues Indica si se debe cerrar la pantalla tras guardar o cancelar.
-     * @param destino Acción opcional a ejecutar si no se cancela.
-     */
-    private fun dialogGuardarPedido(salirDespues: Boolean = true, destino: (() -> Unit)? = null) {
-        if (pedidoGuardado || listaGraficos.isEmpty()) {
-            if (destino != null) {
-                destino()
-            } else if (salirDespues) {
-                finish()
-            }
-            return
-        }
 
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.pedido_dialog_guardar_pedido)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        ajustarDialog(dialog)
-        dialog.setCancelable(false)
-
-        val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarPedido)
-        val btnVolver = dialog.findViewById<Button>(R.id.btn_volverSinGuardar)
-
-        btnGuardar.setOnClickListener {
-            guardarPedido()
-            dialog.dismiss()
-            if (destino != null) {
-                destino()
-            } else if (salirDespues) {
-                finish()
-            }
-        }
-
-        btnVolver.setOnClickListener {
-            dialog.dismiss()
-            if (destino != null) {
-                destino()
-            } else if (salirDespues) {
-                finish()
-            }
-        }
-
-        dialog.show()
-    }
 }

@@ -8,5 +8,6 @@ data class HiloGraficoEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val graficoId: Int,
     val hilo: String,
-    val madejas: Int
+    val madejas: Int,
+    val cantidadModificar: Int? = null
 )

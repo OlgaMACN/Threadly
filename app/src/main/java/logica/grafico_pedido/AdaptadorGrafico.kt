@@ -26,7 +26,8 @@ class AdaptadorGrafico(
     private val hilos: MutableList<HiloGrafico>,
     private val onClickHilo: (HiloGrafico) -> Unit,
     private val onLongClickHilo: ((HiloGrafico) -> Unit)? = null,
-    private val onTotalChanged: (Int) -> Unit
+    private val onTotalChanged: (Int) -> Unit,
+    private val onUpdateMadejas: (HiloGrafico) -> Unit
 ) : RecyclerView.Adapter<AdaptadorGrafico.HiloViewHolder>() {
 
     // Hilos resaltados por búsqueda (search) y por clic (stock)
@@ -68,6 +69,7 @@ class AdaptadorGrafico(
             override fun afterTextChanged(s: Editable?) {
                 hiloItem.cantidadModificar = s?.toString()?.toIntOrNull()
                 onTotalChanged(calcularTotal())
+                onUpdateMadejas(hiloItem)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
