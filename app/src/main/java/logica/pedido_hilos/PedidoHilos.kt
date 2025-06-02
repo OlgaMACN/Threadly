@@ -14,12 +14,17 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import logica.almacen_pedidos.PedidoGuardado
 import logica.almacen_pedidos.PedidoSingleton
 import logica.grafico_pedido.GraficoPedido
+import logica.grafico_pedido.HiloGrafico
 import persistencia.bbdd.ThreadlyDatabase
 import persistencia.daos.GraficoDao
 import persistencia.daos.HiloGraficoDao
@@ -110,11 +115,46 @@ class PedidoHilos : BaseActivity() {
 
 
         /* funciones en continua ejecución durante la pantalla */
-
+        cargarGraficosTemporalesEnMemoria()
         buscadorGrafico()
         actualizarTotalMadejas()
     }
+    /**
+     * 3) Carga desde Room todos los GraficoEntity con idPedido = NULL para este userId.
+     *    Para cada uno, además, carga sus HiloGraficoEntity y lo transforma a dominio.
+     */
+    private fun cargarGraficosTemporalesEnMemoria() {
+        lifecycleScope.launch {
+            val entidadesGrafico = withContext(Dispatchers.IO) {
+                graficoDao.obtenerGraficosEnCurso(userId)
+            }
 
+            // Para cada GraficoEntity, necesitamos leer sus HiloGraficoEntity y mapearlos a HiloGrafico
+            listaGraficos.clear()
+            for (graficoEntity in entidadesGrafico) {
+                val hilosEntidades = withContext(Dispatchers.IO) {
+                    hiloGraficoDao.obtenerHilosDeGrafico(graficoEntity.id)
+                }
+                // Mapeamos a dominio: Grafico(nombre, listaHilos=MutableList<HiloGrafico>)
+                val listaHilosDominio = hilosEntidades.map { ent ->
+                    HiloGrafico(ent.hilo, ent.madejas)
+                }.toMutableList()
+
+                listaGraficos.add(
+                    Grafico(
+                        nombre    = graficoEntity.nombre,
+                        listaHilos = listaHilosDominio
+                    )
+                )
+            }
+
+            // Ordenar alfabéticamente (o como prefieras)
+            listaGraficos.sortBy { it.nombre.lowercase() }
+            adaptadorPedido.actualizarLista(listaGraficos)
+            actualizarTotalMadejas()
+            validarBotonGuardar()
+        }
+    }
     /**
      * Muestra un diálogo de confirmación antes de guardar el pedido actual.
      * Si el usuario confirma, guarda el pedido y lo elimina de memoria.
