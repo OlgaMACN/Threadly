@@ -68,19 +68,20 @@ class PedidoHilos : BaseActivity() {
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
         // 1) Instanciamos los DAOs
-        graficoDao     = ThreadlyDatabase.getDatabase(applicationContext).graficoDao()
+        graficoDao = ThreadlyDatabase.getDatabase(applicationContext).graficoDao()
         hiloGraficoDao = ThreadlyDatabase.getDatabase(applicationContext).hiloGraficoDao()
-        pedidoDao      = ThreadlyDatabase.getDatabase(applicationContext).pedidoDao()
+        pedidoDao = ThreadlyDatabase.getDatabase(applicationContext).pedidoDao()
 
         userId = SesionUsuario.obtenerSesion(this)
         if (userId < 0) finish()
 
-
-        /* inicializar el adaptador y configurar el recycler view */
+        // 2) Inicializamos RecyclerView y Adaptador
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
         tablaPedido.layoutManager = LinearLayoutManager(this)
-        adaptadorPedido = AdaptadorPedido(listaGraficos,
-            onItemClick = { graficoSeleccionado ->  val index = listaGraficos.indexOf(graficoSeleccionado)
+        adaptadorPedido = AdaptadorPedido(
+            listaGraficos,
+            onItemClick = { graficoSeleccionado ->
+                val index = listaGraficos.indexOf(graficoSeleccionado)
                 lanzarConResultado(GraficoPedido::class.java, REQUEST_CODE_GRAFICO_PEDIDO) {
                     putExtra("grafico", graficoSeleccionado)
                     putExtra("position", index)
@@ -94,18 +95,22 @@ class PedidoHilos : BaseActivity() {
 
 
         /* declarar componentes*/
-        val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
         btnGuardarPedido = findViewById(R.id.btn_guardarPedidoA)
-        val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
         btnGuardarPedido.isEnabled = true
+        btnGuardarPedido.setOnClickListener { mostrarDialogoConfirmarGuardado() }
+
+
+        val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
+        val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
 
         /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
-        btnGuardarPedido.setOnClickListener { mostrarDialogoConfirmarGuardado() }
+
 
 
         /* funciones en continua ejecución durante la pantalla */
+
         buscadorGrafico()
         actualizarTotalMadejas()
     }
