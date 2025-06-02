@@ -35,7 +35,7 @@ import utiles.SesionUsuario
         PedidoEntity::class
 
     ],
-    version = 12,
+    version = 13,
     exportSchema = false
 )
 abstract class ThreadlyDatabase : RoomDatabase() {
