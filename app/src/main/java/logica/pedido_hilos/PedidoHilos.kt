@@ -248,7 +248,6 @@ class PedidoHilos : BaseActivity() {
         txtTotal.text = "Total madejas: $total"
     }
 
-
     /**
      * Muestra un diálogo para agregar un nuevo gráfico al pedido.
      * Valida que no haya duplicados y que el nombre no esté vacío.
@@ -313,33 +312,46 @@ class PedidoHilos : BaseActivity() {
      *
      * @param index Índice del gráfico en la lista.
      */
+    /**
+     * 4b) Mostrar diálogo de confirmación para eliminar un gráfico de la lista (tanto en memoria como en DB).
+     */
     private fun dialogoEliminarGrafico(index: Int) {
-        val grafico = listaGraficos[index]
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.pedido_dialog_eliminar_grafico)
-
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        /* llamada al metodo que centra el dialog en pantalla */
+        val graficoDom = listaGraficos[index]
+        val dialog = Dialog(this).apply {
+            setContentView(R.layout.pedido_dialog_eliminar_grafico)
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
         ajustarDialog(dialog)
-
         dialog.setCancelable(false)
 
-        /* variables del dialog */
         val txtNombreGrafico = dialog.findViewById<TextView>(R.id.txtVw_nombreGrafico)
         val btnEliminar = dialog.findViewById<Button>(R.id.btn_eliminarGrafico)
-        val btnVolver =
-            dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog)
+        val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog)
 
-        /* para visualizar el nombre del gráfico en el dialog */
-        txtNombreGrafico.text = grafico.nombre
+        txtNombreGrafico.text = graficoDom.nombre
 
         btnEliminar.setOnClickListener {
-            listaGraficos.removeAt(index)
-            adaptadorPedido.actualizarLista(listaGraficos)
-            actualizarTotalMadejas()
-            validarBotonGuardar()
-            dialog.dismiss()
+            lifecycleScope.launch(Dispatchers.IO) {
+                // 1) Primero obtenemos el id de GraficoEntity por nombre (solo temporales)
+                val entidad = graficoDao.obtenerGraficoEnCursoPorNombre(userId, graficoDom.nombre)
+                if (entidad != null) {
+                    // 2) Borrar todos sus HiloGraficoEntity relacionados
+                    val hilosEnt = hiloGraficoDao.obtenerHilosDeGrafico(entidad.id)
+                    for (h in hilosEnt) {
+                        hiloGraficoDao.eliminarHiloDeGrafico(h)
+                    }
+                    // 3) Borrar el propio grafico
+                    graficoDao.eliminarGraficoEnCurso(entidad.id)
+                }
+                // 4) Actualizar la UI en el hilo principal
+                withContext(Dispatchers.Main) {
+                    listaGraficos.removeAt(index)
+                    adaptadorPedido.actualizarLista(listaGraficos)
+                    actualizarTotalMadejas()
+                    validarBotonGuardar()
+                    dialog.dismiss()
+                }
+            }
         }
 
         btnVolver.setOnClickListener {
@@ -397,10 +409,7 @@ class PedidoHilos : BaseActivity() {
     private fun realizarPedido() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pedido_dialog_realizar_pedido)
-
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        /* llamada al metodo que centra el dialog en pantalla */
         ajustarDialog(dialog)
 
         dialog.setCancelable(false)
@@ -497,6 +506,5 @@ class PedidoHilos : BaseActivity() {
             }
         }
     }
-
 
 }
