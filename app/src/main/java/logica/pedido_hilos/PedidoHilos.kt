@@ -30,6 +30,7 @@ import persistencia.daos.GraficoDao
 import persistencia.daos.HiloGraficoDao
 import persistencia.daos.PedidoDao
 import persistencia.entidades.HiloGraficoEntity
+import persistencia.entidades.PedidoEntity
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
@@ -176,8 +177,8 @@ class PedidoHilos : BaseActivity() {
         val btnCancelar = dialog.findViewById<Button>(R.id.btn_volverSinGuardar)
 
         btnConfirmar.setOnClickListener {
-            guardarPedido()
             dialog.dismiss()
+            guardarPedidoEnBD()
         }
 
         btnCancelar.setOnClickListener {
@@ -462,6 +463,63 @@ class PedidoHilos : BaseActivity() {
             Toast.makeText(this, "Error al redirigir a la tienda.", Toast.LENGTH_SHORT).show()
         }
     }
+
+    /**
+     * 5a) Aquí persistimos en Room el Pedido completo:
+     *     1) Creamos PedidoEntity y lo insertamos.
+     *     2) Llamamos a graficoDao.asociarGraficosAlPedido para “archivar” todos los gráficos con idPedido = null.
+     *     3) Limpiamos la lista en memoria y la interfaz.
+     */
+    private fun guardarPedidoEnBD() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            // 1) Generar un nombre único para el pedido
+            val nombreFinal = nombrePedidoUnico()
+            // 2) Insertar en la tabla "pedidos"
+            val nuevoPedidoId = pedidoDao.insertarPedido(
+                PedidoEntity(
+                    nombre = nombreFinal,
+                    userId = userId
+                )
+            ).toInt()
+
+            // 3) Asociar todos los gráficos “en curso” (idPedido = null) de este userId al nuevoPedidoId
+            graficoDao.asociarGraficosAlPedido(userId, nuevoPedidoId)
+
+            // En el hilo principal, limpiar la UI
+            withContext(Dispatchers.Main) {
+                listaGraficos.clear()
+                adaptadorPedido.actualizarLista(listaGraficos)
+                actualizarTotalMadejas()
+                validarBotonGuardar()
+                Toast.makeText(
+                    this@PedidoHilos,
+                    "Pedido guardado como \"$nombreFinal\"",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+    /**
+     * Genera un nombre único para el nuevo pedido con formato "PyyyyMMdd" o "PyyyyMMdd(n)".
+     */
+    private suspend fun nombrePedidoUnico(): String {
+        val fechaHoy = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        var baseNombre = "P$fechaHoy"
+        var nombreCandidato = baseNombre
+        var contador = 1
+
+        // Leer los pedidos ya existentes en BD para comprobar duplicados
+        val pedidosExistentes = withContext(Dispatchers.IO) {
+            pedidoDao.obtenerPedidosConGraficos(userId).map { it.pedido.nombre }
+        }
+        while (pedidosExistentes.any { it == nombreCandidato }) {
+            nombreCandidato = "$baseNombre($contador)"
+            contador++
+        }
+        return nombreCandidato
+    }
+
 
     /**
      * Cuando vuelves desde GraficoPedido (REQUEST_CODE_GRAFICO_PEDIDO),
