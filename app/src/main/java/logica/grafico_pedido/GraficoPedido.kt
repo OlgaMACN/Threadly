@@ -92,7 +92,7 @@ class GraficoPedido : BaseActivity() {
             withContext(Dispatchers.IO) {
                 var existingId = daoGrafico.obtenerIdPorNombre(graficoNombre)
                 if (existingId == null) {
-                    existingId = daoGrafico.insertarGrafico(GraficoEntity(nombre = graficoNombre)).toInt()
+                    existingId = daoGrafico.insertarGrafico(GraficoEntity(nombre = graficoNombre, idPedido = null, userId = userId )).toInt()
                 }
                 graficoId = existingId
             }
