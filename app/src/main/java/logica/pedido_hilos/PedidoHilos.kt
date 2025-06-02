@@ -20,7 +20,12 @@ import com.threadly.R
 import logica.almacen_pedidos.PedidoGuardado
 import logica.almacen_pedidos.PedidoSingleton
 import logica.grafico_pedido.GraficoPedido
+import persistencia.bbdd.ThreadlyDatabase
+import persistencia.daos.GraficoDao
+import persistencia.daos.HiloGraficoDao
+import persistencia.daos.PedidoDao
 import utiles.BaseActivity
+import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
 import utiles.funciones.funcionToolbar
 import java.util.Date
@@ -42,11 +47,16 @@ private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada gráfico */
 class PedidoHilos : BaseActivity() {
 
     private lateinit var adaptadorPedido: AdaptadorPedido
-    private val listaGraficos = mutableListOf<Grafico>()
+    private var listaGraficos: MutableList<Grafico> = mutableListOf()
     private var pedidoGuardado = false
     private var nombrePedidoEditado: String? = null
     private lateinit var btnGuardarPedido: Button
+    private var userId: Int = -1
 
+    // DAOs
+    private lateinit var graficoDao: GraficoDao
+    private lateinit var hiloGraficoDao: HiloGraficoDao
+    private lateinit var pedidoDao: PedidoDao
 
     /**
      * Método principal al crear la actividad. Inicializa la vista, carga un pedido si se va a editar
@@ -56,6 +66,14 @@ class PedidoHilos : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pedido_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
+
+        // 1) Instanciamos los DAOs
+        graficoDao     = ThreadlyDatabase.getDatabase(applicationContext).graficoDao()
+        hiloGraficoDao = ThreadlyDatabase.getDatabase(applicationContext).hiloGraficoDao()
+        pedidoDao      = ThreadlyDatabase.getDatabase(applicationContext).pedidoDao()
+
+        userId = SesionUsuario.obtenerSesion(this)
+        if (userId < 0) finish()
 
 
         /* inicializar el adaptador y configurar el recycler view */
