@@ -29,6 +29,7 @@ import persistencia.bbdd.ThreadlyDatabase
 import persistencia.daos.GraficoDao
 import persistencia.daos.HiloGraficoDao
 import persistencia.daos.PedidoDao
+import persistencia.entidades.HiloGraficoEntity
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
@@ -454,19 +455,45 @@ class PedidoHilos : BaseActivity() {
     }
 
     /**
-     * Recibe un gráfico actualizado desde la actividad GraficoPedido y actualiza su información.
+     * Cuando vuelves desde GraficoPedido (REQUEST_CODE_GRAFICO_PEDIDO),
+     * actualizamos la entidad HiloGrafico en DB y la lista en memoria.
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == REQUEST_CODE_GRAFICO_PEDIDO && resultCode == RESULT_OK && data != null) {
             val graficoEditado = data.getSerializableExtra("grafico") as? Grafico
             val posicion = data.getIntExtra("position", -1)
 
             if (graficoEditado != null && posicion in listaGraficos.indices) {
-                listaGraficos[posicion] = graficoEditado
-                adaptadorPedido.notifyItemChanged(posicion)
-                actualizarTotalMadejas()
+                // 1) Actualizar hilos en la base de datos
+                lifecycleScope.launch(Dispatchers.IO) {
+                    // Obtenemos el id de GraficoEntity por nombre
+                    val graficoEnt = graficoDao.obtenerGraficoEnCursoPorNombre(userId, graficoEditado.nombre)
+                    if (graficoEnt != null) {
+                        val graficoId = graficoEnt.id
+                        // Eliminamos todos los registros anteriores de hilos de este gráfico
+                        val hilosPrevios = hiloGraficoDao.obtenerHilosDeGrafico(graficoId)
+                        for (prev in hilosPrevios) {
+                            hiloGraficoDao.eliminarHiloDeGrafico(prev)
+                        }
+                        // Insertamos los hilos nuevos (que trae graficoEditado.listaHilos)
+                        for (hiloDom in graficoEditado.listaHilos) {
+                            hiloGraficoDao.insertarHiloEnGrafico(
+                                HiloGraficoEntity(
+                                    graficoId = graficoId,
+                                    hilo = hiloDom.hilo,
+                                    madejas = hiloDom.madejas
+                                )
+                            )
+                        }
+                    }
+                    // 2) Actualizar la lista en memoria y la UI
+                    withContext(Dispatchers.Main) {
+                        listaGraficos[posicion] = graficoEditado
+                        adaptadorPedido.notifyItemChanged(posicion)
+                        actualizarTotalMadejas()
+                    }
+                }
             }
         }
     }
