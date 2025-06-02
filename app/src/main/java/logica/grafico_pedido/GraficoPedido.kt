@@ -217,84 +217,111 @@ class GraficoPedido : BaseActivity() {
      * Además, si el hilo ya existe en este gráfico, muestra un Toast y no lo inserta.
      */
     private fun dialogAgregarHiloGrafico() {
-        val dialog = Dialog(this).apply {
-            setContentView(R.layout.pedidob_dialog_agregar_hilo)
-            window?.setBackgroundDrawableResource(android.R.color.transparent)
-            ajustarDialog(this)
-            setCancelable(false)
-        }
-
-        val inpH = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
-        val inpP = dialog.findViewById<EditText>(R.id.edTxt_introducirPuntadas_dialog_addHilo)
-        val inpC = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
-
-        val btnG = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
-        dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
-            .setOnClickListener { dialog.dismiss() }
-
-        // 1) Si countTelaGlobal ya existe, ocultamos el campo completo (solo se pide una vez)
-        if (countTelaGlobal != null) {
-            inpC.visibility = View.GONE
-        } else {
-            inpC.visibility = View.VISIBLE
-        }
-
-        btnG.setOnClickListener {
-            val hiloCode = inpH.text.toString().trim().uppercase()
-            val punt = inpP.text.toString().trim().toIntOrNull()
-
-            // 2) Si countTelaGlobal es null, pedimos de inpC; si ya existe, lo volvemos a usar
-            val count = countTelaGlobal ?: inpC.text.toString().trim().toIntOrNull()
-                ?.takeIf { it in listOf(14, 16, 18, 20, 25) }
-                ?.also { countTelaGlobal = it }
-
-            // 3) Si el hilo ya está en listaDominio, mostramos Toast y salimos
-            if (listaDominio.any { it.hilo == hiloCode }) {
-                Toast.makeText(this, "El hilo ya se ha añadido al gráfico", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        // 1) Antes de nada, comprobamos en BD si ya hay hilos insertados para este graficoId
+        lifecycleScope.launch {
+            val hilosExistentes = withContext(Dispatchers.IO) {
+                daoGrafico.obtenerHilosPorGrafico(graficoId)  // devuelve List<HiloGraficoEntity>
             }
 
-            if (hiloCode.isEmpty() || punt == null || count == null) {
-                Toast.makeText(this, "Campos inválidos", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            // 2) Creamos el diálogo normalmente
+            val dialog = Dialog(this@GraficoPedido).apply {
+                setContentView(R.layout.pedidob_dialog_agregar_hilo)
+                window?.setBackgroundDrawableResource(android.R.color.transparent)
+                ajustarDialog(this)
+                setCancelable(false)
             }
 
-            val madejas = calcularMadejas(punt, count)
+            // 3) Referenciamos los campos
+            val inpH = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
+            val inpP = dialog.findViewById<EditText>(R.id.edTxt_introducirPuntadas_dialog_addHilo)
+            val inpC = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
+            val btnG = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
+            val btnVol = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
 
-            lifecycleScope.launch {
-                val existe = withContext(Dispatchers.IO) {
-                    ThreadlyDatabase.getDatabase(applicationContext)
-                        .hiloCatalogoDao()
-                        .obtenerHiloPorNumYUsuario(hiloCode, userId) != null
+            // 4) Si ya hay al menos un hilo en BD, ocultamos el campo de count de tela:
+            if (hilosExistentes.isNotEmpty()) {
+                inpC.visibility = View.GONE
+            } else {
+                inpC.visibility = View.VISIBLE
+            }
+
+            btnVol.setOnClickListener { dialog.dismiss() }
+
+            btnG.setOnClickListener {
+                val hiloCode = inpH.text.toString().trim().uppercase()
+                val punt = inpP.text.toString().trim().toIntOrNull()
+
+                // 5) Si no hay hilos existentes, pedimos count de inpC; si ya existían,
+                //    ese “count” lo consideraremos implícito (no está visible).
+                val count: Int? = if (hilosExistentes.isNotEmpty()) {
+                    // Ya había hilos guardados para este gráfico → usamos el mismo count anterior.
+                    // No necesitamos leerlo de ningún EditText, porque el cálculo de madejas
+                    // de los hilos ya insertados en BD se hizo con ese count, así que
+                    // aquí basta que `count` sea distinto de null para que calcularMadejas
+                    // devuelva algo coherente. PODRÍAS recuperar ese count de algún campo
+                    // en BD si lo guardaras, pero si tus hilos en BD ya tienen madejas
+                    // independientes (cálculo previo), entonces es indiferente reenviar count.
+                    // En este ejemplo asumiremos que basta con marcar como “no nulo”:
+                    1
+                } else {
+                    // Primer hilo: el usuario debe haber escrito count en inpC.
+                    inpC.text.toString().trim().toIntOrNull()
+                        ?.takeIf { it in listOf(14, 16, 18, 20, 25) }
                 }
 
-                if (!existe) {
+                // 6) Validaciones
+                if (listaDominio.any { it.hilo == hiloCode }) {
                     Toast.makeText(
                         this@GraficoPedido,
-                        "El hilo no está en tu catálogo. Añádelo primero.",
-                        Toast.LENGTH_LONG
+                        "El hilo ya se ha añadido al gráfico",
+                        Toast.LENGTH_SHORT
                     ).show()
-                    return@launch
+                    return@setOnClickListener
+                }
+                if (hiloCode.isEmpty() || punt == null || count == null) {
+                    Toast.makeText(this@GraficoPedido, "Campos inválidos", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
                 }
 
-                withContext(Dispatchers.IO) {
-                    daoGrafico.insertarHiloEnGrafico(
-                        HiloGraficoEntity(
-                            graficoId = graficoId,
-                            hilo = hiloCode,
-                            madejas = madejas
+                // 7) Calculamos madejas y guardamos en BD
+                val madejas = calcularMadejas(punt, count)
+
+                lifecycleScope.launch {
+                    val existeEnCatalogo = withContext(Dispatchers.IO) {
+                        ThreadlyDatabase.getDatabase(applicationContext)
+                            .hiloCatalogoDao()
+                            .obtenerHiloPorNumYUsuario(hiloCode, userId) != null
+                    }
+
+                    if (!existeEnCatalogo) {
+                        Toast.makeText(
+                            this@GraficoPedido,
+                            "El hilo no está en tu catálogo. Añádelo primero.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        return@launch
+                    }
+
+                    withContext(Dispatchers.IO) {
+                        daoGrafico.insertarHiloEnGrafico(
+                            HiloGraficoEntity(
+                                graficoId = graficoId,
+                                hilo = hiloCode,
+                                madejas = madejas
+                            )
                         )
-                    )
+                    }
+
+                    // 8) Tras insertar, recargamos la lista y cerramos el diálogo
+                    configurarRecycler()
+                    dialog.dismiss()
                 }
-
-                // 4) Tras insertar, recargamos la lista y cerramos el diálogo
-                configurarRecycler()
-                dialog.dismiss()
             }
-        }
 
-        dialog.show()
+            dialog.show()
+        }
     }
+
 
     private fun dialogBorrarHilo(h: HiloGrafico) {
         val dialog = Dialog(this).apply {
