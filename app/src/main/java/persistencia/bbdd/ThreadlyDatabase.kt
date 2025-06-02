@@ -13,11 +13,13 @@ import persistencia.daos.GraficoDao
 import persistencia.daos.HiloCatalogoDao
 import persistencia.daos.HiloGraficoDao
 import persistencia.daos.HiloStockDao
+import persistencia.daos.PedidoDao
 import persistencia.daos.UsuarioDAO
 import persistencia.entidades.GraficoEntity
 import persistencia.entidades.HiloCatalogoEntity
 import persistencia.entidades.HiloGraficoEntity
 import persistencia.entidades.HiloStockEntity
+import persistencia.entidades.PedidoEntity
 import persistencia.entidades.Usuario
 import utiles.SesionUsuario
 
@@ -30,9 +32,10 @@ import utiles.SesionUsuario
         HiloStockEntity::class,
         HiloGraficoEntity::class,
         GraficoEntity::class,
+        PedidoEntity::class
 
     ],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 abstract class ThreadlyDatabase : RoomDatabase() {
@@ -42,7 +45,7 @@ abstract class ThreadlyDatabase : RoomDatabase() {
     abstract fun hiloStockDao(): HiloStockDao
     abstract fun hiloGraficoDao(): HiloGraficoDao
     abstract fun graficoDao(): GraficoDao
-
+    abstract fun pedidoDao(): PedidoDao
 
     companion object {
         @Volatile

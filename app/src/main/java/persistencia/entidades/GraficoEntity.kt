@@ -10,5 +10,7 @@ import androidx.room.PrimaryKey
 )
 data class GraficoEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val nombre: String
+    val nombre: String,
+    val idPedido: Int?, // null = pedido en curso
+    val userId: Int      // por si hay varios usuarios
 )
