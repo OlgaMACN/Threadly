@@ -8,7 +8,12 @@ import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +23,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import persistencia.bbdd.ThreadlyDatabase
 import persistencia.daos.HiloCatalogoDao
-
 import persistencia.entidades.HiloCatalogoEntity
 import utiles.BaseActivity
 import utiles.SesionUsuario
@@ -26,6 +30,8 @@ import utiles.funciones.ValidarFormatoHilos
 import utiles.funciones.ajustarDialog
 import utiles.funciones.funcionToolbar
 import utiles.funciones.leerXML
+import utiles.funciones.ordenarHilos
+
 /*** @author Olga y Sandra Macías Aragón*/
 class CatalogoHilos : BaseActivity() {
 
@@ -84,15 +90,17 @@ class CatalogoHilos : BaseActivity() {
         buscadorHilo()
     }
 
-    private suspend fun refrescarUI() {
-        entidades = dao.obtenerHilosPorUsuario(userId)
+    private fun refrescarUI() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            entidades = dao.obtenerHilosPorUsuario(userId)
 
-        listaCatalogo = entidades.map { e ->
-            HiloCatalogo(e.numHilo, e.nombreHilo, e.color)
-        }.toMutableList()
+            listaCatalogo = ordenarHilos(entidades.map { e ->
+                HiloCatalogo(e.numHilo, e.nombreHilo, e.color)
+            }) { it.numHilo }.toMutableList()
 
-        withContext(Dispatchers.Main) {
-            adaptadorCatalogo.actualizarLista(listaCatalogo)
+            withContext(Dispatchers.Main) {
+                adaptadorCatalogo.actualizarLista(listaCatalogo)
+            }
         }
     }
 
@@ -139,6 +147,7 @@ class CatalogoHilos : BaseActivity() {
     private fun dialogAgregarHiloCatalogo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_agregar_hilo)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
@@ -150,7 +159,7 @@ class CatalogoHilos : BaseActivity() {
         btnVolver.setOnClickListener { dialog.dismiss() }
         btnSave.setOnClickListener {
             val num = inpNum.text.toString().uppercase().trim()
-            val nom = inpNombre.text.toString().uppercase().trim()
+            val nom = inpNombre.text.toString().trim() /* para respetar el formato que ponga el usuario */
             if (num.isEmpty() || nom.isEmpty()) {
                 Toast.makeText(this, "Ningún campo puede estar vacío", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
@@ -161,21 +170,34 @@ class CatalogoHilos : BaseActivity() {
             }
 
             lifecycleScope.launch(Dispatchers.IO) {
-                val ent = HiloCatalogoEntity(
-                    userId = userId,
-                    numHilo = num,
-                    nombreHilo = nom
-                )
-                val res = dao.insertarHilo(ent)
+                val existente = dao.obtenerHiloPorNumYUsuario(num, userId)
+
                 withContext(Dispatchers.Main) {
-                    if (res == -1L) {
-                        Toast.makeText(this@CatalogoHilos, "El número ya existe", Toast.LENGTH_LONG)
-                            .show()
+                    if (existente != null) {
+                        Toast.makeText(
+                            this@CatalogoHilos,
+                            "Ya existe un hilo con ese número",
+                            Toast.LENGTH_LONG
+                        ).show()
                     } else {
-                        Toast.makeText(this@CatalogoHilos, "Hilo añadido", Toast.LENGTH_SHORT)
-                            .show()
-                        lifecycleScope.launch { refrescarUI() }
-                        dialog.dismiss()
+                       /* si no existe se inserta */
+                        val ent = HiloCatalogoEntity(
+                            userId = userId,
+                            numHilo = num,
+                            nombreHilo = nom
+                        )
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            dao.insertarHilo(ent)
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    this@CatalogoHilos,
+                                    "Hilo añadido",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                refrescarUI()
+                                dialog.dismiss()
+                            }
+                        }
                     }
                 }
             }
@@ -187,6 +209,7 @@ class CatalogoHilos : BaseActivity() {
     private fun dialogModificarHiloCatalogo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_modificar)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
@@ -198,36 +221,41 @@ class CatalogoHilos : BaseActivity() {
 
         btnVolver.setOnClickListener { dialog.dismiss() }
         btnNext.setOnClickListener {
-            val numBusq = inpNum.text.toString().trim()
+            val numBusq = inpNum.text.toString().trim().uppercase()
             if (numBusq.isEmpty()) {
                 Toast.makeText(this, "Introduce el número a modificar", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val pos = listaCatalogo.indexOfFirst {
-                it.numHilo.equals(numBusq, ignoreCase = true)
-            }
-            if (pos == -1) {
-                Toast.makeText(this, "No existe ese hilo", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (!chkNum.isChecked && !chkNom.isChecked) {
                 Toast.makeText(this, "Selecciona un campo", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            dialog.dismiss()
-            dialogModificarHiloFinal(pos, chkNum.isChecked, chkNom.isChecked)
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                val entidad = dao.obtenerHiloPorNumYUsuario(numBusq, userId)
+                withContext(Dispatchers.Main) {
+                    if (entidad == null) {
+                        Toast.makeText(this@CatalogoHilos, "No existe ese hilo", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        dialog.dismiss()
+                        dialogModificarHiloFinal(entidad, chkNum.isChecked, chkNom.isChecked)
+                    }
+                }
+            }
         }
 
         dialog.show()
     }
 
     private fun dialogModificarHiloFinal(
-        pos: Int,
+        entidadVieja: HiloCatalogoEntity,
         modNum: Boolean,
         modNom: Boolean
     ) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_modificar_final)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
@@ -236,8 +264,6 @@ class CatalogoHilos : BaseActivity() {
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volverModificarHiloFinal)
         val btnSave = dialog.findViewById<Button>(R.id.btn_guardarModificarHilo)
 
-        // cargo los valores actuales
-        val entidadVieja = entidades[pos]
         if (modNum) inpNum.setText(entidadVieja.numHilo) else inpNum.visibility = View.GONE
         if (modNom) inpNombre.setText(entidadVieja.nombreHilo) else inpNombre.visibility = View.GONE
 
@@ -245,11 +271,12 @@ class CatalogoHilos : BaseActivity() {
             dialog.dismiss()
             dialogModificarHiloCatalogo()
         }
+
         btnSave.setOnClickListener {
             val nuevoNum =
                 if (modNum) inpNum.text.toString().uppercase().trim() else entidadVieja.numHilo
-            val nuevoNom = if (modNom) inpNombre.text.toString().uppercase()
-                .trim() else entidadVieja.nombreHilo
+            val nuevoNom = if (modNom) inpNombre.text.toString()
+                .trim() else entidadVieja.nombreHilo /* para respetar el formato que ponga el usuario */
 
             if ((modNum && nuevoNum.isEmpty()) || (modNom && nuevoNom.isEmpty())) {
                 Toast.makeText(this, "Ningún campo vacío", Toast.LENGTH_SHORT).show()
@@ -261,14 +288,30 @@ class CatalogoHilos : BaseActivity() {
             }
 
             lifecycleScope.launch(Dispatchers.IO) {
+
+                if (modNum && nuevoNum != entidadVieja.numHilo) {
+                    val existente = dao.obtenerHiloPorNumYUsuario(nuevoNum, userId)
+                    if (existente != null) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                this@CatalogoHilos,
+                                "Ya existe un hilo con ese número",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        return@launch
+                    }
+                }
+
                 val entidadNueva = entidadVieja.copy(
                     numHilo = nuevoNum,
                     nombreHilo = nuevoNom
                 )
                 dao.actualizarHilo(entidadNueva)
+
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@CatalogoHilos, "Hilo modificado", Toast.LENGTH_SHORT).show()
-                    lifecycleScope.launch { refrescarUI() }
+                    refrescarUI()
                     dialog.dismiss()
                 }
             }
@@ -277,9 +320,10 @@ class CatalogoHilos : BaseActivity() {
         dialog.show()
     }
 
-    private fun dialogEliminarHiloCatalogo(pos: Int) {
+    private fun dialogEliminarHiloCatalogo(hilo: HiloCatalogo) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.catalogo_dialog_eliminar_hilo)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
@@ -287,12 +331,11 @@ class CatalogoHilos : BaseActivity() {
         val btnVolver = dialog.findViewById<Button>(R.id.btn_botonVolverEliminarCat)
         val txtMsg = dialog.findViewById<TextView>(R.id.txtVw_mensajeEliminarHiloCat)
 
-        val entidad = entidades[pos]
         val plantilla = getString(R.string.confirmarEliminarHiloCat)
-        val texto = plantilla.replace("%s", entidad.numHilo)
+        val texto = plantilla.replace("%s", hilo.numHilo)
         val span = SpannableString(texto)
-        val start = texto.indexOf(entidad.numHilo)
-        val end = start + entidad.numHilo.length
+        val start = texto.indexOf(hilo.numHilo)
+        val end = start + hilo.numHilo.length
         span.setSpan(
             ForegroundColorSpan(resources.getColor(R.color.red)),
             start,
@@ -304,14 +347,14 @@ class CatalogoHilos : BaseActivity() {
         btnVolver.setOnClickListener { dialog.dismiss() }
         btnEliminar.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
-                dao.eliminarHilo(entidad)
+                dao.eliminarPorNumYUsuario(hilo.numHilo, userId)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
                         this@CatalogoHilos,
-                        "Hilo ${entidad.numHilo} eliminado",
+                        "Hilo ${hilo.numHilo} eliminado",
                         Toast.LENGTH_SHORT
                     ).show()
-                    lifecycleScope.launch { refrescarUI() }
+                    refrescarUI()
                     dialog.dismiss()
                 }
             }
@@ -319,4 +362,5 @@ class CatalogoHilos : BaseActivity() {
 
         dialog.show()
     }
+
 }

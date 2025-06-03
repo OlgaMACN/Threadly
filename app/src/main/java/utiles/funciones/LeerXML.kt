@@ -47,7 +47,8 @@ fun leerXML(context: Context, resourceId: Int): List<HiloCatalogo> {
             val nodo = nodosHilo.item(i) as Element
             val codigo = nodo.getElementsByTagName("codigo").item(0).textContent.trim()
             val nombre = nodo.getElementsByTagName("nombre").item(0).textContent.trim()
-            val color = nodo.getElementsByTagName("color").item(0).textContent.trim()
+            val color = nodo.getElementsByTagName("color").
+        item(0).textContent.trim()
 
             listaHilos.add(
                 HiloCatalogo(

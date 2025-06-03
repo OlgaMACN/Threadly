@@ -9,8 +9,8 @@ import com.threadly.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import logica.stock_personal.StockSingleton
 import persistencia.bbdd.ThreadlyDatabase
+import persistencia.daos.HiloStockDao
 import utiles.BaseActivity
 import utiles.Consejos
 import utiles.SesionUsuario
@@ -30,6 +30,8 @@ class PantallaPrincipal : BaseActivity() {
     private lateinit var txtTip: TextView
     private lateinit var txtNombreUser: TextView
     private lateinit var imgPerfil: ImageView
+    private lateinit var dao: HiloStockDao
+    private var userId: Int = -1
 
     /**
      * Se ejecuta al crear la actividad. Inicializa el toolbar, carga el usuario,
@@ -38,20 +40,17 @@ class PantallaPrincipal : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pantalla_aa_inicio)
-
         funcionToolbar(this) /* carga el toolbar personalizado */
 
-        cargarUsuario() /* muestra imagen y nombre del usuario */
         txtNombreUser = findViewById(R.id.txtVw_nombreUsuario)
         imgPerfil = findViewById(R.id.imgVw_imagenPerfil)
         txtTip = findViewById(R.id.txtVw_contenidoTip)
 
-        /* inicializa el stock si es necesario y muestra el total de madejas */
-        StockSingleton.inicializarStockSiNecesario(this)
-        val totalMadejas = StockSingleton.mostrarTotalStock()
+        dao = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
+        userId = SesionUsuario.obtenerSesion(this)
+        if (userId < 0) finish()
 
-        val txtStock = findViewById<TextView>(R.id.txtVw_contenidoStock)
-        txtStock.text = "$totalMadejas"
+        cargarUsuario() /* muestra imagen y nombre del usuario */
 
         /* abre la pantalla de configuración (datos personales) */
         findViewById<ImageButton>(R.id.imgBtn_configuracion).setOnClickListener {
@@ -65,15 +64,19 @@ class PantallaPrincipal : BaseActivity() {
      */
     override fun onResume() {
         super.onResume()
-        /* cartelito stock */
-        StockSingleton.inicializarStockSiNecesario(this)
-        val total = StockSingleton.mostrarTotalStock()
-        findViewById<TextView>(R.id.txtVw_contenidoStock).text = "$total"
-        /* cartelito consejo */
-        consejoAleatorio()
-        /* cargar el usuario logueado */
-        cargarUsuario()
 
+        lifecycleScope.launch {
+            val totalMadejas = withContext(Dispatchers.IO) {
+                dao.obtenerStockPorUsuario(userId)
+                    .sumOf { it.madejas }
+            }
+
+            findViewById<TextView>(R.id.txtVw_contenidoStock)
+                .text = totalMadejas.toString()
+
+            consejoAleatorio()
+            cargarUsuario()
+        }
     }
 
     /**
@@ -81,28 +84,25 @@ class PantallaPrincipal : BaseActivity() {
      * Si no hay usuario cargado, no realiza ninguna acción.
      */
     private fun cargarUsuario() {
-        val userId = SesionUsuario.obtenerSesion(this)
-        if (userId < 0) return
-
+        val id = SesionUsuario.obtenerSesion(this).takeIf { it >= 0 } ?: return
         lifecycleScope.launch {
-            val usuario = withContext(Dispatchers.IO) {
+            val u = withContext(Dispatchers.IO) {
                 ThreadlyDatabase.getDatabase(applicationContext)
                     .usuarioDAO()
-                    .obtenerPorId(userId)
-            }
-            usuario?.let {
-                txtNombreUser.text = it.username
-                imgPerfil.setImageResource(
-                    when (it.profilePic) {
-                        1 -> R.drawable.img_avatar2
-                        2 -> R.drawable.img_avatar3
-                        3 -> R.drawable.img_avatar4
-                        4 -> R.drawable.img_avatar5
-                        5 -> R.drawable.img_avatar6
-                        else -> R.drawable.img_avatar_defecto
-                    }
-                )
-            }
+                    .obtenerPorId(id)
+            } ?: return@launch
+
+            txtNombreUser.text = u.username
+            imgPerfil.setImageResource(
+                when (u.profilePic) {
+                    1 -> R.drawable.img_avatar2
+                    2 -> R.drawable.img_avatar3
+                    3 -> R.drawable.img_avatar4
+                    4 -> R.drawable.img_avatar5
+                    5 -> R.drawable.img_avatar6
+                    else -> R.drawable.img_avatar_defecto
+                }
+            )
         }
     }
 
