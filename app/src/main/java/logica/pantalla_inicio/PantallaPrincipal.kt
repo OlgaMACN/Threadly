@@ -10,7 +10,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import persistencia.bbdd.ThreadlyDatabase
+import persistencia.daos.GraficoDao
 import persistencia.daos.HiloStockDao
+import persistencia.daos.PedidoDao
 import utiles.BaseActivity
 import utiles.Consejos
 import utiles.SesionUsuario
@@ -31,7 +33,11 @@ class PantallaPrincipal : BaseActivity() {
     private lateinit var txtNombreUser: TextView
     private lateinit var imgPerfil: ImageView
     private lateinit var dao: HiloStockDao
+    private lateinit var pedidoDao: PedidoDao
+    private lateinit var graficoDao: GraficoDao
+
     private var userId: Int = -1
+
 
     /**
      * Se ejecuta al crear la actividad. Inicializa el toolbar, carga el usuario,
@@ -48,6 +54,10 @@ class PantallaPrincipal : BaseActivity() {
 
         // inicializa DAO y sesión
         dao = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
+        pedidoDao = ThreadlyDatabase.getDatabase(applicationContext).pedidoDao()
+        graficoDao = ThreadlyDatabase.getDatabase(applicationContext).graficoDao()
+
+
         userId = SesionUsuario.obtenerSesion(this)
         if (userId < 0) finish()
 
@@ -73,8 +83,15 @@ class PantallaPrincipal : BaseActivity() {
                     .sumOf { it.madejas }
             }
             // 2) Mostramos el total
-            findViewById<TextView>(R.id.txtVw_contenidoStock)
-                .text = totalMadejas.toString()
+            val txtGrafico = findViewById<TextView>(R.id.txtVw_contenidoGrafico)
+            val ultimoGrafico = withContext(Dispatchers.IO) {
+                graficoDao.obtenerUltimoGrafico(userId)
+            }
+            txtGrafico.text = if (ultimoGrafico != null) {
+                ultimoGrafico.nombre
+            } else {
+                "Ahora mismo no hay ningún pedido en curso"
+            }
 
             // 3) Consejo y usuarios
             consejoAleatorio()

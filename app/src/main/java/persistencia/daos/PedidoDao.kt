@@ -23,6 +23,9 @@ interface PedidoDao {
     @Query("SELECT * FROM pedidos WHERE userId = :userId ORDER BY nombre")
     suspend fun obtenerPedidosConGraficos(userId: Int): List<PedidoConGraficos>
 
+    @Query("SELECT * FROM pedidos WHERE userId = :userId ORDER BY id DESC LIMIT 1")
+    suspend fun obtenerUltimoPedido(userId: Int): PedidoEntity?
+
     /**
      * (Opcional) Elimina un pedido completo (si lo necesitas).
      */
