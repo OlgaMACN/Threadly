@@ -84,11 +84,15 @@ class PantallaPrincipal : BaseActivity() {
             }
             // 2) Mostramos el total
             val txtGrafico = findViewById<TextView>(R.id.txtVw_contenidoGrafico)
+
             val ultimoGrafico = withContext(Dispatchers.IO) {
-                graficoDao.obtenerUltimoGrafico(userId)
+                ThreadlyDatabase.getDatabase(applicationContext)
+                    .graficoDao()
+                    .obtenerUltimoGraficoEnCurso(userId)
             }
+
             txtGrafico.text = if (ultimoGrafico != null) {
-                ultimoGrafico.nombre
+              ultimoGrafico.nombre
             } else {
                 "Ahora mismo no hay ningún pedido en curso"
             }

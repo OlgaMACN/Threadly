@@ -32,6 +32,15 @@ interface GraficoDao {
     @Query("SELECT * FROM graficos WHERE userId = :userId AND idPedido IS NULL AND nombre = :nombreGrafico LIMIT 1")
     suspend fun obtenerGraficoEnCursoPorNombre(userId: Int, nombreGrafico: String): GraficoEntity?
 
+    @Query("""
+    SELECT * FROM graficos 
+    WHERE userId = :userId AND idPedido IS NULL 
+    ORDER BY id DESC 
+    LIMIT 1
+""")
+    suspend fun obtenerUltimoGraficoEnCurso(userId: Int): GraficoEntity?
+
+
     @Query("SELECT * FROM graficos WHERE userId = :userId ORDER BY id DESC LIMIT 1")
     suspend fun obtenerUltimoGrafico(userId: Int): GraficoEntity?
 
