@@ -21,6 +21,8 @@ import com.threadly.R
  * @param listaPedidos Lista de pedidos guardados que se mostrarán.
  * @param onDescargarClick Función lambda que se ejecuta al pulsar el botón de descarga.
  * @param onPedidoRealizadoClick Función lambda que se ejecuta al pulsar el botón de marcar como realizado.
+ *
+ *
  */
 class AdaptadorAlmacen(
     private var listaPedidos: List<PedidoGuardado>,

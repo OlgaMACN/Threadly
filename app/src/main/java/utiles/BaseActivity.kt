@@ -57,6 +57,17 @@ open class BaseActivity : AppCompatActivity() {
         startActivity(i)
     }
 
+
+    fun lanzarConResultado(destino: Class<out BaseActivity>, requestCode: Int, extras: Intent.() -> Unit = {}) {
+        val i = Intent(this, destino).apply {
+            putExtra("usuario_id", usuarioId)
+            putExtra("nombre_usuario", nombreUsuario)
+            extras()
+        }
+        startActivityForResult(i, requestCode)
+    }
+
+
     /**
      * Método simplificado para ir a otra actividad que extienda de [BaseActivity],
      * pasando los datos de usuario para evitar pérdida de información.

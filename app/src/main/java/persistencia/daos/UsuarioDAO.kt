@@ -82,4 +82,7 @@ interface UsuarioDAO {
      */
     @Query("SELECT * FROM Usuario WHERE username = :nombre")
     suspend fun obtenerPorNombre(nombre: String): Usuario?
+
+    @Query("SELECT * FROM Usuario")
+    suspend fun obtenerTodos(): List<Usuario>
 }

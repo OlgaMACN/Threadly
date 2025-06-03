@@ -15,12 +15,18 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
-import logica.stock_personal.StockSingleton.esPrimeraVez
-import logica.stock_personal.StockSingleton.marcarPrimeraVez
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import persistencia.bbdd.ThreadlyDatabase
+import persistencia.daos.HiloStockDao
+import persistencia.entidades.HiloStockEntity
 import utiles.BaseActivity
+import utiles.SesionUsuario
 import utiles.funciones.LeerXMLCodigo
 import utiles.funciones.ValidarFormatoHilos
 import utiles.funciones.ajustarDialog
@@ -33,94 +39,108 @@ import utiles.funciones.ordenarHilos
  * También incluye un buscador por código de hilo.
  *
  * @author Olga y Sandra Macías Aragón
- *
  */
 class StockPersonal : BaseActivity() {
 
     private lateinit var tablaStock: RecyclerView
     private lateinit var adaptadorStock: AdaptadorStock
+    private lateinit var dao: HiloStockDao
+    private var userId: Int = -1
 
-    /**
-     * Método llamado al crear la actividad. Inicializa la interfaz, carga datos y configura eventos.
-     */
+    private val listaStock = mutableListOf<HiloStock>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.stock_aa_principal)
-
         funcionToolbar(this)
 
+
+        dao = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
+        userId = SesionUsuario.obtenerSesion(this)
+        if (userId < 0) finish()
+
+
         tablaStock = findViewById(R.id.tabla_stock)
-        adaptadorStock = AdaptadorStock(StockSingleton.listaStock, ::dialogEliminarHilo)
+        adaptadorStock = AdaptadorStock(listaStock, ::dialogEliminarHilo)
         tablaStock.layoutManager = LinearLayoutManager(this)
         tablaStock.adapter = adaptadorStock
 
-        /* cargar datos iniciales del catálogo si es la primera vez que se abre */
-        if (esPrimeraVez(this)) {
-            val listaInicial = LeerXMLCodigo(this, R.raw.catalogo_hilos)
-            StockSingleton.listaStock.addAll(listaInicial)
-            adaptadorStock.actualizarLista(StockSingleton.listaStock)
-            marcarPrimeraVez(this)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val existentes = dao.obtenerStockPorUsuario(userId)
+            if (existentes.isEmpty()) {
+                val inicial = LeerXMLCodigo(this@StockPersonal, R.raw.catalogo_hilos)
+                val entidades = inicial.map { h ->
+                    HiloStockEntity(
+                        usuarioId = userId,
+                        hiloId    = h.hiloId,
+                        madejas   = 0
+                    )
+                }
+                dao.insertarStocks(entidades)
+            }
+            refrescarUI()
         }
 
-        StockSingleton.inicializarStockSiNecesario(this)
-
-        /* configurar botones de acción */
-        val btnAgregarHilo = findViewById<Button>(R.id.btn_agregarHiloStk)
-        val btnAgregarMadeja = findViewById<Button>(R.id.btn_agregarMadejaStk)
-        val btnEliminarMadeja = findViewById<Button>(R.id.btn_eliminarMadejaStk)
-
-        btnAgregarHilo.setOnClickListener { dialogAgregarHilo() }
-        btnAgregarMadeja.setOnClickListener { dialogAgregarMadeja() }
-        btnEliminarMadeja.setOnClickListener { dialogEliminarMadeja() }
+        findViewById<Button>(R.id.btn_agregarHiloStk).setOnClickListener { dialogAgregarHilo() }
+        findViewById<Button>(R.id.btn_agregarMadejaStk).setOnClickListener { dialogAgregarMadeja() }
+        findViewById<Button>(R.id.btn_eliminarMadejaStk).setOnClickListener { dialogEliminarMadeja() }
 
         buscadorHilo()
     }
 
-    /**
-     * Configura el buscador de hilos por código.
-     * Resalta el hilo encontrado o muestra mensaje si no se encuentra.
-     */
+    /** Refresca la RV leyendo de Room y ordenando. */
+    private fun refrescarUI() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val entidades = dao.obtenerStockPorUsuario(userId)
+            val dominio = entidades.map { HiloStock(it.hiloId, it.madejas) }
+            val ordenada = ordenarHilos(dominio) { it.hiloId }
+
+            withContext(Dispatchers.Main) {
+                listaStock.clear()
+                listaStock.addAll(ordenada)
+                adaptadorStock.actualizarLista(listaStock)
+            }
+        }
+    }
+
+    /** Buscador: resalta o muestra mensaje si no hay. */
     private fun buscadorHilo() {
-        val hiloBuscado = findViewById<EditText>(R.id.edTxt_buscadorHilo)
-        val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaStock)
-        val txtNoResultados = findViewById<TextView>(R.id.txtVw_sinResultados)
+        val edt = findViewById<EditText>(R.id.edTxt_buscadorHilo)
+        val btn = findViewById<ImageButton>(R.id.imgBtn_lupaStock)
+        val txtNo = findViewById<TextView>(R.id.txtVw_sinResultados)
+        txtNo.visibility = View.GONE
 
-        txtNoResultados.visibility = View.GONE
-
-        btnLupa.setOnClickListener {
-            val texto = hiloBuscado.text.toString().trim().uppercase()
-            val coincidencia = StockSingleton.listaStock.find { it.hiloId == texto }
-
-            if (coincidencia != null) {
-                adaptadorStock.resaltarHilo(coincidencia.hiloId)
-                adaptadorStock.actualizarLista(StockSingleton.listaStock)
+        btn.setOnClickListener {
+            val code = edt.text.toString().trim().uppercase()
+            val found = listaStock.find { it.hiloId == code }
+            if (found != null) {
+                adaptadorStock.resaltarHilo(found.hiloId)
+                adaptadorStock.actualizarLista(listaStock)
+                tablaStock.scrollToPosition(listaStock.indexOf(found))
                 tablaStock.visibility = View.VISIBLE
-                txtNoResultados.visibility = View.GONE
-                tablaStock.scrollToPosition(StockSingleton.listaStock.indexOf(coincidencia))
+                txtNo.visibility = View.GONE
             } else {
                 tablaStock.visibility = View.GONE
-                txtNoResultados.visibility = View.VISIBLE
+                txtNo.visibility = View.VISIBLE
             }
         }
 
-        hiloBuscado.addTextChangedListener(object : TextWatcher {
+        edt.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     adaptadorStock.resaltarHilo(null)
-                    adaptadorStock.actualizarLista(StockSingleton.listaStock)
+                    adaptadorStock.actualizarLista(listaStock)
                     tablaStock.visibility = View.VISIBLE
-                    txtNoResultados.visibility = View.GONE
+                    txtNo.visibility = View.GONE
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
-    /**
-     * Muestra un diálogo para agregar un nuevo hilo al stock.
-     */
+    /** Diálogo para añadir un hilo nuevo. */
     private fun dialogAgregarHilo() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_agregar_hilo)
@@ -128,56 +148,44 @@ class StockPersonal : BaseActivity() {
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
-        val inputHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
-        val inputMadejas = dialog.findViewById<EditText>(R.id.edTxt_introducirMadeja_dialog_addHilo)
-        val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_agregarHilo)
-        val btnGuardar = dialog.findViewById<Button>(R.id.btn_botonAgregarHiloStk)
+        val inpHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
+        val inpMadejas = dialog.findViewById<EditText>(R.id.edTxt_introducirMadeja_dialog_addHilo)
+        dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_agregarHilo)
+            .setOnClickListener { dialog.dismiss() }
+        dialog.findViewById<Button>(R.id.btn_botonAgregarHiloStk)
+            .setOnClickListener {
+                val hilo = inpHilo.text.toString().trim().uppercase()
+                val madejas = inpMadejas.text.toString().toIntOrNull() ?: -1
+                if (hilo.isEmpty() || madejas < 0) {
+                    Toast.makeText(this, "Campos inválidos", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+                if (!ValidarFormatoHilos.formatoValidoHilo(hilo)) {
+                    Toast.makeText(this, "Formato inválido", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
 
-        btnVolver.setOnClickListener { dialog.dismiss() }
-
-        btnGuardar.setOnClickListener {
-            val hilo = inputHilo.text.toString().uppercase().trim()
-            val madejasString = inputMadejas.text.toString().trim()
-
-            /* validaciones de campos */
-            if (hilo.isEmpty() || madejasString.isEmpty()) {
-                Toast.makeText(this, "Ningún campo puede estar vacío", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val existe = dao.obtenerPorHiloUsuario(hilo, userId)
+                    if (existe != null) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@StockPersonal, "Ya existe ese hilo", Toast.LENGTH_LONG).show()
+                        }
+                    } else {
+                        dao.insertarStock(HiloStockEntity(userId, hilo, madejas))
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@StockPersonal, "Hilo añadido", Toast.LENGTH_SHORT).show()
+                            refrescarUI()
+                            dialog.dismiss()
+                        }
+                    }
+                }
             }
 
-            if (!ValidarFormatoHilos.formatoValidoHilo(hilo)) {
-                Toast.makeText(this, "Formato inválido: solo letras y números", Toast.LENGTH_LONG)
-                    .show()
-                return@setOnClickListener
-            }
-
-            val madejas = madejasString.toIntOrNull()
-            if (madejas == null || madejas < 0) {
-                Toast.makeText(this, "Solo números enteros positivos", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-
-            /* intentar agregar hilo */
-            if (!StockSingleton.agregarHilo(hilo, madejas)) {
-                Toast.makeText(
-                    this,
-                    "El hilo '$hilo' ya existe o datos inválidos",
-                    Toast.LENGTH_LONG
-                ).show()
-                return@setOnClickListener
-            }
-
-            StockSingleton.listaStock =
-                ordenarHilos(StockSingleton.listaStock) { it.hiloId }.toMutableList()
-            adaptadorStock.actualizarLista(StockSingleton.listaStock)
-            dialog.dismiss()
-        }
         dialog.show()
     }
 
-    /**
-     * Muestra un diálogo para agregar madejas a un hilo existente.
-     */
+    /** Diálogo para sumar madejas a un hilo existente. */
     private fun dialogAgregarMadeja() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_agregar_madeja)
@@ -185,62 +193,57 @@ class StockPersonal : BaseActivity() {
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
-        val inputHilo = dialog.findViewById<EditText>(R.id.edTxt_agregarMadejasStk_hilo)
-        val inputCantidad = dialog.findViewById<EditText>(R.id.edTxt_agregarMadejasStk)
-        val txtMadejasActuales = dialog.findViewById<TextView>(R.id.txtVw_madejasActualesStk)
-        val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarMadejaStk)
-        val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_eliminarMadeja)
+        val inpH = dialog.findViewById<EditText>(R.id.edTxt_agregarMadejasStk_hilo)
+        val inpC = dialog.findViewById<EditText>(R.id.edTxt_agregarMadejasStk)
+        val lbl = dialog.findViewById<TextView>(R.id.txtVw_madejasActualesStk)
+        val btnG = dialog.findViewById<Button>(R.id.btn_guardarMadejaStk)
+        dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_eliminarMadeja)
+            .setOnClickListener { dialog.dismiss() }
 
-        inputCantidad.isEnabled = false
-        btnGuardar.isEnabled = false
-
-        inputHilo.addTextChangedListener(object : TextWatcher {
+        inpH.addTextChangedListener(object : TextWatcher {
             @SuppressLint("SetTextI18n")
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val hilo = s.toString().uppercase().trim()
-                val item = StockSingleton.listaStock.find { it.hiloId == hilo }
-
-                if (item != null) {
-                    txtMadejasActuales.text = "Madejas actuales: ${item.madejas}"
-                    inputCantidad.isEnabled = true
-                    btnGuardar.isEnabled = true
-                } else {
-                    txtMadejasActuales.text = "Madejas actuales: -"
-                    inputCantidad.isEnabled = false
-                    btnGuardar.isEnabled = false
+                val code = s.toString().trim().uppercase()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val ent = dao.obtenerPorHiloUsuario(code, userId)
+                    withContext(Dispatchers.Main) {
+                        if (ent != null) {
+                            lbl.text = "Madejas actuales: ${ent.madejas}"
+                            inpC.isEnabled = true
+                            btnG.isEnabled = true
+                        } else {
+                            lbl.text = "Madejas actuales: -"
+                            inpC.isEnabled = false
+                            btnG.isEnabled = false
+                        }
+                    }
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        btnGuardar.setOnClickListener {
-            val hilo = inputHilo.text.toString().uppercase().trim()
-            val cantidad = inputCantidad.text.toString().toIntOrNull()
-
-            if (cantidad == null || cantidad <= 0) {
-                Toast.makeText(this, "Introduce una cantidad válida", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        btnG.setOnClickListener {
+            val code = inpH.text.toString().trim().uppercase()
+            val add = inpC.text.toString().toIntOrNull() ?: 0
+            lifecycleScope.launch(Dispatchers.IO) {
+                val ent = dao.obtenerPorHiloUsuario(code, userId)
+                if (ent != null && add > 0) {
+                    val upd = ent.copy(madejas = ent.madejas + add)
+                    dao.actualizarStock(upd)
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@StockPersonal, "Madejas sumadas", Toast.LENGTH_SHORT).show()
+                        refrescarUI()
+                        dialog.dismiss()
+                    }
+                }
             }
-
-            if (!StockSingleton.agregarMadejas(hilo, cantidad)) {
-                Toast.makeText(this, "Hilo no encontrado o cantidad inválida", Toast.LENGTH_SHORT)
-                    .show()
-                return@setOnClickListener
-            }
-
-            val item = StockSingleton.listaStock.find { it.hiloId == hilo }!!
-            adaptadorStock.actualizarHilo(item)
-            dialog.dismiss()
         }
-        btnVolver.setOnClickListener { dialog.dismiss() }
+
         dialog.show()
     }
 
-    /**
-     * Muestra un diálogo para eliminar una cierta cantidad de madejas de un hilo existente.
-     */
+    /** Diálogo para restar madejas de un hilo existente. */
     private fun dialogEliminarMadeja() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_eliminar_madeja)
@@ -248,101 +251,89 @@ class StockPersonal : BaseActivity() {
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
-        val idHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirNumHiloMadejasEliminarStk)
-        val cantidadEliminar =
-            dialog.findViewById<EditText>(R.id.edTxt_edTxt_introducirNumMadejasEliminarStk)
-        val txtMadejasActuales = dialog.findViewById<TextView>(R.id.txtVw_madejasActualesStk)
-        val btnEliminar = dialog.findViewById<Button>(R.id.btn_eliminarMadejaConfirmarStk)
-        val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_eliminarMadeja)
+        val inpH = dialog.findViewById<EditText>(R.id.edTxt_introducirNumHiloMadejasEliminarStk)
+        val inpC = dialog.findViewById<EditText>(R.id.edTxt_edTxt_introducirNumMadejasEliminarStk)
+        val lbl = dialog.findViewById<TextView>(R.id.txtVw_madejasActualesStk)
+        val btnE = dialog.findViewById<Button>(R.id.btn_eliminarMadejaConfirmarStk)
+        dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_eliminarMadeja)
+            .setOnClickListener { dialog.dismiss() }
 
-        var hiloEncontrado: HiloStock? = null
+        var current: HiloStockEntity? = null
 
-        idHilo.addTextChangedListener(object : TextWatcher {
+        inpH.addTextChangedListener(object : TextWatcher {
             @SuppressLint("SetTextI18n")
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val hiloId = s.toString().uppercase().trim()
-                hiloEncontrado = StockSingleton.listaStock.find { it.hiloId == hiloId }
-
-                if (hiloEncontrado != null) {
-                    txtMadejasActuales.text = "Madejas actuales: ${hiloEncontrado!!.madejas}"
-                    btnEliminar.isEnabled = true
-                } else {
-                    txtMadejasActuales.text = "Madejas actuales: -"
-                    btnEliminar.isEnabled = false
+                val code = s.toString().trim().uppercase()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    current = dao.obtenerPorHiloUsuario(code, userId)
+                    withContext(Dispatchers.Main) {
+                        if (current != null) {
+                            lbl.text = "Madejas actuales: ${current!!.madejas}"
+                            btnE.isEnabled = true
+                        } else {
+                            lbl.text = "Madejas actuales: -"
+                            btnE.isEnabled = false
+                        }
+                    }
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        btnEliminar.setOnClickListener {
-            val cantidadStr = cantidadEliminar.text.toString().trim()
-            val cantidad = cantidadStr.toIntOrNull()
-
-            if (cantidad == null || cantidad <= 0) {
-                Toast.makeText(this, "Introduce una cantidad válida", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            if (hiloEncontrado != null) {
-                val nuevaCantidad = maxOf(0, hiloEncontrado!!.madejas - cantidad)
-                if (StockSingleton.modificarMadejas(hiloEncontrado!!.hiloId, nuevaCantidad)) {
-                    adaptadorStock.actualizarHilo(hiloEncontrado!!)
+        btnE.setOnClickListener {
+            val del = inpC.text.toString().toIntOrNull() ?: 0
+            lifecycleScope.launch(Dispatchers.IO) {
+                current?.let {
+                    val nueva = maxOf(0, it.madejas - del)
+                    val upd = it.copy(madejas = nueva)
+                    dao.actualizarStock(upd)
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@StockPersonal, "Madejas actualizadas", Toast.LENGTH_SHORT).show()
+                        refrescarUI()
+                        dialog.dismiss()
+                    }
                 }
-                dialog.dismiss()
             }
         }
 
-        btnVolver.setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
 
-    /**
-     * Muestra un diálogo de confirmación para eliminar completamente un hilo del inventario.
-     * @param posicion Posición del hilo en la lista del RecyclerView.
-     */
-    private fun dialogEliminarHilo(posicion: Int) {
+    /** Diálogo de confirmación para eliminar un hilo completamente. */
+    private fun dialogEliminarHilo(pos: Int) {
+        val hilo = listaStock[pos]
+
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.stock_dialog_eliminar_hilo)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
-        val btnEliminar = dialog.findViewById<Button>(R.id.btn_botonEliminarHiloStk)
-        val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_eliminarHilo)
-        val hiloABorrar = dialog.findViewById<TextView>(R.id.txtVw_confirmarEliminarHiloStk)
+        val btnE = dialog.findViewById<Button>(R.id.btn_botonEliminarHiloStk)
+        val btnV = dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_eliminarHilo)
+        val lbl  = dialog.findViewById<TextView>(R.id.txtVw_confirmarEliminarHiloStk)
 
-        val hiloEliminado = StockSingleton.listaStock[posicion].hiloId
-        val textoOriginal = getString(R.string.confirmarEliminarHiloStk)
-        val textoConHilo = textoOriginal.replace("%s", hiloEliminado)
-        val spannable = SpannableString(textoConHilo)
-        val start = textoConHilo.indexOf(hiloEliminado)
-        val end = start + hiloEliminado.length
-
-        /* resaltar en rojo el ID del hilo a eliminar */
-        if (start != -1) {
-            spannable.setSpan(
-                ForegroundColorSpan(Color.RED),
-                start,
-                end,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+        val plantilla = getString(R.string.confirmarEliminarHiloStk)
+        val texto    = plantilla.replace("%s", hilo.hiloId)
+        val span     = SpannableString(texto).apply {
+            val start = texto.indexOf(hilo.hiloId)
+            setSpan(ForegroundColorSpan(Color.RED), start, start + hilo.hiloId.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
-        hiloABorrar.text = spannable
+        lbl.text = span
 
-        btnVolver.setOnClickListener { dialog.dismiss() }
-
-        btnEliminar.setOnClickListener {
-            val eliminado = StockSingleton.eliminarHilo(hiloEliminado)
-            if (eliminado) {
-                adaptadorStock.actualizarLista(StockSingleton.listaStock)
-                Toast.makeText(this, "Hilo '$hiloEliminado' eliminado", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "No se pudo eliminar el hilo", Toast.LENGTH_SHORT).show()
+        btnV.setOnClickListener { dialog.dismiss() }
+        btnE.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.IO) {
+                dao.eliminarPorUsuarioYHilo(userId, hilo.hiloId)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@StockPersonal, "Hilo '${hilo.hiloId}' eliminado", Toast.LENGTH_SHORT).show()
+                    refrescarUI()
+                    dialog.dismiss()
+                }
             }
-            dialog.dismiss()
         }
+
         dialog.show()
     }
 }

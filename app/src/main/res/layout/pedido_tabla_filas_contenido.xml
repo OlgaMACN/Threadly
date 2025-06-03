@@ -3,10 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@color/fondoPantallas"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
     android:clickable="true"
     android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
     android:paddingHorizontal="16dp">
 
     <TextView
@@ -16,18 +16,18 @@
         android:layout_weight="1"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
-        android:textSize="20sp"
         android:text="@string/textoNombreGrafico"
-        android:textColor="@color/black" />
-
-    <TextView
-        android:id="@+id/txtVw_textoMadejasPedido"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:fontFamily="@font/catchy_mager"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:text="@string/textoMadejasPedido"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+    <!--
+        <TextView
+            android:id="@+id/txtVw_textoMadejasPedido"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/catchy_mager"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:text="@string/textoMadejasPedido"
+            android:textColor="@color/black" />-->
 </LinearLayout>

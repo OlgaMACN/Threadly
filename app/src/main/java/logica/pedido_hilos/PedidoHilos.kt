@@ -14,13 +14,25 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import logica.almacen_pedidos.PedidoGuardado
 import logica.almacen_pedidos.PedidoSingleton
 import logica.grafico_pedido.GraficoPedido
+import logica.grafico_pedido.HiloGrafico
+import persistencia.bbdd.ThreadlyDatabase
+import persistencia.daos.GraficoDao
+import persistencia.daos.HiloGraficoDao
+import persistencia.daos.PedidoDao
+import persistencia.entidades.HiloGraficoEntity
+import persistencia.entidades.PedidoEntity
 import utiles.BaseActivity
+import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
 import utiles.funciones.funcionToolbar
 import java.util.Date
@@ -42,9 +54,15 @@ private val REQUEST_CODE_GRAFICO_PEDIDO = 1 /* para identificar cada gráfico */
 class PedidoHilos : BaseActivity() {
 
     private lateinit var adaptadorPedido: AdaptadorPedido
-    private val listaGraficos = mutableListOf<Grafico>()
+    private var listaGraficos: MutableList<Grafico> = mutableListOf()
     private var pedidoGuardado = false
     private var nombrePedidoEditado: String? = null
+    private lateinit var btnGuardarPedido: Button
+    private var userId: Int = -1
+
+    private lateinit var graficoDao: GraficoDao
+    private lateinit var hiloGraficoDao: HiloGraficoDao
+    private lateinit var pedidoDao: PedidoDao
 
     /**
      * Método principal al crear la actividad. Inicializa la vista, carga un pedido si se va a editar
@@ -55,15 +73,22 @@ class PedidoHilos : BaseActivity() {
         setContentView(R.layout.pedido_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
-        /* inicializar el adaptador y configurar el recycler view */
+        graficoDao = ThreadlyDatabase.getDatabase(applicationContext).graficoDao()
+        hiloGraficoDao = ThreadlyDatabase.getDatabase(applicationContext).hiloGraficoDao()
+        pedidoDao = ThreadlyDatabase.getDatabase(applicationContext).pedidoDao()
+
+        userId = SesionUsuario.obtenerSesion(this)
+        if (userId < 0) finish()
+
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
         tablaPedido.layoutManager = LinearLayoutManager(this)
-        adaptadorPedido = AdaptadorPedido(listaGraficos,
+        adaptadorPedido = AdaptadorPedido(
+            listaGraficos,
             onItemClick = { graficoSeleccionado ->
-                Log.d("PedidoHilos", "Click en gráfico: ${graficoSeleccionado.nombre}")
-                // Lanzamos GraficoPedido propagando sesión y pasando el gráfico
-                lanzar(GraficoPedido::class.java) {
+                val index = listaGraficos.indexOf(graficoSeleccionado)
+                lanzarConResultado(GraficoPedido::class.java, REQUEST_CODE_GRAFICO_PEDIDO) {
                     putExtra("grafico", graficoSeleccionado)
+                    putExtra("position", index)
                 }
             },
             onEliminarGrafico = { index ->
@@ -72,20 +97,93 @@ class PedidoHilos : BaseActivity() {
         )
         tablaPedido.adapter = adaptadorPedido
 
-
         /* declarar componentes*/
+        btnGuardarPedido = findViewById(R.id.btn_guardarPedidoA)
+        btnGuardarPedido.isEnabled = true
+        btnGuardarPedido.setOnClickListener { mostrarDialogoConfirmarGuardado() }
+
+
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
-        val btnGuardarPedido = findViewById<Button>(R.id.btn_guardarPedidoA)
         val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
 
-        /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
-        btnGuardarPedido.setOnClickListener { guardarPedido() }
+
 
         /* funciones en continua ejecución durante la pantalla */
+        cargarGraficosTemporalesEnMemoria()
         buscadorGrafico()
         actualizarTotalMadejas()
+    }
+
+    /**
+     * 3) Carga desde Room todos los GraficoEntity con idPedido = NULL para este userId.
+     *    Para cada uno, además, carga sus HiloGraficoEntity y lo transforma a dominio.
+     */
+    private fun cargarGraficosTemporalesEnMemoria() {
+        lifecycleScope.launch {
+            val entidadesGrafico = withContext(Dispatchers.IO) {
+                graficoDao.obtenerGraficosEnCurso(userId)
+            }
+
+            listaGraficos.clear()
+            for (graficoEntity in entidadesGrafico) {
+                val hilosEntidades = withContext(Dispatchers.IO) {
+                    hiloGraficoDao.obtenerHilosDeGrafico(graficoEntity.id)
+                }
+                val listaHilosDominio = hilosEntidades.map { ent ->
+                    HiloGrafico(ent.hilo, ent.madejas)
+                }.toMutableList()
+
+                listaGraficos.add(
+                    Grafico(
+                        nombre = graficoEntity.nombre,
+                        listaHilos = listaHilosDominio
+                    )
+                )
+            }
+
+            listaGraficos.sortBy { it.nombre.lowercase() }
+            adaptadorPedido.actualizarLista(listaGraficos)
+            actualizarTotalMadejas()
+            validarBotonGuardar()
+        }
+    }
+
+    /**
+     * Muestra un diálogo de confirmación antes de guardar el pedido actual.
+     * Si el usuario confirma, guarda el pedido y lo elimina de memoria.
+     */
+    private fun mostrarDialogoConfirmarGuardado() {
+        if (listaGraficos.isEmpty()) {
+            Toast.makeText(this, "El pedido está vacío", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.pedido_dialog_guardar_pedido)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        ajustarDialog(dialog)
+        dialog.setCancelable(false)
+
+        val btnConfirmar = dialog.findViewById<Button>(R.id.btn_guardarPedido)
+        val btnCancelar = dialog.findViewById<Button>(R.id.btn_volverSinGuardar)
+
+        btnConfirmar.setOnClickListener {
+            dialog.dismiss()
+            guardarPedidoEnBD()
+        }
+
+        btnCancelar.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun validarBotonGuardar() {
+        val habilitado = listaGraficos.isNotEmpty()
+        btnGuardarPedido.alpha = if (habilitado) 1.0f else 0.5f
     }
 
     /**
@@ -144,7 +242,6 @@ class PedidoHilos : BaseActivity() {
         txtTotal.text = "Total madejas: $total"
     }
 
-
     /**
      * Muestra un diálogo para agregar un nuevo gráfico al pedido.
      * Valida que no haya duplicados y que el nombre no esté vacío.
@@ -195,6 +292,7 @@ class PedidoHilos : BaseActivity() {
             listaGraficos.sortBy { it.nombre.lowercase() }
             adaptadorPedido.actualizarLista(listaGraficos)
             actualizarTotalMadejas()
+            validarBotonGuardar()
             dialog.dismiss()
         }
         btnCancelar.setOnClickListener {
@@ -208,32 +306,46 @@ class PedidoHilos : BaseActivity() {
      *
      * @param index Índice del gráfico en la lista.
      */
+    /**
+     * 4b) Mostrar diálogo de confirmación para eliminar un gráfico de la lista (tanto en memoria como en DB).
+     */
     private fun dialogoEliminarGrafico(index: Int) {
-        val grafico = listaGraficos[index]
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.pedido_dialog_eliminar_grafico)
-
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        /* llamada al metodo que centra el dialog en pantalla */
+        val graficoDom = listaGraficos[index]
+        val dialog = Dialog(this).apply {
+            setContentView(R.layout.pedido_dialog_eliminar_grafico)
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
         ajustarDialog(dialog)
-
         dialog.setCancelable(false)
 
-        /* variables del dialog */
         val txtNombreGrafico = dialog.findViewById<TextView>(R.id.txtVw_nombreGrafico)
         val btnEliminar = dialog.findViewById<Button>(R.id.btn_eliminarGrafico)
-        val btnVolver =
-            dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog)
+        val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog)
 
-        /* para visualizar el nombre del gráfico en el dialog */
-        txtNombreGrafico.text = grafico.nombre
+        txtNombreGrafico.text = graficoDom.nombre
 
         btnEliminar.setOnClickListener {
-            listaGraficos.removeAt(index)
-            adaptadorPedido.actualizarLista(listaGraficos)
-            actualizarTotalMadejas()
-            dialog.dismiss()
+            lifecycleScope.launch(Dispatchers.IO) {
+
+                val entidad = graficoDao.obtenerGraficoEnCursoPorNombre(userId, graficoDom.nombre)
+                if (entidad != null) {
+
+                    val hilosEnt = hiloGraficoDao.obtenerHilosDeGrafico(entidad.id)
+                    for (h in hilosEnt) {
+                        hiloGraficoDao.eliminarHiloDeGrafico(h)
+                    }
+
+                    graficoDao.eliminarGraficoEnCurso(entidad.id)
+                }
+
+                withContext(Dispatchers.Main) {
+                    listaGraficos.removeAt(index)
+                    adaptadorPedido.actualizarLista(listaGraficos)
+                    actualizarTotalMadejas()
+                    validarBotonGuardar()
+                    dialog.dismiss()
+                }
+            }
         }
 
         btnVolver.setOnClickListener {
@@ -255,14 +367,13 @@ class PedidoHilos : BaseActivity() {
         }
 
         val nombreFinal = nombrePedidoEditado ?: nombrePedido()
-
         val nuevoPedido = PedidoGuardado(nombre = nombreFinal, graficos = copiaGraficos)
 
-        // Si estamos editando, reemplazamos el existente
         PedidoSingleton.guardarPedido(nuevoPedido)
 
         listaGraficos.clear()
         adaptadorPedido.actualizarLista(listaGraficos)
+        validarBotonGuardar()
         pedidoGuardado = true
         Toast.makeText(this, "Pedido guardado como $nombreFinal", Toast.LENGTH_SHORT).show()
     }
@@ -291,10 +402,7 @@ class PedidoHilos : BaseActivity() {
     private fun realizarPedido() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pedido_dialog_realizar_pedido)
-
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        /* llamada al metodo que centra el dialog en pantalla */
         ajustarDialog(dialog)
 
         dialog.setCancelable(false)
@@ -348,88 +456,98 @@ class PedidoHilos : BaseActivity() {
         }
     }
 
+    /* persistir en room el pedido */
+    private fun guardarPedidoEnBD() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            // 1) Generar un nombre único para el pedido
+            val nombreFinal = nombrePedidoUnico()
+            // 2) Insertar en la tabla "pedidos"
+            val nuevoPedidoId = pedidoDao.insertarPedido(
+                PedidoEntity(
+                    nombre = nombreFinal,
+                    userId = userId
+                )
+            ).toInt()
+
+            graficoDao.asociarGraficosAlPedido(userId, nuevoPedidoId)
+
+            withContext(Dispatchers.Main) {
+                listaGraficos.clear()
+                adaptadorPedido.actualizarLista(listaGraficos)
+                actualizarTotalMadejas()
+                validarBotonGuardar()
+                Toast.makeText(
+                    this@PedidoHilos,
+                    "Pedido guardado como \"$nombreFinal\"",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
     /**
-     * Recibe un gráfico actualizado desde la actividad GraficoPedido y actualiza su información.
+     * Genera un nombre único para el nuevo pedido con formato "PyyyyMMdd" o "PyyyyMMdd(n)".
+     */
+    private suspend fun nombrePedidoUnico(): String {
+        val fechaHoy = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+        var baseNombre = "P$fechaHoy"
+        var nombreCandidato = baseNombre
+        var contador = 1
+
+        val pedidosExistentes = withContext(Dispatchers.IO) {
+            pedidoDao.obtenerPedidosConGraficos(userId).map { it.pedido.nombre }
+        }
+        while (pedidosExistentes.any { it == nombreCandidato }) {
+            nombreCandidato = "$baseNombre($contador)"
+            contador++
+        }
+        return nombreCandidato
+    }
+
+
+    /**
+     * Cuando vuelves desde GraficoPedido (REQUEST_CODE_GRAFICO_PEDIDO),
+     * actualizamos la entidad HiloGrafico en DB y la lista en memoria.
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_GRAFICO_PEDIDO && resultCode == RESULT_OK && data != null) {
-            val updatedGrafico = data.getSerializableExtra("grafico") as? Grafico ?: return
-            val position = data.getIntExtra("position", -1)
-            if (position in listaGraficos.indices) {
-                /* reemplaza el gráfico con su versión actualizada */
-                listaGraficos[position] = updatedGrafico
-                /* se notifica al adaptador */
-                adaptadorPedido.actualizarLista(listaGraficos)
-                /* y se actualiza */
-                actualizarTotalMadejas()
+            val graficoEditado = data.getSerializableExtra("grafico") as? Grafico
+            val posicion = data.getIntExtra("position", -1)
+
+            if (graficoEditado != null && posicion in listaGraficos.indices) {
+
+                lifecycleScope.launch(Dispatchers.IO) {
+
+                    val graficoEnt =
+                        graficoDao.obtenerGraficoEnCursoPorNombre(userId, graficoEditado.nombre)
+                    if (graficoEnt != null) {
+                        val graficoId = graficoEnt.id
+
+                        val hilosPrevios = hiloGraficoDao.obtenerHilosDeGrafico(graficoId)
+                        for (prev in hilosPrevios) {
+                            hiloGraficoDao.eliminarHiloDeGrafico(prev)
+                        }
+
+                        for (hiloDom in graficoEditado.listaHilos) {
+                            hiloGraficoDao.insertarHiloEnGrafico(
+                                HiloGraficoEntity(
+                                    graficoId = graficoId,
+                                    hilo = hiloDom.hilo,
+                                    madejas = hiloDom.madejas
+                                )
+                            )
+                        }
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        listaGraficos[posicion] = graficoEditado
+                        adaptadorPedido.notifyItemChanged(posicion)
+                        actualizarTotalMadejas()
+                    }
+                }
             }
         }
-    }
-
-    /**
-     * Muestra un diálogo para confirmar si se desea guardar antes de salir.
-     * Si ya está guardado o no hay gráficos, sale directamente.
-     */
-    @Suppress("MissingSuperCall")
-    override fun onBackPressed() {
-        dialogGuardarPedido()
-    }
-
-    /**
-     * Llamada auxiliar para navegar desde esta pantalla, mostrando el diálogo de guardar si es necesario.
-     *
-     * @param destino Acción a ejecutar tras confirmar guardar o salir.
-     */
-    fun onSalirDePantalla(destino: () -> Unit) {
-        dialogGuardarPedido(salirDespues = false, destino = destino)
-    }
-
-    /**
-     * Muestra el diálogo de guardar pedido si hay cambios pendientes.
-     *
-     * @param salirDespues Indica si se debe cerrar la pantalla tras guardar o cancelar.
-     * @param destino Acción opcional a ejecutar si no se cancela.
-     */
-    private fun dialogGuardarPedido(salirDespues: Boolean = true, destino: (() -> Unit)? = null) {
-        if (pedidoGuardado || listaGraficos.isEmpty()) {
-            if (destino != null) {
-                destino()
-            } else if (salirDespues) {
-                finish()
-            }
-            return
-        }
-
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.pedido_dialog_guardar_pedido)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        ajustarDialog(dialog)
-        dialog.setCancelable(false)
-
-        val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarPedido)
-        val btnVolver = dialog.findViewById<Button>(R.id.btn_volverSinGuardar)
-
-        btnGuardar.setOnClickListener {
-            guardarPedido()
-            dialog.dismiss()
-            if (destino != null) {
-                destino()
-            } else if (salirDespues) {
-                finish()
-            }
-        }
-
-        btnVolver.setOnClickListener {
-            dialog.dismiss()
-            if (destino != null) {
-                destino()
-            } else if (salirDespues) {
-                finish()
-            }
-        }
-
-        dialog.show()
     }
 
 }
