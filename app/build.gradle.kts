@@ -34,6 +34,14 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    dataBinding {
+        enable = true
+    }
+
+//    viewBinding {
+//        enable = true
+//    }
 }
 
 dependencies {
@@ -52,6 +60,7 @@ dependencies {
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.room.common.jvm) /* dependencias de room */
     implementation(libs.androidx.room.runtime.android)
+    implementation(libs.androidx.hilt.work)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
