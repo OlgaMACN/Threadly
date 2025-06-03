@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -21,7 +20,6 @@ import com.threadly.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import logica.almacen_pedidos.PedidoGuardado
 import logica.almacen_pedidos.PedidoSingleton
 import logica.grafico_pedido.GraficoPedido
 import logica.grafico_pedido.HiloGrafico
@@ -256,45 +254,41 @@ class PedidoHilos : BaseActivity() {
     private fun dialogAgregarGrafico() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.pedido_dialog_agregar_grafico)
-
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        /* llamada al metodo que centra el dialog en pantalla */
         ajustarDialog(dialog)
-
         dialog.setCancelable(false)
 
-        /* variables del dialog */
         val nombreInput = dialog.findViewById<EditText>(R.id.edTxt_pedirNombreGrafico)
         val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardarGrafico)
-        val btnCancelar =
-            dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog_agregarGrafico)
+        val btnCancelar = dialog.findViewById<Button>(R.id.btn_volver_pedido_dialog_agregarGrafico)
 
         btnGuardar.setOnClickListener {
             val nombre = nombreInput.text.toString().trim()
-
             if (nombre.isEmpty()) {
-                Toast.makeText(
-                    this,
-                    "Por favor, introduce un nombre.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Por favor, introduce un nombre.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
-            /* verificar si ya existe un gráfico con ese nombre */
             if (listaGraficos.any { it.nombre.equals(nombre, ignoreCase = true) }) {
-                Toast.makeText(this, "Ya existe un gráfico con ese nombre", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this, "Ya existe un gráfico con ese nombre", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            /* el usuario creará un nuevo gráfico con madejas a cero, hasta que lo edite */
+            // ① Insertar el GraficoEntity en Room, aunque no tenga hilos todavía:
+            lifecycleScope.launch(Dispatchers.IO) {
+                graficoDao.insertarGrafico(
+                    persistencia.entidades.GraficoEntity(
+                        nombre   = nombre,
+                        idPedido = null,
+                        userId   = userId
+                    )
+                )
+            }
+
+            // ② En paralelo, añadimos al listado en memoria el dominio Grafico con listaHilos vacía:
             val nuevoGrafico = Grafico(
                 nombre = nombre,
                 listaHilos = mutableListOf()
             )
-
             listaGraficos.add(nuevoGrafico)
             listaGraficos.sortBy { it.nombre.lowercase() }
             adaptadorPedido.actualizarLista(listaGraficos)
@@ -302,11 +296,13 @@ class PedidoHilos : BaseActivity() {
             validarBotonGuardar()
             dialog.dismiss()
         }
+
         btnCancelar.setOnClickListener {
             dialog.dismiss()
         }
         dialog.show()
     }
+
 
     /**
      * Muestra un diálogo de confirmación para eliminar un gráfico del pedido.
@@ -359,31 +355,6 @@ class PedidoHilos : BaseActivity() {
             dialog.dismiss()
         }
         dialog.show()
-    }
-
-    /**
-     * Guarda el pedido actual en memoria (singleton) y limpia la lista de gráficos.
-     * Si se está editando un pedido, lo sobrescribe.
-     */
-    private fun guardarPedido() {
-        val copiaGraficos = listaGraficos.map { grafico ->
-            grafico.copy(
-                listaHilos = grafico.listaHilos?.map { it.copy() }?.toMutableList()
-                    ?: mutableListOf()
-            )
-        }
-
-        val nombreFinal = nombrePedidoEditado ?: nombrePedido()
-        val nuevoPedido = PedidoGuardado(nombre = nombreFinal, graficos = copiaGraficos)
-
-        // Si estamos editando, reemplazamos el existente
-        PedidoSingleton.guardarPedido(nuevoPedido)
-
-        listaGraficos.clear()
-        adaptadorPedido.actualizarLista(listaGraficos)
-        validarBotonGuardar()
-        pedidoGuardado = true
-        Toast.makeText(this, "Pedido guardado como $nombreFinal", Toast.LENGTH_SHORT).show()
     }
 
     /**
