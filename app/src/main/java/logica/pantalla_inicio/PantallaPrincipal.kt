@@ -46,7 +46,6 @@ class PantallaPrincipal : BaseActivity() {
         imgPerfil = findViewById(R.id.imgVw_imagenPerfil)
         txtTip = findViewById(R.id.txtVw_contenidoTip)
 
-        // inicializa DAO y sesión
         dao = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
         userId = SesionUsuario.obtenerSesion(this)
         if (userId < 0) finish()
@@ -66,17 +65,15 @@ class PantallaPrincipal : BaseActivity() {
     override fun onResume() {
         super.onResume()
 
-        // 1) Leemos el stock y sumamos madejas
         lifecycleScope.launch {
             val totalMadejas = withContext(Dispatchers.IO) {
                 dao.obtenerStockPorUsuario(userId)
                     .sumOf { it.madejas }
             }
-            // 2) Mostramos el total
+
             findViewById<TextView>(R.id.txtVw_contenidoStock)
                 .text = totalMadejas.toString()
 
-            // 3) Consejo y usuarios
             consejoAleatorio()
             cargarUsuario()
         }

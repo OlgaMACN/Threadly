@@ -46,7 +46,7 @@ class StockPersonal : BaseActivity() {
     private lateinit var adaptadorStock: AdaptadorStock
     private lateinit var dao: HiloStockDao
     private var userId: Int = -1
-    // Trabajamos siempre sobre esta lista local:
+
     private val listaStock = mutableListOf<HiloStock>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,18 +54,18 @@ class StockPersonal : BaseActivity() {
         setContentView(R.layout.stock_aa_principal)
         funcionToolbar(this)
 
-        // Inicializa DAO y sesión
+
         dao = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
         userId = SesionUsuario.obtenerSesion(this)
         if (userId < 0) finish()
 
-        // RecyclerView y Adaptador
+
         tablaStock = findViewById(R.id.tabla_stock)
         adaptadorStock = AdaptadorStock(listaStock, ::dialogEliminarHilo)
         tablaStock.layoutManager = LinearLayoutManager(this)
         tablaStock.adapter = adaptadorStock
 
-        // Primera carga: si no hay stock para este usuario, cargo el XML
+
         lifecycleScope.launch(Dispatchers.IO) {
             val existentes = dao.obtenerStockPorUsuario(userId)
             if (existentes.isEmpty()) {
@@ -82,7 +82,6 @@ class StockPersonal : BaseActivity() {
             refrescarUI()
         }
 
-        // Botones
         findViewById<Button>(R.id.btn_agregarHiloStk).setOnClickListener { dialogAgregarHilo() }
         findViewById<Button>(R.id.btn_agregarMadejaStk).setOnClickListener { dialogAgregarMadeja() }
         findViewById<Button>(R.id.btn_eliminarMadejaStk).setOnClickListener { dialogEliminarMadeja() }

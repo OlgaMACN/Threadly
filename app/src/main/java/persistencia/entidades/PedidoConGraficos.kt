@@ -12,7 +12,7 @@ data class PedidoConGraficos(
 
     @Relation(
         parentColumn = "id",
-        entityColumn = "idPedido",    // campo en GraficoEntity que apunta a PedidoEntity.id
+        entityColumn = "idPedido",    /* campo en GraficoEntity que apunta a PedidoEntity.id */
         entity = GraficoEntity::class
     )
     val graficos: List<GraficoConHilos>

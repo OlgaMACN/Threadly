@@ -41,14 +41,12 @@ class AdaptadorCatalogo(
             holder.txtNoColor.visibility = View.VISIBLE
         }
 
-        // resaltar si corresponde
         if (hilo.numHilo == hiloResaltado) {
             holder.itemView.setBackgroundColor(Color.YELLOW)
         } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT)
         }
 
-        // Aquí puedes usar click largo o un botón si luego añades uno
         holder.itemView.setOnLongClickListener {
             onEliminarClick(hilo)
             true

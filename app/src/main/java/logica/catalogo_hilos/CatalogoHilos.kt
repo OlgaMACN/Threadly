@@ -170,7 +170,6 @@ class CatalogoHilos : BaseActivity() {
             }
 
             lifecycleScope.launch(Dispatchers.IO) {
-                // BONUS: validamos manualmente si ya existe
                 val existente = dao.obtenerHiloPorNumYUsuario(num, userId)
 
                 withContext(Dispatchers.Main) {
@@ -181,7 +180,7 @@ class CatalogoHilos : BaseActivity() {
                             Toast.LENGTH_LONG
                         ).show()
                     } else {
-                        // No existe, lo insertamos
+                       /* si no existe se inserta */
                         val ent = HiloCatalogoEntity(
                             userId = userId,
                             numHilo = num,
@@ -289,7 +288,7 @@ class CatalogoHilos : BaseActivity() {
             }
 
             lifecycleScope.launch(Dispatchers.IO) {
-                // BONUS: validación si se modifica el número
+
                 if (modNum && nuevoNum != entidadVieja.numHilo) {
                     val existente = dao.obtenerHiloPorNumYUsuario(nuevoNum, userId)
                     if (existente != null) {
@@ -300,7 +299,7 @@ class CatalogoHilos : BaseActivity() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                        return@launch // abortar
+                        return@launch
                     }
                 }
 
@@ -348,7 +347,7 @@ class CatalogoHilos : BaseActivity() {
         btnVolver.setOnClickListener { dialog.dismiss() }
         btnEliminar.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
-                dao.eliminarPorNumYUsuario(hilo.numHilo, userId) // O usa el ID si lo tienes
+                dao.eliminarPorNumYUsuario(hilo.numHilo, userId)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
                         this@CatalogoHilos,

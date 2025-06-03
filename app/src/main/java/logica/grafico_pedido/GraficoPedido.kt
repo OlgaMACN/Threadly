@@ -11,7 +11,11 @@ import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,12 +23,12 @@ import com.threadly.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import logica.pedido_hilos.Grafico
 import persistencia.bbdd.ThreadlyDatabase
 import persistencia.daos.HiloGraficoDao
 import persistencia.daos.HiloStockDao
 import persistencia.entidades.GraficoEntity
 import persistencia.entidades.HiloGraficoEntity
-import logica.pedido_hilos.Grafico
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
@@ -52,13 +56,13 @@ class GraficoPedido : BaseActivity() {
     private lateinit var txtStockActual: TextView
     private lateinit var recyclerView: RecyclerView
 
-    // Lista en memoria de HiloGrafico (dominio)
+
     private var listaDominio: MutableList<HiloGrafico> = mutableListOf()
 
     private var graficoNombre: String = ""
     private var graficoId: Int = -1
 
-    // countTelaGlobal se mantiene para ocultar el campo tras la primera inserción
+
     private var countTelaGlobal: Int? = null
     private var userId: Int = -1
 
@@ -68,16 +72,16 @@ class GraficoPedido : BaseActivity() {
         funcionToolbar(this)
 
         daoGrafico = ThreadlyDatabase.getDatabase(applicationContext).hiloGraficoDao()
-        daoStock   = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
-        userId     = SesionUsuario.obtenerSesion(this)
+        daoStock = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
+        userId = SesionUsuario.obtenerSesion(this)
         if (userId < 0) finish()
 
-        txtTotal       = findViewById(R.id.txtVw_totalMadejasGraficoIndividual)
+        txtTotal = findViewById(R.id.txtVw_totalMadejasGraficoIndividual)
         txtStockActual = findViewById(R.id.txtVw_stockHiloActual)
-        recyclerView   = findViewById(R.id.tabla_grafico)
+        recyclerView = findViewById(R.id.tabla_grafico)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Recibimos el objeto Grafico desde PedidoHilos
+
         val graficoRecibido = intent.getSerializableExtra("grafico") as? Grafico
         if (graficoRecibido == null) {
             Toast.makeText(this, "Error: gráfico no recibido", Toast.LENGTH_LONG).show()
@@ -92,13 +96,20 @@ class GraficoPedido : BaseActivity() {
             withContext(Dispatchers.IO) {
                 var existingId = daoGrafico.obtenerIdPorNombre(graficoNombre)
                 if (existingId == null) {
-                    existingId = daoGrafico.insertarGrafico(GraficoEntity(nombre = graficoNombre, idPedido = null, userId = userId )).toInt()
+                    existingId = daoGrafico.insertarGrafico(
+                        GraficoEntity(
+                            nombre = graficoNombre,
+                            idPedido = null,
+                            userId = userId
+                        )
+                    ).toInt()
                 }
                 graficoId = existingId
             }
 
             if (graficoId < 0) {
-                Toast.makeText(this@GraficoPedido, "Error cargando gráfico", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@GraficoPedido, "Error cargando gráfico", Toast.LENGTH_SHORT)
+                    .show()
                 finish()
                 return@launch
             }
@@ -115,7 +126,7 @@ class GraficoPedido : BaseActivity() {
                 daoGrafico.obtenerHilosPorGrafico(graficoId)
             }
 
-            // Mapeamos entidades a dominio y ordenamos
+
             listaDominio = entidades.map { HiloGrafico(it.hilo, it.madejas) }
                 .let { ordenarHilos(it) { h -> h.hilo } }
                 .toMutableList()
@@ -151,7 +162,7 @@ class GraficoPedido : BaseActivity() {
                 adaptadorGrafico.actualizarLista(listaDominio)
             }
 
-            // Calculamos y mostramos el total inicial
+
             val total = listaDominio.sumOf { it.madejas }
             txtTotal.text = "Total Madejas: $total"
             buscadorHilo()
@@ -198,6 +209,7 @@ class GraficoPedido : BaseActivity() {
                     recyclerView.visibility = View.VISIBLE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -217,13 +229,11 @@ class GraficoPedido : BaseActivity() {
      * Además, si el hilo ya existe en este gráfico, muestra un Toast y no lo inserta.
      */
     private fun dialogAgregarHiloGrafico() {
-        // 1) Antes de nada, comprobamos en BD si ya hay hilos insertados para este graficoId
         lifecycleScope.launch {
             val hilosExistentes = withContext(Dispatchers.IO) {
-                daoGrafico.obtenerHilosPorGrafico(graficoId)  // devuelve List<HiloGraficoEntity>
+                daoGrafico.obtenerHilosPorGrafico(graficoId)
             }
 
-            // 2) Creamos el diálogo normalmente
             val dialog = Dialog(this@GraficoPedido).apply {
                 setContentView(R.layout.pedidob_dialog_agregar_hilo)
                 window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -231,14 +241,12 @@ class GraficoPedido : BaseActivity() {
                 setCancelable(false)
             }
 
-            // 3) Referenciamos los campos
             val inpH = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
             val inpP = dialog.findViewById<EditText>(R.id.edTxt_introducirPuntadas_dialog_addHilo)
             val inpC = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
             val btnG = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
             val btnVol = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
 
-            // 4) Si ya hay al menos un hilo en BD, ocultamos el campo de count de tela:
             if (hilosExistentes.isNotEmpty()) {
                 inpC.visibility = View.GONE
             } else {
@@ -251,25 +259,13 @@ class GraficoPedido : BaseActivity() {
                 val hiloCode = inpH.text.toString().trim().uppercase()
                 val punt = inpP.text.toString().trim().toIntOrNull()
 
-                // 5) Si no hay hilos existentes, pedimos count de inpC; si ya existían,
-                //    ese “count” lo consideraremos implícito (no está visible).
                 val count: Int? = if (hilosExistentes.isNotEmpty()) {
-                    // Ya había hilos guardados para este gráfico → usamos el mismo count anterior.
-                    // No necesitamos leerlo de ningún EditText, porque el cálculo de madejas
-                    // de los hilos ya insertados en BD se hizo con ese count, así que
-                    // aquí basta que `count` sea distinto de null para que calcularMadejas
-                    // devuelva algo coherente. PODRÍAS recuperar ese count de algún campo
-                    // en BD si lo guardaras, pero si tus hilos en BD ya tienen madejas
-                    // independientes (cálculo previo), entonces es indiferente reenviar count.
-                    // En este ejemplo asumiremos que basta con marcar como “no nulo”:
                     1
                 } else {
-                    // Primer hilo: el usuario debe haber escrito count en inpC.
                     inpC.text.toString().trim().toIntOrNull()
                         ?.takeIf { it in listOf(14, 16, 18, 20, 25) }
                 }
 
-                // 6) Validaciones
                 if (listaDominio.any { it.hilo == hiloCode }) {
                     Toast.makeText(
                         this@GraficoPedido,
@@ -279,11 +275,11 @@ class GraficoPedido : BaseActivity() {
                     return@setOnClickListener
                 }
                 if (hiloCode.isEmpty() || punt == null || count == null) {
-                    Toast.makeText(this@GraficoPedido, "Campos inválidos", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@GraficoPedido, "Campos inválidos", Toast.LENGTH_SHORT)
+                        .show()
                     return@setOnClickListener
                 }
 
-                // 7) Calculamos madejas y guardamos en BD
                 val madejas = calcularMadejas(punt, count)
 
                 lifecycleScope.launch {
@@ -312,7 +308,6 @@ class GraficoPedido : BaseActivity() {
                         )
                     }
 
-                    // 8) Tras insertar, recargamos la lista y cerramos el diálogo
                     configurarRecycler()
                     dialog.dismiss()
                 }

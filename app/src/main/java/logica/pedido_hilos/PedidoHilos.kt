@@ -60,7 +60,6 @@ class PedidoHilos : BaseActivity() {
     private lateinit var btnGuardarPedido: Button
     private var userId: Int = -1
 
-    // DAOs
     private lateinit var graficoDao: GraficoDao
     private lateinit var hiloGraficoDao: HiloGraficoDao
     private lateinit var pedidoDao: PedidoDao
@@ -74,7 +73,6 @@ class PedidoHilos : BaseActivity() {
         setContentView(R.layout.pedido_aa_principal)
         funcionToolbar(this) /* llamada a la función para usar el toolbar */
 
-        // 1) Instanciamos los DAOs
         graficoDao = ThreadlyDatabase.getDatabase(applicationContext).graficoDao()
         hiloGraficoDao = ThreadlyDatabase.getDatabase(applicationContext).hiloGraficoDao()
         pedidoDao = ThreadlyDatabase.getDatabase(applicationContext).pedidoDao()
@@ -82,7 +80,6 @@ class PedidoHilos : BaseActivity() {
         userId = SesionUsuario.obtenerSesion(this)
         if (userId < 0) finish()
 
-        // 2) Inicializamos RecyclerView y Adaptador
         val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
         tablaPedido.layoutManager = LinearLayoutManager(this)
         adaptadorPedido = AdaptadorPedido(
@@ -100,7 +97,6 @@ class PedidoHilos : BaseActivity() {
         )
         tablaPedido.adapter = adaptadorPedido
 
-
         /* declarar componentes*/
         btnGuardarPedido = findViewById(R.id.btn_guardarPedidoA)
         btnGuardarPedido.isEnabled = true
@@ -110,10 +106,8 @@ class PedidoHilos : BaseActivity() {
         val btnAgregarGrafico = findViewById<Button>(R.id.btn_agregarGraficoPedido)
         val btnRealizarPedido = findViewById<Button>(R.id.btn_realizarPedido)
 
-        /* cuando se pulsan se llevan a cabo sus acciones */
         btnAgregarGrafico.setOnClickListener { dialogAgregarGrafico() }
         btnRealizarPedido.setOnClickListener { realizarPedido() }
-
 
 
         /* funciones en continua ejecución durante la pantalla */
@@ -121,6 +115,7 @@ class PedidoHilos : BaseActivity() {
         buscadorGrafico()
         actualizarTotalMadejas()
     }
+
     /**
      * 3) Carga desde Room todos los GraficoEntity con idPedido = NULL para este userId.
      *    Para cada uno, además, carga sus HiloGraficoEntity y lo transforma a dominio.
@@ -131,32 +126,30 @@ class PedidoHilos : BaseActivity() {
                 graficoDao.obtenerGraficosEnCurso(userId)
             }
 
-            // Para cada GraficoEntity, necesitamos leer sus HiloGraficoEntity y mapearlos a HiloGrafico
             listaGraficos.clear()
             for (graficoEntity in entidadesGrafico) {
                 val hilosEntidades = withContext(Dispatchers.IO) {
                     hiloGraficoDao.obtenerHilosDeGrafico(graficoEntity.id)
                 }
-                // Mapeamos a dominio: Grafico(nombre, listaHilos=MutableList<HiloGrafico>)
                 val listaHilosDominio = hilosEntidades.map { ent ->
                     HiloGrafico(ent.hilo, ent.madejas)
                 }.toMutableList()
 
                 listaGraficos.add(
                     Grafico(
-                        nombre    = graficoEntity.nombre,
+                        nombre = graficoEntity.nombre,
                         listaHilos = listaHilosDominio
                     )
                 )
             }
 
-            // Ordenar alfabéticamente (o como prefieras)
             listaGraficos.sortBy { it.nombre.lowercase() }
             adaptadorPedido.actualizarLista(listaGraficos)
             actualizarTotalMadejas()
             validarBotonGuardar()
         }
     }
+
     /**
      * Muestra un diálogo de confirmación antes de guardar el pedido actual.
      * Si el usuario confirma, guarda el pedido y lo elimina de memoria.
@@ -333,18 +326,18 @@ class PedidoHilos : BaseActivity() {
 
         btnEliminar.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
-                // 1) Primero obtenemos el id de GraficoEntity por nombre (solo temporales)
+
                 val entidad = graficoDao.obtenerGraficoEnCursoPorNombre(userId, graficoDom.nombre)
                 if (entidad != null) {
-                    // 2) Borrar todos sus HiloGraficoEntity relacionados
+
                     val hilosEnt = hiloGraficoDao.obtenerHilosDeGrafico(entidad.id)
                     for (h in hilosEnt) {
                         hiloGraficoDao.eliminarHiloDeGrafico(h)
                     }
-                    // 3) Borrar el propio grafico
+
                     graficoDao.eliminarGraficoEnCurso(entidad.id)
                 }
-                // 4) Actualizar la UI en el hilo principal
+
                 withContext(Dispatchers.Main) {
                     listaGraficos.removeAt(index)
                     adaptadorPedido.actualizarLista(listaGraficos)
@@ -376,7 +369,6 @@ class PedidoHilos : BaseActivity() {
         val nombreFinal = nombrePedidoEditado ?: nombrePedido()
         val nuevoPedido = PedidoGuardado(nombre = nombreFinal, graficos = copiaGraficos)
 
-        // Si estamos editando, reemplazamos el existente
         PedidoSingleton.guardarPedido(nuevoPedido)
 
         listaGraficos.clear()
@@ -464,12 +456,7 @@ class PedidoHilos : BaseActivity() {
         }
     }
 
-    /**
-     * 5a) Aquí persistimos en Room el Pedido completo:
-     *     1) Creamos PedidoEntity y lo insertamos.
-     *     2) Llamamos a graficoDao.asociarGraficosAlPedido para “archivar” todos los gráficos con idPedido = null.
-     *     3) Limpiamos la lista en memoria y la interfaz.
-     */
+    /* persistir en room el pedido */
     private fun guardarPedidoEnBD() {
         lifecycleScope.launch(Dispatchers.IO) {
             // 1) Generar un nombre único para el pedido
@@ -482,10 +469,8 @@ class PedidoHilos : BaseActivity() {
                 )
             ).toInt()
 
-            // 3) Asociar todos los gráficos “en curso” (idPedido = null) de este userId al nuevoPedidoId
             graficoDao.asociarGraficosAlPedido(userId, nuevoPedidoId)
 
-            // En el hilo principal, limpiar la UI
             withContext(Dispatchers.Main) {
                 listaGraficos.clear()
                 adaptadorPedido.actualizarLista(listaGraficos)
@@ -509,7 +494,6 @@ class PedidoHilos : BaseActivity() {
         var nombreCandidato = baseNombre
         var contador = 1
 
-        // Leer los pedidos ya existentes en BD para comprobar duplicados
         val pedidosExistentes = withContext(Dispatchers.IO) {
             pedidoDao.obtenerPedidosConGraficos(userId).map { it.pedido.nombre }
         }
@@ -532,18 +516,19 @@ class PedidoHilos : BaseActivity() {
             val posicion = data.getIntExtra("position", -1)
 
             if (graficoEditado != null && posicion in listaGraficos.indices) {
-                // 1) Actualizar hilos en la base de datos
+
                 lifecycleScope.launch(Dispatchers.IO) {
-                    // Obtenemos el id de GraficoEntity por nombre
-                    val graficoEnt = graficoDao.obtenerGraficoEnCursoPorNombre(userId, graficoEditado.nombre)
+
+                    val graficoEnt =
+                        graficoDao.obtenerGraficoEnCursoPorNombre(userId, graficoEditado.nombre)
                     if (graficoEnt != null) {
                         val graficoId = graficoEnt.id
-                        // Eliminamos todos los registros anteriores de hilos de este gráfico
+
                         val hilosPrevios = hiloGraficoDao.obtenerHilosDeGrafico(graficoId)
                         for (prev in hilosPrevios) {
                             hiloGraficoDao.eliminarHiloDeGrafico(prev)
                         }
-                        // Insertamos los hilos nuevos (que trae graficoEditado.listaHilos)
+
                         for (hiloDom in graficoEditado.listaHilos) {
                             hiloGraficoDao.insertarHiloEnGrafico(
                                 HiloGraficoEntity(
@@ -554,7 +539,7 @@ class PedidoHilos : BaseActivity() {
                             )
                         }
                     }
-                    // 2) Actualizar la lista en memoria y la UI
+
                     withContext(Dispatchers.Main) {
                         listaGraficos[posicion] = graficoEditado
                         adaptadorPedido.notifyItemChanged(posicion)

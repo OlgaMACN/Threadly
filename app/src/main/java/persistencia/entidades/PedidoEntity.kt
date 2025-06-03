@@ -12,8 +12,6 @@ import androidx.room.PrimaryKey
 data class PedidoEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-
     val nombre: String,
-
     val userId: Int
 )

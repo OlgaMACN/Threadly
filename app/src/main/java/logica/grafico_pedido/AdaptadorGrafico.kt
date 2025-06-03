@@ -30,7 +30,6 @@ class AdaptadorGrafico(
     private val onUpdateMadejas: (HiloGrafico) -> Unit
 ) : RecyclerView.Adapter<AdaptadorGrafico.HiloViewHolder>() {
 
-    // Hilos resaltados por búsqueda (search) y por clic (stock)
     private var hiloResaltadoBusqueda: String? = null
     private var hiloResaltadoClick: String? = null
 
@@ -53,18 +52,15 @@ class AdaptadorGrafico(
     override fun onBindViewHolder(holder: HiloViewHolder, position: Int) {
         val hiloItem = hilos[position]
 
-        // 1) Mostrar el código y la cantidad original de madejas
         holder.txtHilo.text = hiloItem.hilo
         holder.txtMadejas.text = hiloItem.madejas.toString()
 
-        // 2) Retirar TextWatcher previo
         holder.textWatcher?.let {
             holder.edtModificar.removeTextChangedListener(it)
         }
-        // 3) Mostrar la cantidad modificada (si hay) o dejar vacío
+
         holder.edtModificar.setText(hiloItem.cantidadModificar?.toString() ?: "")
 
-        // 4) Asignar nuevo TextWatcher para actualizar cantidadModificar y total
         holder.textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 hiloItem.cantidadModificar = s?.toString()?.toIntOrNull()
@@ -76,17 +72,13 @@ class AdaptadorGrafico(
         }
         holder.edtModificar.addTextChangedListener(holder.textWatcher)
 
-        // 5) Decidir qué fondo aplicar:
-        //    - Primero, si coincide con hiloResaltadoBusqueda → usamos drawable “resaltar búsqueda”
-        //    - Si no, si coincide con hiloResaltadoClick → usamos drawable “resaltar clic”
-        //    - En cualquier otro caso, transparente
         when {
             hiloItem.hilo == hiloResaltadoBusqueda -> {
-                // Color/Drawable para la búsqueda
+                /* búsqueda */
                 holder.filaLayout.setBackgroundResource(R.drawable.reutilizable_resaltar_busqueda)
             }
             hiloItem.hilo == hiloResaltadoClick -> {
-                // Color/Drawable para el clic (p.ej. un azulito)
+                /* azulito stock */
                 holder.filaLayout.setBackgroundResource(R.drawable.reutilizable_resaltar_hilografico_stock)
             }
             else -> {
@@ -94,11 +86,10 @@ class AdaptadorGrafico(
             }
         }
 
-        // 6) Clic simple sobre el TextView del hilo: invocamos onClickHilo
         holder.txtHilo.setOnClickListener {
             onClickHilo(hiloItem)
         }
-        // 7) Pulsación larga en toda la fila para invocar onLongClickHilo
+
         holder.itemView.setOnLongClickListener {
             onLongClickHilo?.invoke(hiloItem)
             true
@@ -123,7 +114,6 @@ class AdaptadorGrafico(
     @SuppressLint("NotifyDataSetChanged")
     fun resaltarHiloBusqueda(hiloId: String?) {
         hiloResaltadoBusqueda = hiloId
-        // Al buscar, borro cualquier resaltado por clic
         hiloResaltadoClick = null
         notifyDataSetChanged()
     }

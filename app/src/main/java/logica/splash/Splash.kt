@@ -59,11 +59,10 @@ class Splash : AppCompatActivity() {
         setContentView(R.layout.splash_layout)
         val logo = findViewById<ImageView>(R.id.logoThreadly)
 
-        //todo quitar esta parte hasta el comentario masivo en producción
+        //todo quitar esta parte hasta el comentario masivo en producción, esto son pruebas
         val db = ThreadlyDatabase.getDatabase(applicationContext)
         val dao = db.usuarioDAO()
 
-        // Crear usuario de prueba si no hay ninguno
         CoroutineScope(Dispatchers.IO).launch {
             val usuarios = dao.obtenerTodos()
             if (usuarios.isEmpty()) {
