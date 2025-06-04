@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
 import android.text.Spanned
-import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.*
@@ -92,7 +91,13 @@ class GraficoPedido : BaseActivity() {
             withContext(Dispatchers.IO) {
                 var existingId = daoGrafico.obtenerIdPorNombre(graficoNombre)
                 if (existingId == null) {
-                    existingId = daoGrafico.insertarGrafico(GraficoEntity(nombre = graficoNombre, idPedido = null, userId = userId )).toInt()
+                    existingId = daoGrafico.insertarGrafico(
+                        GraficoEntity(
+                            nombre = graficoNombre,
+                            idPedido = null,
+                            userId = userId
+                        )
+                    ).toInt()
                 }
                 graficoId = existingId
             }
@@ -126,9 +131,7 @@ class GraficoPedido : BaseActivity() {
                     onClickHilo = { hiloGrafico ->
                         val hiloActual = hiloGrafico.hilo
                         val yaResaltado = adaptadorGrafico.obtenerHiloResaltadoClick() == hiloActual
-
                         adaptadorGrafico.resaltarHiloClick(hiloActual)
-
                         if (yaResaltado) {
                             txtStockActual.text = "Stock: 0"
                         } else {
@@ -140,21 +143,9 @@ class GraficoPedido : BaseActivity() {
                         txtTotal.text = "Total Madejas: $total"
                     },
                     onUpdateMadejas = { hiloGrafico ->
+                        // Persistir la nueva cantidad de madejas en Room
                         lifecycleScope.launch(Dispatchers.IO) {
-                            val nuevoValor = hiloGrafico.cantidadModificar ?: hiloGrafico.madejas
-                            daoGrafico.actualizarMadejas(hiloGrafico.hilo, nuevoValor)
-                            // Actualizar la lista en memoria en Main thread
-                            withContext(Dispatchers.Main) {
-                                // Buscar el hilo en listaDominio y actualizar madejas
-                                val index = listaDominio.indexOfFirst { it.hilo == hiloGrafico.hilo }
-                                if (index != -1) {
-                                    listaDominio[index] = hiloGrafico.copy(madejas = nuevoValor)
-                                    adaptadorGrafico.notifyItemChanged(index)
-                                    // Recalcular total y actualizar texto
-                                    val total = listaDominio.sumOf { it.madejas }
-                                    txtTotal.text = "Total Madejas: $total"
-                                }
-                            }
+                            daoGrafico.actualizarMadejas(hiloGrafico.hilo, hiloGrafico.madejas)
                         }
                     }
                 )
@@ -201,7 +192,7 @@ class GraficoPedido : BaseActivity() {
             }
         }
 
-        edt.addTextChangedListener(object : TextWatcher {
+        edt.addTextChangedListener(object : android.text.TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     adaptadorGrafico.resaltarHiloBusqueda(null)
@@ -239,8 +230,8 @@ class GraficoPedido : BaseActivity() {
         val inpH = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
         val inpP = dialog.findViewById<EditText>(R.id.edTxt_introducirPuntadas_dialog_addHilo)
         val inpC = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
-
         val btnG = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
+
         dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
             .setOnClickListener { dialog.dismiss() }
 
