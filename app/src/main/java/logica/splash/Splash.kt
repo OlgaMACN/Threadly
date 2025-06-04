@@ -15,8 +15,12 @@ import kotlinx.coroutines.launch
 import logica.login.LoginUserExiste
 import logica.pantalla_inicio.PantallaPrincipal
 import persistencia.bbdd.ThreadlyDatabase
+import persistencia.entidades.HiloCatalogoEntity
+import persistencia.entidades.HiloStockEntity
 import persistencia.entidades.Usuario
 import utiles.SesionUsuario
+import utiles.funciones.LeerXMLCodigo
+import utiles.funciones.leerXML
 import java.util.Timer
 import java.util.TimerTask
 
@@ -37,6 +41,7 @@ import java.util.TimerTask
  */
 class Splash : AppCompatActivity() {
 
+
     /**
      * Método llamado al crear la actividad.
      * Configura la vista, animaciones y la transición automática.
@@ -46,12 +51,10 @@ class Splash : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         /* forzar modo claro para toda la actividad */
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
         super.onCreate(savedInstanceState)
 
         /* ocultar la barra de título para una apariencia más limpia */
         supportActionBar?.hide()
-
         /* habilitar modo edge-to-edge para que la interfaz ocupe toda la pantalla */
         enableEdgeToEdge()
 
@@ -62,6 +65,9 @@ class Splash : AppCompatActivity() {
         //todo quitar esta parte hasta el comentario masivo en producción
         val db = ThreadlyDatabase.getDatabase(applicationContext)
         val dao = db.usuarioDAO()
+        val hiloDao = db.hiloCatalogoDao()
+        val stockDao = db.hiloStockDao()
+
 
         // Crear usuario de prueba si no hay ninguno
         CoroutineScope(Dispatchers.IO).launch {
@@ -72,8 +78,33 @@ class Splash : AppCompatActivity() {
                     password = "1234",
                     profilePic = R.drawable.img_avatar_defecto
                 )
-                val id = dao.insertar(usuarioPrueba).toInt()
-                SesionUsuario.guardarSesion(applicationContext, id)
+
+                val nuevoId = dao.insertar(usuarioPrueba).toInt()
+
+                // Guardar sesión activa
+                SesionUsuario.guardarSesion(applicationContext, nuevoId)
+
+                // Precargar catálogo XML para ese usuario
+                val xmlList = leerXML(applicationContext, R.raw.catalogo_hilos)
+                val entidadesXml = xmlList.map { hc ->
+                    HiloCatalogoEntity(
+                        userId = nuevoId,
+                        numHilo = hc.numHilo,
+                        nombreHilo = hc.nombreHilo,
+                        color = hc.color
+                    )
+                }
+                hiloDao.insertarHilos(entidadesXml)
+                // Precargar stock con madejas = 0
+                val xmlStock = LeerXMLCodigo(applicationContext, R.raw.catalogo_hilos)
+                val entidadesStock = xmlStock.map { hilo ->
+                    HiloStockEntity(
+                        usuarioId = nuevoId,
+                        hiloId = hilo.hiloId,
+                        madejas = 0
+                    )
+                }
+                stockDao.insertarStocks(entidadesStock)
             }
 
             ////////////////////////

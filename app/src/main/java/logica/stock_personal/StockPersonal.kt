@@ -27,7 +27,6 @@ import persistencia.daos.HiloStockDao
 import persistencia.entidades.HiloStockEntity
 import utiles.BaseActivity
 import utiles.SesionUsuario
-import utiles.funciones.LeerXMLCodigo
 import utiles.funciones.ValidarFormatoHilos
 import utiles.funciones.ajustarDialog
 import utiles.funciones.funcionToolbar
@@ -68,18 +67,6 @@ class StockPersonal : BaseActivity() {
 
         // Primera carga: si no hay stock para este usuario, cargo el XML
         lifecycleScope.launch(Dispatchers.IO) {
-            val existentes = dao.obtenerStockPorUsuario(userId)
-            if (existentes.isEmpty()) {
-                val inicial = LeerXMLCodigo(this@StockPersonal, R.raw.catalogo_hilos)
-                val entidades = inicial.map { h ->
-                    HiloStockEntity(
-                        usuarioId = userId,
-                        hiloId = h.hiloId,
-                        madejas = 0
-                    )
-                }
-                dao.insertarStocks(entidades)
-            }
             refrescarUI()
         }
 

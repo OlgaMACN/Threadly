@@ -65,20 +65,7 @@ class CatalogoHilos : BaseActivity() {
 
         /* primera carga para el xml */
         lifecycleScope.launch(Dispatchers.IO) {
-            val existentes = dao.obtenerHilosPorUsuario(userId)
-            if (existentes.isEmpty()) {
-                val xmlList = leerXML(this@CatalogoHilos, R.raw.catalogo_hilos)
-                val entidadesXml = xmlList.map { hc ->
-                    HiloCatalogoEntity(
-                        userId = userId,
-                        numHilo = hc.numHilo,
-                        nombreHilo = hc.nombreHilo,
-                        color = hc.color
-                    )
-                }
-                dao.insertarHilos(entidadesXml)
-            }
-            refrescarUI()
+                      refrescarUI()
         }
 
 

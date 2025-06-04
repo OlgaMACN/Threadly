@@ -16,6 +16,9 @@ interface HiloCatalogoDao {
     @Query("SELECT * FROM hilo_catalogo WHERE userId = :userId ORDER BY numHilo ASC")
     fun obtenerHilosPorUsuario(userId: Int): List<HiloCatalogoEntity>
 
+    @Query("SELECT COUNT(*) FROM hilo_catalogo WHERE userId = :usuarioId")
+    suspend fun contarHilos(usuarioId: Int): Int
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertarHilos(hilos: List<HiloCatalogoEntity>)
 
