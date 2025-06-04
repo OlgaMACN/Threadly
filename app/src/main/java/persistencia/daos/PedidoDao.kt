@@ -13,7 +13,7 @@ import persistencia.entidades.PedidoEntity
 @Dao
 interface PedidoDao {
 
-    /**
+    /*
      * Inserta un pedido en la tabla "pedidos" y devuelve su id generado.
      */
     @Insert
