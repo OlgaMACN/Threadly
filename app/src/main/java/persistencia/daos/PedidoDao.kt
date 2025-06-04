@@ -3,6 +3,7 @@ package persistencia.daos
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -18,6 +19,9 @@ interface PedidoDao {
     @Insert
     suspend fun insertarPedido(p: PedidoEntity): Long
 
+    @Query("SELECT * FROM pedidos WHERE userId = :userId ORDER BY nombre")
+    suspend fun obtenerTodosPorUsuario(userId: Int): List<PedidoEntity>
+
     /**
      * Obtiene todos los pedidos guardados de un usuario dado, ordenados por nombre.
      */
@@ -27,6 +31,18 @@ interface PedidoDao {
 
     @Query("SELECT * FROM pedidos WHERE userId = :userId ORDER BY id DESC LIMIT 1")
     suspend fun obtenerUltimoPedido(userId: Int): PedidoEntity?
+
+    @Query("SELECT * FROM pedidos ORDER BY nombre")
+    suspend fun obtenerTodos(): List<PedidoEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertar(pedido: PedidoEntity): Long
+
+    @Update
+    suspend fun actualizar(pedido: PedidoEntity)
+
+    @Delete
+    suspend fun eliminar(pedido: PedidoEntity)
 
     @Transaction
     @Query("SELECT * FROM pedidos WHERE userId = :userId")

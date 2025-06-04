@@ -20,7 +20,6 @@ import com.threadly.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import logica.almacen_pedidos.PedidoSingleton
 import logica.grafico_pedido.GraficoPedido
 import logica.grafico_pedido.HiloGrafico
 import persistencia.bbdd.ThreadlyDatabase
@@ -360,24 +359,6 @@ class PedidoHilos : BaseActivity() {
             dialog.dismiss()
         }
         dialog.show()
-    }
-
-    /**
-     * Genera un nombre único para un nuevo pedido con el formato "Pyyyymmdd" o "Pyyyymmdd(n)".
-     *
-     * @return Nombre único del pedido.
-     */
-    private fun nombrePedido(): String {
-        val fechaHoy = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
-        var baseNombre = "P$fechaHoy"
-        var nombreFinal = baseNombre
-        var contador = 1
-
-        while (PedidoSingleton.listaPedidos.any { it.nombre == nombreFinal }) {
-            nombreFinal = "$baseNombre($contador)"
-            contador++
-        }
-        return nombreFinal
     }
 
     /**

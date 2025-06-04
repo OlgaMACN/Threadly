@@ -6,7 +6,8 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
-import logica.almacen_pedidos.PedidoGuardado
+import modelo.PedidoGuardado
+
 
 /**
  * Exporta un pedido a un archivo CSV en la carpeta de descargas del dispositivo,
