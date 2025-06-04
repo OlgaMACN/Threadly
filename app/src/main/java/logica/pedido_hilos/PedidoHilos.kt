@@ -519,9 +519,7 @@ class PedidoHilos : BaseActivity() {
 
             if (graficoEditado != null && posicion in listaGraficos.indices) {
                 lifecycleScope.launch(Dispatchers.IO) {
-
-                    val graficoEnt =
-                        graficoDao.obtenerGraficoEnCursoPorNombre(userId, graficoEditado.nombre)
+                    val graficoEnt = graficoDao.obtenerGraficoEnCursoPorNombre(userId, graficoEditado.nombre)
                     if (graficoEnt != null) {
                         val graficoId = graficoEnt.id
                         val hilosPrevios = hiloGraficoDao.obtenerHilosDeGrafico(graficoId)
@@ -538,15 +536,16 @@ class PedidoHilos : BaseActivity() {
                             )
                         }
                     }
-                    // 2) Actualizar la lista en memoria y la UI
                     withContext(Dispatchers.Main) {
                         listaGraficos[posicion] = graficoEditado
                         adaptadorPedido.notifyItemChanged(posicion)
                         actualizarTotalMadejas()
+                        validarBotonGuardar()
                     }
                 }
             }
         }
     }
+
 
 }

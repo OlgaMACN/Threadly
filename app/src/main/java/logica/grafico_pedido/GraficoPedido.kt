@@ -139,10 +139,22 @@ class GraficoPedido : BaseActivity() {
                     onTotalChanged = { total ->
                         txtTotal.text = "Total Madejas: $total"
                     },
-                    onUpdateMadejas = { hilo ->
+                    onUpdateMadejas = { hiloGrafico ->
                         lifecycleScope.launch(Dispatchers.IO) {
-                            val nuevoValor = hilo.cantidadModificar ?: hilo.madejas
-                            daoGrafico.actualizarMadejas(hilo.hilo, nuevoValor)
+                            val nuevoValor = hiloGrafico.cantidadModificar ?: hiloGrafico.madejas
+                            daoGrafico.actualizarMadejas(hiloGrafico.hilo, nuevoValor)
+                            // Actualizar la lista en memoria en Main thread
+                            withContext(Dispatchers.Main) {
+                                // Buscar el hilo en listaDominio y actualizar madejas
+                                val index = listaDominio.indexOfFirst { it.hilo == hiloGrafico.hilo }
+                                if (index != -1) {
+                                    listaDominio[index] = hiloGrafico.copy(madejas = nuevoValor)
+                                    adaptadorGrafico.notifyItemChanged(index)
+                                    // Recalcular total y actualizar texto
+                                    val total = listaDominio.sumOf { it.madejas }
+                                    txtTotal.text = "Total Madejas: $total"
+                                }
+                            }
                         }
                     }
                 )
