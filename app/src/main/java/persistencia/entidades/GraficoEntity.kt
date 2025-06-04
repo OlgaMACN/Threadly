@@ -6,11 +6,11 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "graficos",
-    indices = [Index(value = ["nombre"], unique = true)]
+    indices = [Index(value = ["userId", "nombre", "idPedido"], unique = true)]
 )
 data class GraficoEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val nombre: String,
     val idPedido: Int?, // null = pedido en curso
-    val userId: Int      // por si hay varios usuarios
+    val userId: Int
 )

@@ -271,34 +271,63 @@ class PedidoHilos : BaseActivity() {
                 Toast.makeText(this, "Por favor, introduce un nombre.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            // ① — Evito duplicado en la lista en memoria (pedido en curso)
             if (listaGraficos.any { it.nombre.equals(nombre, ignoreCase = true) }) {
-                Toast.makeText(this, "Ya existe un gráfico con ese nombre", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(
+                    this,
+                    "Ya existe un gráfico con ese nombre en el pedido actual",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
 
-            // ① Insertar el GraficoEntity en Room, aunque no tenga hilos todavía:
+            // ② — Consulto en BD si existe ANYGráfico (sea en curso o ya guardado)
             lifecycleScope.launch(Dispatchers.IO) {
-                graficoDao.insertarGrafico(
-                    persistencia.entidades.GraficoEntity(
-                        nombre = nombre,
-                        idPedido = null,
-                        userId = userId
-                    )
-                )
-            }
+                val enCualquierPedido = graficoDao.obtenerGraficoPorNombre(nombre)
 
-            // ② En paralelo, añadimos al listado en memoria el dominio Grafico con listaHilos vacía:
-            val nuevoGrafico = Grafico(
-                nombre = nombre,
-                listaHilos = mutableListOf()
-            )
-            listaGraficos.add(nuevoGrafico)
-            listaGraficos.sortBy { it.nombre.lowercase() }
-            adaptadorPedido.actualizarLista(listaGraficos)
-            actualizarTotalMadejas()
-            validarBotonGuardar()
-            dialog.dismiss()
+                withContext(Dispatchers.Main) {
+                    if (enCualquierPedido != null) {
+                        // Si se encontró en BD un Gráfico con ese nombre (ya sea idPedido=null o ≠null),
+                        // muestro Toast informativo. Pero NO impido seguir, porque solo quiero bloquear
+                        // la creación duplicada en el mismo pedido en curso (lo previene el paso ①).
+                        Toast.makeText(
+                            this@PedidoHilos,
+                            "Atención: Agrégalo si quieres, pero ya existe un gráfico con ese nombre en pedidos anteriores",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+                // ③ — Ahora consulto si existe justo 'en curso' (idPedido=null) PARA ESTE USUARIO:
+                val yaEnCurso = graficoDao.obtenerGraficoEnCursoPorNombre(userId, nombre)
+
+                if (yaEnCurso == null) {
+                    // Si NO está en curso -> inserto nuevo
+                    graficoDao.insertarGrafico(
+                        persistencia.entidades.GraficoEntity(
+                            nombre = nombre,
+                            idPedido = null,
+                            userId = userId
+                        )
+                    )
+                }
+                // Si ya estaba en curso, me salto la inserción (evito el UNIQUE contra (userId, nombre, idPedido=null))
+
+                // ④ — Finalmente, añado el dominio en memoria (listaGraficos) y refresco UI
+                withContext(Dispatchers.Main) {
+                    val nuevoGrafico = Grafico(
+                        nombre = nombre,
+                        listaHilos = mutableListOf()
+                    )
+                    listaGraficos.add(nuevoGrafico)
+                    listaGraficos.sortBy { it.nombre.lowercase() }
+                    adaptadorPedido.actualizarLista(listaGraficos)
+                    actualizarTotalMadejas()
+                    validarBotonGuardar()
+                    dialog.dismiss()
+                }
+            }
         }
 
         btnCancelar.setOnClickListener {

@@ -1,7 +1,9 @@
 package logica.almacen_pedidos
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -11,9 +13,10 @@ import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.widget.*
+import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.lifecycle.lifecycleScope
 import com.threadly.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,12 +26,16 @@ import modelo.toEntity
 import modelo.toPedidoGuardado
 import persistencia.bbdd.ThreadlyDatabase
 import persistencia.daos.PedidoDao
+import persistencia.entidades.GraficoEntity
+import persistencia.entidades.HiloGraficoEntity
 import persistencia.entidades.PedidoEntity
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
 import utiles.funciones.exportarPedidoCSV
 import utiles.funciones.funcionToolbar
+import java.io.File
+import java.io.FileWriter
 
 class AlmacenPedidos : BaseActivity() {
 
@@ -42,15 +49,16 @@ class AlmacenPedidos : BaseActivity() {
         setContentView(R.layout.almacen_aa_pedidos)
         funcionToolbar(this)
 
-        // Inicializamos DAO
+        // 1) Inicializar DAO
         val db = ThreadlyDatabase.getDatabase(applicationContext)
         pedidoDao = db.pedidoDao()
 
+        // 2) RecyclerView + Adaptador
         tablaAlmacen = findViewById(R.id.tabla_almacen)
-
         adaptador = AdaptadorAlmacen(
             listaPedidos,
             onDescargarClick = { pedido ->
+                // Mismo exportar CSV que ya tenías
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val resultado = exportarPedidoCSV(this, pedido)
                     Toast.makeText(
@@ -67,7 +75,7 @@ class AlmacenPedidos : BaseActivity() {
                 }
             },
             onPedidoRealizadoClick = { pedido ->
-                // Actualizar stock si es necesario…
+                // Marcar como realizado en Room
                 pedido.realizado = true
                 lifecycleScope.launch(Dispatchers.IO) {
                     pedidoDao.actualizar(pedido.toEntity())
@@ -79,9 +87,12 @@ class AlmacenPedidos : BaseActivity() {
                         ).show()
                     }
                 }
+            },
+            onNombrePedidoClick = { pedido ->
+                // -------------- NUEVO: Vista CSV al pulsar nombre --------------
+                mostrarCsvEnVista(pedido)
             }
         )
-
         tablaAlmacen.layoutManager = LinearLayoutManager(this)
         tablaAlmacen.adapter = adaptador
 
@@ -188,5 +199,47 @@ class AlmacenPedidos : BaseActivity() {
         }
 
         dialog.show()
+    }
+
+    /**
+     * Genera un CSV temporal con dos columnas (Hilo, Madejas) sumando
+     * todas las madejas de cada hilo en todos los gráficos del pedido,
+     * y lanza un Intent para que el usuario lo abra con un lector de CSV.
+     */
+    private fun mostrarCsvEnVista(pedido: PedidoGuardado) {
+        lifecycleScope.launch {
+            // 1) Agregar todos los hilos + madejas en un mapa para sumar
+            val agregados = mutableMapOf<String, Int>()
+            pedido.graficos.forEach { grafico ->
+                grafico.listaHilos.forEach { hiloGrafico ->
+                    val actual = agregados[hiloGrafico.hilo] ?: 0
+                    agregados[hiloGrafico.hilo] = actual + hiloGrafico.madejas
+                }
+            }
+
+            // 2) Crear archivo CSV en cache dir
+            val nombreArchivo = "pedido_${pedido.id}.csv"
+            val archivo = File(cacheDir, nombreArchivo)
+            FileWriter(archivo).use { writer ->
+                writer.append("Hilo,Madejas\n")
+                agregados.forEach { (hilo, totalMadejas) ->
+                    writer.append("$hilo,$totalMadejas\n")
+                }
+            }
+
+            // 3) Obtener URI via FileProvider (debes declarar en AndroidManifest y xml/filepaths.xml)
+            val uri = FileProvider.getUriForFile(
+                this@AlmacenPedidos,
+                "${packageName}.fileprovider",
+                archivo
+            )
+
+            // 4) Lanzar Intent para ver CSV
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "text/csv")
+                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            startActivity(Intent.createChooser(intent, "Abrir con"))
+        }
     }
 }

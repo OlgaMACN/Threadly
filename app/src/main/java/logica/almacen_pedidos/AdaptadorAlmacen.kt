@@ -1,6 +1,5 @@
 package logica.almacen_pedidos
 
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,16 +12,18 @@ import modelo.PedidoGuardado
 import com.threadly.R
 
 /**
- * Adaptador para el RecyclerView que muestra los pedidos almacenados.
+ * Adaptador para el RecyclerView de pedidos almacenados.
  *
- * @param listaPedidos      Lista de PedidoGuardado a mostrar.
- * @param onDescargarClick  Lambda que se llama al pulsar el botón de descarga.
- * @param onPedidoRealizadoClick Lambda que se llama al marcar un pedido como realizado.
+ * @param listaPedidos               Lista de PedidoGuardado a mostrar.
+ * @param onDescargarClick           Lambda que se llama al pulsar el botón de descarga.
+ * @param onPedidoRealizadoClick     Lambda que se llama al pulsar el botón "realizado".
+ * @param onNombrePedidoClick        Lambda que se llama al pulsar el TextView de nombre.
  */
 class AdaptadorAlmacen(
     private var listaPedidos: List<PedidoGuardado>,
     private val onDescargarClick: (PedidoGuardado) -> Unit,
-    private val onPedidoRealizadoClick: (PedidoGuardado) -> Unit
+    private val onPedidoRealizadoClick: (PedidoGuardado) -> Unit,
+    private val onNombrePedidoClick: (PedidoGuardado) -> Unit
 ) : RecyclerView.Adapter<AdaptadorAlmacen.PedidoViewHolder>() {
 
     inner class PedidoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -40,12 +41,18 @@ class AdaptadorAlmacen(
     override fun onBindViewHolder(holder: PedidoViewHolder, position: Int) {
         val pedido = listaPedidos[position]
 
+        // 1) clic en el nombre abre el CSV
         holder.txtNombrePedido.text = pedido.nombre
+        holder.txtNombrePedido.setOnClickListener {
+            onNombrePedidoClick(pedido)
+        }
 
+        // 2) Botón de descarga
         holder.btnDescargar.setOnClickListener {
             onDescargarClick(pedido)
         }
 
+        // 3) Icono "realizado"
         if (pedido.realizado) {
             holder.btnPedidoRealizado.isEnabled = false
             holder.btnPedidoRealizado.setImageResource(R.drawable.img_tick_pedido)
@@ -58,7 +65,6 @@ class AdaptadorAlmacen(
             holder.btnPedidoRealizado.setImageResource(R.drawable.img_tick_pedido)
             holder.btnPedidoRealizado.clearColorFilter()
         }
-
         holder.btnPedidoRealizado.setOnClickListener {
             if (holder.btnPedidoRealizado.isEnabled) {
                 onPedidoRealizadoClick(pedido)
@@ -66,6 +72,7 @@ class AdaptadorAlmacen(
             }
         }
 
+        // 4) Pulsación larga para eliminar
         holder.itemView.setOnLongClickListener {
             val contexto = holder.itemView.context as AlmacenPedidos
             contexto.dialogEliminarPedido(position)

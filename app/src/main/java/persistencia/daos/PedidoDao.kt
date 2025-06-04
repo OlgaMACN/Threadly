@@ -19,8 +19,13 @@ interface PedidoDao {
     @Insert
     suspend fun insertarPedido(p: PedidoEntity): Long
 
+    @Transaction
     @Query("SELECT * FROM pedidos WHERE userId = :userId ORDER BY nombre")
     suspend fun obtenerTodosPorUsuario(userId: Int): List<PedidoEntity>
+
+    @Transaction
+    @Query("SELECT * FROM pedidos WHERE id = :pedidoId")
+    suspend fun obtenerPedidoConGraficos(pedidoId: Int): PedidoConGraficos
 
     /**
      * Obtiene todos los pedidos guardados de un usuario dado, ordenados por nombre.

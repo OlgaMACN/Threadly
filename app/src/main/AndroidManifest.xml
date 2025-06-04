@@ -13,8 +13,18 @@
         android:theme="@style/Theme.Threadly"
         tools:targetApi="31">
 
-        <!-- TODO IMPORTANTE: Declarar todas las activities utilizadas -->
 
+        <!-- Provider para poder pre visualizar el pedido -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+        <!-- TODO IMPORTANTE: Declarar todas las activities utilizadas -->
         <!-- Splash: será la que dará inicio a la ejecución -->
         <activity
             android:name="logica.splash.Splash"

@@ -28,6 +28,19 @@ interface HiloGraficoDao {
     @Query("SELECT * FROM hilos_grafico WHERE graficoId = :graficoId")
     fun obtenerHilosPorGrafico(graficoId: Int): List<HiloGraficoEntity>
 
+
+    /**
+     * Devuelve todos los HiloGraficoEntity cuyos graficoId estén en
+     * el conjunto de IDs de graficos asociados a un pedido dado.
+     */
+    @Query("""
+        SELECT hg.* 
+        FROM hilos_grafico AS hg
+        INNER JOIN graficos AS g ON hg.graficoId = g.id
+        WHERE g.idPedido = :pedidoId
+    """)
+    suspend fun obtenerHilosPorPedido(pedidoId: Int): List<HiloGraficoEntity>
+
     @Update
     suspend fun actualizarHilo(hilo: HiloGraficoEntity)
 
