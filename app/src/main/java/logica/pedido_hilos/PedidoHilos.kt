@@ -58,6 +58,7 @@ class PedidoHilos : BaseActivity() {
     private lateinit var btnGuardarPedido: Button
     private var userId: Int = -1
 
+
     // DAOs
     private lateinit var graficoDao: GraficoDao
     private lateinit var hiloGraficoDao: HiloGraficoDao
@@ -113,12 +114,12 @@ class PedidoHilos : BaseActivity() {
         btnRealizarPedido.setOnClickListener { realizarPedido() }
 
 
-
         /* funciones en continua ejecución durante la pantalla */
         cargarGraficosTemporalesEnMemoria()
         buscadorGrafico()
         actualizarTotalMadejas()
     }
+
     /**
      * 3) Carga desde Room todos los GraficoEntity con idPedido = NULL para este userId.
      *    Para cada uno, además, carga sus HiloGraficoEntity y lo transforma a dominio.
@@ -142,7 +143,7 @@ class PedidoHilos : BaseActivity() {
 
                 listaGraficos.add(
                     Grafico(
-                        nombre    = graficoEntity.nombre,
+                        nombre = graficoEntity.nombre,
                         listaHilos = listaHilosDominio
                     )
                 )
@@ -155,6 +156,7 @@ class PedidoHilos : BaseActivity() {
             validarBotonGuardar()
         }
     }
+
     /**
      * Muestra un diálogo de confirmación antes de guardar el pedido actual.
      * Si el usuario confirma, guarda el pedido y lo elimina de memoria.
@@ -243,7 +245,9 @@ class PedidoHilos : BaseActivity() {
      */
     private fun actualizarTotalMadejas() {
         val txtTotal = findViewById<TextView>(R.id.txtVw_madejasTotalPedido)
-        val total = adaptadorPedido.obtenerTotalMadejas()
+        val total = listaGraficos.sumOf { grafico ->
+            grafico.listaHilos.sumOf { hiloGrafico -> hiloGrafico.madejas }
+        }
         txtTotal.text = "Total madejas: $total"
     }
 
@@ -269,7 +273,8 @@ class PedidoHilos : BaseActivity() {
                 return@setOnClickListener
             }
             if (listaGraficos.any { it.nombre.equals(nombre, ignoreCase = true) }) {
-                Toast.makeText(this, "Ya existe un gráfico con ese nombre", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Ya existe un gráfico con ese nombre", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
@@ -277,9 +282,9 @@ class PedidoHilos : BaseActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 graficoDao.insertarGrafico(
                     persistencia.entidades.GraficoEntity(
-                        nombre   = nombre,
+                        nombre = nombre,
                         idPedido = null,
-                        userId   = userId
+                        userId = userId
                     )
                 )
             }
@@ -503,18 +508,16 @@ class PedidoHilos : BaseActivity() {
             val posicion = data.getIntExtra("position", -1)
 
             if (graficoEditado != null && posicion in listaGraficos.indices) {
-                // 1) Actualizar hilos en la base de datos
                 lifecycleScope.launch(Dispatchers.IO) {
-                    // Obtenemos el id de GraficoEntity por nombre
-                    val graficoEnt = graficoDao.obtenerGraficoEnCursoPorNombre(userId, graficoEditado.nombre)
+
+                    val graficoEnt =
+                        graficoDao.obtenerGraficoEnCursoPorNombre(userId, graficoEditado.nombre)
                     if (graficoEnt != null) {
                         val graficoId = graficoEnt.id
-                        // Eliminamos todos los registros anteriores de hilos de este gráfico
                         val hilosPrevios = hiloGraficoDao.obtenerHilosDeGrafico(graficoId)
                         for (prev in hilosPrevios) {
                             hiloGraficoDao.eliminarHiloDeGrafico(prev)
                         }
-                        // Insertamos los hilos nuevos (que trae graficoEditado.listaHilos)
                         for (hiloDom in graficoEditado.listaHilos) {
                             hiloGraficoDao.insertarHiloEnGrafico(
                                 HiloGraficoEntity(
