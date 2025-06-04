@@ -208,16 +208,16 @@ class AlmacenPedidos : BaseActivity() {
      */
     private fun mostrarCsvEnVista(pedido: PedidoGuardado) {
         lifecycleScope.launch {
-            // 1) Agregar todos los hilos + madejas en un mapa para sumar
+            // 1) Agrupamos todas las madejas por código de hilo:
             val agregados = mutableMapOf<String, Int>()
             pedido.graficos.forEach { grafico ->
                 grafico.listaHilos.forEach { hiloGrafico ->
-                    val actual = agregados[hiloGrafico.hilo] ?: 0
-                    agregados[hiloGrafico.hilo] = actual + hiloGrafico.madejas
+                    val acumulado = agregados[hiloGrafico.hilo] ?: 0
+                    agregados[hiloGrafico.hilo] = acumulado + hiloGrafico.madejas
                 }
             }
 
-            // 2) Crear archivo CSV en cache dir
+            // 2) Creamos el CSV en cacheDir:
             val nombreArchivo = "pedido_${pedido.id}.csv"
             val archivo = File(cacheDir, nombreArchivo)
             FileWriter(archivo).use { writer ->
@@ -227,19 +227,32 @@ class AlmacenPedidos : BaseActivity() {
                 }
             }
 
-            // 3) Obtener URI via FileProvider (debes declarar en AndroidManifest y xml/filepaths.xml)
+            // 3) Obtenemos la URI via FileProvider:
+            val authority = "${packageName}.fileprovider"
             val uri = FileProvider.getUriForFile(
                 this@AlmacenPedidos,
-                "${packageName}.fileprovider",
+                authority,
                 archivo
             )
 
-            // 4) Lanzar Intent para ver CSV
+            // 4) Lanzamos un Intent con MIME “text/*” (más abierto que “text/csv”):
             val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, "text/csv")
+                setDataAndType(uri, "text/*")
                 flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
             }
-            startActivity(Intent.createChooser(intent, "Abrir con"))
+
+            // 5) Comprobamos si hay al menos una app capaz de manejarlo:
+            if (intent.resolveActivity(packageManager) != null) {
+                startActivity(Intent.createChooser(intent, "Abrir con"))
+            } else {
+                // En caso de que no haya, avisamos al usuario:
+                Toast.makeText(
+                    this@AlmacenPedidos,
+                    "No hay aplicación instalada que abra archivos de texto.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
+
 }
