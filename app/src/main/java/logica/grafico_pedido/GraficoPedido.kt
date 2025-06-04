@@ -341,7 +341,7 @@ class GraficoPedido : BaseActivity() {
     }
 
     /**
-     * Devuelve al activity padre (PedidoHilos) el gráfico completo, con su lista de HiloGrafico.
+     * Devuelve al activity padre (PedidoHilos) el gráfico completo, con su lista de HiloGrafico
      */
     private fun devolverResultadoYSalir() {
         val listaFinal = adaptadorGrafico.obtenerLista()
