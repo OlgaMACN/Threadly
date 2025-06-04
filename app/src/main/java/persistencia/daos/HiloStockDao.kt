@@ -20,6 +20,7 @@ interface HiloStockDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertarStock(ent: HiloStockEntity): Long
 
+
     @Query("SELECT * FROM hilo_stock WHERE usuarioId = :userId")
     suspend fun obtenerPorUsuario(userId: Int): List<HiloStockEntity>
 

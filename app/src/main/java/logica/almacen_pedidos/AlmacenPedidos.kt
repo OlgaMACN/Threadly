@@ -25,9 +25,8 @@ import modelo.PedidoGuardado
 import modelo.toEntity
 import modelo.toPedidoGuardado
 import persistencia.bbdd.ThreadlyDatabase
+import persistencia.daos.HiloStockDao
 import persistencia.daos.PedidoDao
-import persistencia.entidades.GraficoEntity
-import persistencia.entidades.HiloGraficoEntity
 import persistencia.entidades.PedidoEntity
 import utiles.BaseActivity
 import utiles.SesionUsuario
@@ -42,28 +41,34 @@ class AlmacenPedidos : BaseActivity() {
     private lateinit var tablaAlmacen: RecyclerView
     private lateinit var adaptador: AdaptadorAlmacen
     private lateinit var pedidoDao: PedidoDao
+    private lateinit var stockDao: HiloStockDao
     private val listaPedidos = mutableListOf<PedidoGuardado>()
+    private var userId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.almacen_aa_pedidos)
         funcionToolbar(this)
 
-        // 1) Inicializar DAO
+        // Obtenemos el userId de la sesión
+        userId = SesionUsuario.obtenerSesion(this)
+        if (userId < 0) finish()
+
+        // 1) Inicializar DAOs
         val db = ThreadlyDatabase.getDatabase(applicationContext)
         pedidoDao = db.pedidoDao()
+        stockDao = db.hiloStockDao()
 
-        // 2) RecyclerView + Adaptador
+        // 2) Configurar RecyclerView y Adaptador
         tablaAlmacen = findViewById(R.id.tabla_almacen)
         adaptador = AdaptadorAlmacen(
             listaPedidos,
             onDescargarClick = { pedido ->
-                // Mismo exportar CSV que ya tenías
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    val resultado = exportarPedidoCSV(this, pedido)
+                    val ok = exportarPedidoCSV(this, pedido)
                     Toast.makeText(
                         this,
-                        if (resultado) "Pedido guardado en Descargas/Threadly" else "Error al descargar :(",
+                        if (ok) "Pedido guardado en Descargas/Threadly" else "Error al descargar :(",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
@@ -75,21 +80,9 @@ class AlmacenPedidos : BaseActivity() {
                 }
             },
             onPedidoRealizadoClick = { pedido ->
-                // Marcar como realizado en Room
-                pedido.realizado = true
-                lifecycleScope.launch(Dispatchers.IO) {
-                    pedidoDao.actualizar(pedido.toEntity())
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            this@AlmacenPedidos,
-                            "Pedido realizado y stock actualizado",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+                marcarPedidoComoRealizadoYActualizarStock(pedido)
             },
             onNombrePedidoClick = { pedido ->
-                // -------------- NUEVO: Vista CSV al pulsar nombre --------------
                 mostrarCsvEnVista(pedido)
             }
         )
@@ -106,7 +99,6 @@ class AlmacenPedidos : BaseActivity() {
     }
 
     private fun cargarPedidosDesdeRoom() {
-        val userId = SesionUsuario.obtenerSesion(this)
         lifecycleScope.launch {
             val pedidosEnt = withContext(Dispatchers.IO) {
                 pedidoDao.obtenerTodosPorUsuario(userId)
@@ -202,55 +194,100 @@ class AlmacenPedidos : BaseActivity() {
     }
 
     /**
-     * Genera un CSV temporal con dos columnas (Hilo, Madejas) sumando
-     * todas las madejas de cada hilo en todos los gráficos del pedido,
-     * y lanza un Intent para que el usuario lo abra con un lector de CSV.
+     * Genera un CSV temporal y lo abre con un lector de CSV instalado.
      */
     private fun mostrarCsvEnVista(pedido: PedidoGuardado) {
         lifecycleScope.launch {
-            // 1) Agrupamos todas las madejas por código de hilo:
+            // 1) Agrupamos madejas por hilo
             val agregados = mutableMapOf<String, Int>()
             pedido.graficos.forEach { grafico ->
                 grafico.listaHilos.forEach { hiloGrafico ->
-                    val acumulado = agregados[hiloGrafico.hilo] ?: 0
-                    agregados[hiloGrafico.hilo] = acumulado + hiloGrafico.madejas
+                    val prev = agregados[hiloGrafico.hilo] ?: 0
+                    agregados[hiloGrafico.hilo] = prev + hiloGrafico.madejas
                 }
             }
 
-            // 2) Creamos el CSV en cacheDir:
+            // 2) Creamos archivo CSV en cacheDir
             val nombreArchivo = "pedido_${pedido.id}.csv"
             val archivo = File(cacheDir, nombreArchivo)
             FileWriter(archivo).use { writer ->
                 writer.append("Hilo,Madejas\n")
-                agregados.forEach { (hilo, totalMadejas) ->
-                    writer.append("$hilo,$totalMadejas\n")
+                agregados.forEach { (hilo, total) ->
+                    writer.append("$hilo,$total\n")
                 }
             }
 
-            // 3) Obtenemos la URI via FileProvider:
+            // 3) URI a través de FileProvider
             val authority = "${packageName}.fileprovider"
-            val uri = FileProvider.getUriForFile(
+            val uri: Uri = FileProvider.getUriForFile(
                 this@AlmacenPedidos,
                 authority,
                 archivo
             )
 
-            // 4) Lanzamos un Intent con MIME “text/*” (más abierto que “text/csv”):
+            // 4) Intent ACTION_VIEW con MIME "text/csv"
             val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, "text/*")
+                setDataAndType(uri, "text/csv")
                 flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
             }
 
-            // 5) Comprobamos si hay al menos una app capaz de manejarlo:
+            // 5) Verificar que exista app capaz de abrir CSV
             if (intent.resolveActivity(packageManager) != null) {
                 startActivity(Intent.createChooser(intent, "Abrir con"))
             } else {
-                // En caso de que no haya, avisamos al usuario:
                 Toast.makeText(
                     this@AlmacenPedidos,
-                    "No hay aplicación instalada que abra archivos de texto.",
+                    "No se encontró ninguna aplicación para ver archivos CSV.",
                     Toast.LENGTH_LONG
                 ).show()
+            }
+        }
+    }
+
+    /**
+     * Marca el pedido como realizado en la base de datos y, a la vez,
+     * añade las madejas de cada hilo al stock personal del usuario.
+     */
+    private fun marcarPedidoComoRealizadoYActualizarStock(pedido: PedidoGuardado) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            // 1) Marcar el pedido como realizado en la tabla 'pedidos'
+            pedido.realizado = true
+            pedidoDao.actualizar(pedido.toEntity())
+
+            // 2) Para cada gráfico y cada hilo en ese pedido,
+            //    sumamos madejas al stock personal (insertar o actualizar).
+            pedido.graficos.forEach { grafico ->
+                grafico.listaHilos.forEach { hiloGrafico ->
+                    val codigoHilo      = hiloGrafico.hilo
+                    val madejasNuevo    = hiloGrafico.madejas
+
+                    // Obtenemos las madejas actuales (si existen) para este usuario y ese hilo
+                    val actual = stockDao.obtenerMadejas(userId, codigoHilo)
+
+                    if (actual == null) {
+                        // No existe registro => insertamos uno nuevo
+                        val nuevaEntidad = persistencia.entidades.HiloStockEntity(
+                            usuarioId = userId,
+                            hiloId    = codigoHilo,
+                            madejas   = madejasNuevo
+                        )
+                        stockDao.insertarStock(nuevaEntidad)
+                    } else {
+                        // Ya existe => actualizamos sumando las madejas
+                        val acumulado = actual + madejasNuevo
+                        stockDao.actualizarMadejas(userId, codigoHilo, acumulado)
+                    }
+                }
+            }
+
+            // 3) De vuelta al hilo principal, mostramos Toast y recargamos la lista de pedidos
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    this@AlmacenPedidos,
+                    "Pedido marcado como realizado y stock actualizado",
+                    Toast.LENGTH_SHORT
+                ).show()
+                cargarPedidosDesdeRoom()
             }
         }
     }

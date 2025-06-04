@@ -46,6 +46,7 @@ class StockPersonal : BaseActivity() {
     private lateinit var adaptadorStock: AdaptadorStock
     private lateinit var dao: HiloStockDao
     private var userId: Int = -1
+
     // Trabajamos siempre sobre esta lista local:
     private val listaStock = mutableListOf<HiloStock>()
 
@@ -73,8 +74,8 @@ class StockPersonal : BaseActivity() {
                 val entidades = inicial.map { h ->
                     HiloStockEntity(
                         usuarioId = userId,
-                        hiloId    = h.hiloId,
-                        madejas   = 0
+                        hiloId = h.hiloId,
+                        madejas = 0
                     )
                 }
                 dao.insertarStocks(entidades)
@@ -136,6 +137,7 @@ class StockPersonal : BaseActivity() {
                     txtNo.visibility = View.GONE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -170,12 +172,24 @@ class StockPersonal : BaseActivity() {
                     val existe = dao.obtenerPorHiloUsuario(hilo, userId)
                     if (existe != null) {
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(this@StockPersonal, "Ya existe ese hilo", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this@StockPersonal,
+                                "Ya existe ese hilo",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     } else {
-                        dao.insertarStock(HiloStockEntity(userId, hilo, madejas))
+                        dao.insertarStock(
+                            HiloStockEntity(
+                                usuarioId = userId,
+                                hiloId = hilo,
+                                madejas = madejas
+                            )
+                        )
+
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(this@StockPersonal, "Hilo añadido", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@StockPersonal, "Hilo añadido", Toast.LENGTH_SHORT)
+                                .show()
                             refrescarUI()
                             dialog.dismiss()
                         }
@@ -220,6 +234,7 @@ class StockPersonal : BaseActivity() {
                     }
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
@@ -233,7 +248,8 @@ class StockPersonal : BaseActivity() {
                     val upd = ent.copy(madejas = ent.madejas + add)
                     dao.actualizarStock(upd)
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@StockPersonal, "Madejas sumadas", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@StockPersonal, "Madejas sumadas", Toast.LENGTH_SHORT)
+                            .show()
                         refrescarUI()
                         dialog.dismiss()
                     }
@@ -278,6 +294,7 @@ class StockPersonal : BaseActivity() {
                     }
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
@@ -290,7 +307,11 @@ class StockPersonal : BaseActivity() {
                     val upd = it.copy(madejas = nueva)
                     dao.actualizarStock(upd)
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@StockPersonal, "Madejas actualizadas", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@StockPersonal,
+                            "Madejas actualizadas",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         refrescarUI()
                         dialog.dismiss()
                     }
@@ -313,13 +334,18 @@ class StockPersonal : BaseActivity() {
 
         val btnE = dialog.findViewById<Button>(R.id.btn_botonEliminarHiloStk)
         val btnV = dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_eliminarHilo)
-        val lbl  = dialog.findViewById<TextView>(R.id.txtVw_confirmarEliminarHiloStk)
+        val lbl = dialog.findViewById<TextView>(R.id.txtVw_confirmarEliminarHiloStk)
 
         val plantilla = getString(R.string.confirmarEliminarHiloStk)
-        val texto    = plantilla.replace("%s", hilo.hiloId)
-        val span     = SpannableString(texto).apply {
+        val texto = plantilla.replace("%s", hilo.hiloId)
+        val span = SpannableString(texto).apply {
             val start = texto.indexOf(hilo.hiloId)
-            setSpan(ForegroundColorSpan(Color.RED), start, start + hilo.hiloId.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(
+                ForegroundColorSpan(Color.RED),
+                start,
+                start + hilo.hiloId.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         }
         lbl.text = span
 
@@ -328,7 +354,11 @@ class StockPersonal : BaseActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 dao.eliminarPorUsuarioYHilo(userId, hilo.hiloId)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@StockPersonal, "Hilo '${hilo.hiloId}' eliminado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@StockPersonal,
+                        "Hilo '${hilo.hiloId}' eliminado",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     refrescarUI()
                     dialog.dismiss()
                 }
