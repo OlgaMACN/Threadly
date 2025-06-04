@@ -1,9 +1,11 @@
 package persistencia.daos
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import persistencia.entidades.PedidoConGraficos
 import persistencia.entidades.PedidoEntity
 
@@ -25,6 +27,16 @@ interface PedidoDao {
 
     @Query("SELECT * FROM pedidos WHERE userId = :userId ORDER BY id DESC LIMIT 1")
     suspend fun obtenerUltimoPedido(userId: Int): PedidoEntity?
+
+    @Transaction
+    @Query("SELECT * FROM pedidos WHERE userId = :userId")
+    suspend fun getPedidosDelUsuario(userId: Int): List<PedidoConGraficos>
+
+    @Delete
+    suspend fun deletePedido(pedido: PedidoEntity)
+
+    @Update
+    suspend fun updatePedido(pedido: PedidoEntity)
 
     /**
      * (Opcional) Elimina un pedido completo (si lo necesitas).
