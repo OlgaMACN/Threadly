@@ -20,6 +20,13 @@ interface GraficoDao {
     suspend fun obtenerIdPorNombre(nombreGrafico: String): Int?
 
     /**
+     * Devuelve todos los GraficoEntity que pertenezcan a un usuario y a un pedido dado.
+     * (es decir, aquellos registros de “graficos” donde userId = :userId y idPedido = :pedidoId)
+     */
+    @Query("SELECT * FROM graficos WHERE userId = :userId AND idPedido = :pedidoId")
+    suspend fun obtenerGraficoPorPedido(userId: Int, pedidoId: Int): List<GraficoEntity>
+
+    /**
      * Asocia todos los gráficos EN CURSO (idPedido IS NULL) de este userId al pedido con nuevoId.
      */
     @Query("UPDATE graficos SET idPedido = :nuevoId WHERE userId = :userId AND idPedido IS NULL")
@@ -32,12 +39,14 @@ interface GraficoDao {
     @Query("SELECT * FROM graficos WHERE userId = :userId AND idPedido IS NULL AND nombre = :nombreGrafico LIMIT 1")
     suspend fun obtenerGraficoEnCursoPorNombre(userId: Int, nombreGrafico: String): GraficoEntity?
 
-    @Query("""
+    @Query(
+        """
     SELECT * FROM graficos 
     WHERE userId = :userId AND idPedido IS NULL 
     ORDER BY id DESC 
     LIMIT 1
-""")
+"""
+    )
     suspend fun obtenerUltimoGraficoEnCurso(userId: Int): GraficoEntity?
 
 

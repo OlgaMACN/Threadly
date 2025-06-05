@@ -12,7 +12,6 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -24,12 +23,15 @@ import com.threadly.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import modelo.PedidoGuardado
-import modelo.toEntity
-import modelo.toPedidoGuardado
+import logica.grafico_pedido.HiloGrafico
+import logica.pedido_hilos.Grafico
 import persistencia.bbdd.ThreadlyDatabase
+import persistencia.daos.GraficoDao
+import persistencia.daos.HiloGraficoDao
 import persistencia.daos.HiloStockDao
 import persistencia.daos.PedidoDao
+import persistencia.entidades.GraficoEntity
+import persistencia.entidades.HiloGraficoEntity
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
@@ -44,6 +46,8 @@ class AlmacenPedidos : BaseActivity() {
     private lateinit var adaptador: AdaptadorAlmacen
     private lateinit var pedidoDao: PedidoDao
     private lateinit var stockDao: HiloStockDao
+    private lateinit var graficoDao: GraficoDao
+    private lateinit var hiloGraficoDao: HiloGraficoDao
     private val listaPedidos = mutableListOf<PedidoGuardado>()
     private var userId: Int = -1
 
@@ -60,6 +64,8 @@ class AlmacenPedidos : BaseActivity() {
         val db = ThreadlyDatabase.getDatabase(applicationContext)
         pedidoDao = db.pedidoDao()
         stockDao = db.hiloStockDao()
+        graficoDao = db.graficoDao()
+        hiloGraficoDao = db.hiloGraficoDao()
 
         // 2) Configurar RecyclerView y Adaptador
         tablaAlmacen = findViewById(R.id.tabla_almacen)
@@ -102,13 +108,64 @@ class AlmacenPedidos : BaseActivity() {
 
     private fun cargarPedidosDesdeRoom() {
         lifecycleScope.launch {
+            // 1) Leer todos los pedidos para este usuario
             val pedidosEnt = withContext(Dispatchers.IO) {
                 pedidoDao.obtenerTodosPorUsuario(userId)
             }
+
             listaPedidos.clear()
-            listaPedidos.addAll(pedidosEnt.map { it.toPedidoGuardado() })
-            adaptador.actualizarLista(listaPedidos)
-            Log.d("AlmacenPedidos", "Pedidos cargados: ${listaPedidos.size}")
+
+            // 2) Por cada PedidoEntity, traemos sus gráficos y luego los hilos de cada gráfico
+            for (pedidoEnt in pedidosEnt) {
+                val pedidoId = pedidoEnt.id
+                val nombrePedido = pedidoEnt.nombre
+
+                // 2.2) Obtener todos los GraficoEntity que pertenecen a este pedido
+                val graficosEntidades: List<GraficoEntity> = withContext(Dispatchers.IO) {
+                    graficoDao.obtenerGraficoPorPedido(userId, pedidoId)
+                }
+
+                // 2.3) Para cada GraficoEntity, leemos sus hilos
+                val listaGraficoDominio = mutableListOf<Grafico>()
+                for (graficoEnt in graficosEntidades) {
+                    // 2.3.1) Traer los HiloGraficoEntity de este grafico
+                    val hilosEntidades: List<HiloGraficoEntity> = withContext(Dispatchers.IO) {
+                        hiloGraficoDao.obtenerHilosDeGrafico(graficoEnt.id)
+                    }
+
+                    // 2.3.2) Mapear cada HiloGraficoEntity a tu modelo de dominio HiloGrafico
+                    val listaHilosDominio = hilosEntidades.map { hiloEnt ->
+                        HiloGrafico(
+                            hilo = hiloEnt.hilo,
+                            madejas = hiloEnt.madejas
+                        )
+                    }.toMutableList()
+
+                    // 2.3.3) Construir el objeto Grafico (dominio) con su lista de hilos
+                    listaGraficoDominio.add(
+                        Grafico(
+                            nombre = graficoEnt.nombre,
+                            listaHilos = listaHilosDominio
+                        )
+                    )
+                }
+
+                // 2.4) Construir el objeto PedidoGuardado incluyendo userId
+                val pedidoDominio = PedidoGuardado(
+                    id = pedidoId,
+                    nombre = nombrePedido,
+                    userId = pedidoEnt.userId,
+                    realizado = pedidoEnt.realizado,
+                    graficos = listaGraficoDominio
+                )
+
+                listaPedidos.add(pedidoDominio)
+            }
+
+            // 3) Actualizar el adaptador en el hilo principal
+            withContext(Dispatchers.Main) {
+                adaptador.actualizarLista(listaPedidos)
+            }
         }
     }
 

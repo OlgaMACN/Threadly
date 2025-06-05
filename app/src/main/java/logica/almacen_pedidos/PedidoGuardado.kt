@@ -1,4 +1,4 @@
-package modelo
+package logica.almacen_pedidos
 
 import logica.pedido_hilos.Grafico
 import persistencia.entidades.PedidoEntity

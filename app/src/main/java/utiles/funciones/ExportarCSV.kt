@@ -6,7 +6,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
-import modelo.PedidoGuardado
+import logica.almacen_pedidos.PedidoGuardado
 
 
 /**
