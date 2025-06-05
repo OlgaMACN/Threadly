@@ -254,30 +254,25 @@ class GraficoPedido : BaseActivity() {
 
         btnG.setOnClickListener {
             val hiloCode = inpH.text.toString().trim().uppercase()
-            val punt      = inpP.text.toString().trim().toIntOrNull()
+            val punt = inpP.text.toString().trim().toIntOrNull()
 
-            // 2) Si el hilo ya está en listaDominio, mostramos Toast y salimos
             if (listaDominio.any { it.hilo == hiloCode }) {
                 Toast.makeText(this, "El hilo ya se ha añadido al gráfico", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // 3) Validamos campos obligatorios: hiloCode y punt deben ser no nulos
             if (hiloCode.isEmpty() || punt == null) {
                 Toast.makeText(this, "Campos inválidos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // 4) Ahora comprobamos existencia en catálogo ANTES de manejar el countTela
             lifecycleScope.launch {
                 val existeEnCatalogo = withContext(Dispatchers.IO) {
                     ThreadlyDatabase.getDatabase(applicationContext)
                         .hiloCatalogoDao()
                         .obtenerHiloPorNumYUsuario(hiloCode, userId) != null
                 }
-
                 if (!existeEnCatalogo) {
-                    // Si no existe en catálogo, mostramos Toast y salimos: NO tocamos countTelaGlobal
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
                             this@GraficoPedido,
@@ -288,25 +283,35 @@ class GraficoPedido : BaseActivity() {
                     return@launch
                 }
 
-                // 5) A estas alturas sabemos que el hilo existe. Ahora sí tomamos el countTela,
-                //    Y SI countTelaGlobal es null, leemos el valor y lo guardamos.
-                val countIntroducido: Int? = if (countTelaGlobal == null) {
-                    inpC.text.toString().trim().toIntOrNull()?.takeIf { it in listOf(14, 16, 18, 20, 25) }
-                        ?.also { countTelaGlobal = it }
-                } else {
-                    countTelaGlobal
+                // --- Aquí la nueva parte que agrega la comprobación ---
+                val cantidadHilos = withContext(Dispatchers.IO) {
+                    daoGrafico.countHilosDeGrafico(graficoId)
                 }
 
-                if (countIntroducido == null) {
-                    // Si no hay count válido (ni global ni ingreso actual), error
+                // Solo pedir count si no hay ningún hilo asociado aún (y countTelaGlobal es null)
+                if (cantidadHilos == 0 && countTelaGlobal == null) {
+                    // Pedir count de tela (tomarlo del input)
+                    val countIntroducido = inpC.text.toString().trim().toIntOrNull()?.takeIf {
+                        it in listOf(14, 16, 18, 20, 25)
+                    }
+                    if (countIntroducido == null) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@GraficoPedido, "Count de tela inválido", Toast.LENGTH_SHORT).show()
+                        }
+                        return@launch
+                    }
+                    countTelaGlobal = countIntroducido
+                }
+
+                // Si ya hay countTelaGlobal, no pedimos de nuevo
+                if (countTelaGlobal == null) {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@GraficoPedido, "Count de tela inválido", Toast.LENGTH_SHORT).show()
                     }
                     return@launch
                 }
 
-                // 6) Calculamos madejas y grabamos en BD
-                val madejas = calcularMadejas(punt, countIntroducido)
+                val madejas = calcularMadejas(punt, countTelaGlobal!!)
                 withContext(Dispatchers.IO) {
                     daoGrafico.insertarHiloEnGrafico(
                         HiloGraficoEntity(
@@ -316,14 +321,13 @@ class GraficoPedido : BaseActivity() {
                         )
                     )
                 }
-
-                // 7) Tras insertar, recargamos la lista y cerramos el diálogo en el hilo principal
                 withContext(Dispatchers.Main) {
                     configurarRecycler()
                     dialog.dismiss()
                 }
             }
         }
+
 
         dialog.show()
     }

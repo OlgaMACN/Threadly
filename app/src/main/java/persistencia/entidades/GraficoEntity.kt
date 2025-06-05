@@ -12,5 +12,6 @@ data class GraficoEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val nombre: String,
     val idPedido: Int?, // null = pedido en curso
-    val userId: Int
+    val userId: Int,
+    val count: Int? = null
 )
