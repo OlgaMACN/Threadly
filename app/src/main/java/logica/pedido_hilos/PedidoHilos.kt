@@ -117,7 +117,7 @@ class PedidoHilos : BaseActivity() {
 
         /* funciones en continua ejecución durante la pantalla */
         cargarGraficosTemporalesEnMemoria()
-        buscador()
+        buscadorPedido()
         actualizarTotalMadejas()
     }
 
@@ -198,7 +198,7 @@ class PedidoHilos : BaseActivity() {
      * Muestra un buscador para filtrar gráficos por nombre.
      * Permite al usuario escribir y resaltar coincidencias.
      */
-    private fun buscador() {
+    private fun buscadorPedido() {
         val buscarPedido       = findViewById<EditText>(R.id.edTxt_buscadorPedido)
         val btnLupaPedido      = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
         val tablaPedido        = findViewById<RecyclerView>(R.id.tabla_pedido)

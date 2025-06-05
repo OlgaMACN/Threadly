@@ -2,6 +2,7 @@ package logica.grafico_pedido
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -67,13 +69,13 @@ class GraficoPedido : BaseActivity() {
         funcionToolbar(this)
 
         daoGrafico = ThreadlyDatabase.getDatabase(applicationContext).hiloGraficoDao()
-        daoStock   = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
-        userId     = SesionUsuario.obtenerSesion(this)
+        daoStock = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
+        userId = SesionUsuario.obtenerSesion(this)
         if (userId < 0) finish()
 
-        txtTotal       = findViewById(R.id.txtVw_totalMadejasGraficoIndividual)
+        txtTotal = findViewById(R.id.txtVw_totalMadejasGraficoIndividual)
         txtStockActual = findViewById(R.id.txtVw_stockHiloActual)
-        recyclerView   = findViewById(R.id.tabla_grafico)
+        recyclerView = findViewById(R.id.tabla_grafico)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Recibimos el objeto Grafico desde PedidoHilos
@@ -103,7 +105,8 @@ class GraficoPedido : BaseActivity() {
             }
 
             if (graficoId < 0) {
-                Toast.makeText(this@GraficoPedido, "Error cargando gráfico", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@GraficoPedido, "Error cargando gráfico", Toast.LENGTH_SHORT)
+                    .show()
                 finish()
                 return@launch
             }
@@ -157,7 +160,7 @@ class GraficoPedido : BaseActivity() {
             // Calculamos y mostramos el total inicial
             val total = listaDominio.sumOf { it.madejas }
             txtTotal.text = "Total Madejas: $total"
-            buscadorHilo()
+            buscadorGrafico()
         }
     }
 
@@ -170,7 +173,8 @@ class GraficoPedido : BaseActivity() {
         }
     }
 
-    private fun buscadorHilo() {
+    private fun buscadorGrafico() {
+
         val edt = findViewById<EditText>(R.id.edTxt_buscadorGrafico)
         val btn = findViewById<ImageView>(R.id.imgVw_lupaGrafico)
         val txtNo = findViewById<TextView>(R.id.txtVw_sinResultadosGrafico)
@@ -178,6 +182,10 @@ class GraficoPedido : BaseActivity() {
         txtNo.visibility = View.GONE
 
         btn.setOnClickListener {
+
+            // 1) Ocultar el teclado
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(edt.windowToken, 0)
             val code = edt.text.toString().trim().uppercase()
             val found = listaDominio.find { it.hilo == code }
             if (found != null) {
@@ -201,6 +209,7 @@ class GraficoPedido : BaseActivity() {
                     recyclerView.visibility = View.VISIBLE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -253,7 +262,8 @@ class GraficoPedido : BaseActivity() {
 
             // 3) Si el hilo ya está en listaDominio, mostramos Toast y salimos
             if (listaDominio.any { it.hilo == hiloCode }) {
-                Toast.makeText(this, "El hilo ya se ha añadido al gráfico", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "El hilo ya se ha añadido al gráfico", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
