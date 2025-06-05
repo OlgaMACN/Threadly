@@ -43,7 +43,7 @@ class AdaptadorCatalogo(
 
         // resaltar si corresponde
         if (hilo.numHilo == hiloResaltado) {
-            holder.itemView.setBackgroundColor(Color.YELLOW)
+            holder.itemView.setBackgroundResource(R.color.filaResaltadaBusqueda)
         } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT)
         }

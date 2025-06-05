@@ -1,6 +1,7 @@
 package logica.catalogo_hilos
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
@@ -8,6 +9,7 @@ import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -29,7 +31,6 @@ import utiles.SesionUsuario
 import utiles.funciones.ValidarFormatoHilos
 import utiles.funciones.ajustarDialog
 import utiles.funciones.funcionToolbar
-import utiles.funciones.leerXML
 import utiles.funciones.ordenarHilos
 
 /*** @author Olga y Sandra Macías Aragón*/
@@ -65,7 +66,7 @@ class CatalogoHilos : BaseActivity() {
 
         /* primera carga para el xml */
         lifecycleScope.launch(Dispatchers.IO) {
-                      refrescarUI()
+            refrescarUI()
         }
 
 
@@ -74,7 +75,7 @@ class CatalogoHilos : BaseActivity() {
         findViewById<Button>(R.id.btn_modificarHiloConsulta)
             .setOnClickListener { dialogModificarHiloCatalogo() }
 
-        buscadorHilo()
+        buscadorCatalogo()
     }
 
     private fun refrescarUI() {
@@ -91,26 +92,43 @@ class CatalogoHilos : BaseActivity() {
         }
     }
 
-    private fun buscadorHilo() {
+    private fun buscadorCatalogo() {
         val editText = findViewById<EditText>(R.id.txtVw_buscarHiloConsulta)
         val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaCatalogo)
         val txtNoRes = findViewById<TextView>(R.id.txtVw_sinResultadosCatalogo)
         txtNoRes.visibility = View.GONE
 
         btnLupa.setOnClickListener {
+            /* ocultar el teclado */
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(editText.windowToken, 0)
+
             val busq = editText.text.toString().trim().uppercase()
+
+            // 1) Si el texto buscado está vacío, restauramos todo
+            if (busq.isEmpty()) {
+                adaptadorCatalogo.resaltarHilo(null)
+                adaptadorCatalogo.actualizarLista(listaCatalogo)
+                tablaCatalogo.visibility = View.VISIBLE
+                txtNoRes.visibility = View.GONE
+                return@setOnClickListener
+            }
+
+            // 2) Buscamos la primera coincidencia exacta de numHilo o parcial en nombreHilo
             val found = listaCatalogo.find {
                 it.numHilo == busq ||
                         it.nombreHilo.contains(busq, ignoreCase = true)
             }
+
             if (found != null) {
                 val idx = listaCatalogo.indexOf(found)
                 adaptadorCatalogo.resaltarHilo(found.numHilo)
-                adaptadorCatalogo.actualizarLista(listaCatalogo)
+                adaptadorCatalogo.notifyDataSetChanged()
                 tablaCatalogo.scrollToPosition(idx)
                 tablaCatalogo.visibility = View.VISIBLE
                 txtNoRes.visibility = View.GONE
             } else {
+                // Si no hay coincidencias, ocultamos la tabla y mostramos "sin resultados"
                 tablaCatalogo.visibility = View.GONE
                 txtNoRes.visibility = View.VISIBLE
             }
@@ -146,7 +164,8 @@ class CatalogoHilos : BaseActivity() {
         btnVolver.setOnClickListener { dialog.dismiss() }
         btnSave.setOnClickListener {
             val num = inpNum.text.toString().uppercase().trim()
-            val nom = inpNombre.text.toString().trim() /* para respetar el formato que ponga el usuario */
+            val nom =
+                inpNombre.text.toString().trim() /* para respetar el formato que ponga el usuario */
             if (num.isEmpty() || nom.isEmpty()) {
                 Toast.makeText(this, "Ningún campo puede estar vacío", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
