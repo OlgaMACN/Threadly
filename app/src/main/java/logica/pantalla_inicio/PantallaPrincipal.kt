@@ -35,7 +35,7 @@ class PantallaPrincipal : BaseActivity() {
     private lateinit var dao: HiloStockDao
     private lateinit var pedidoDao: PedidoDao
     private lateinit var graficoDao: GraficoDao
-
+    private lateinit var txtStock: TextView
     private var userId: Int = -1
 
 
@@ -51,6 +51,7 @@ class PantallaPrincipal : BaseActivity() {
         txtNombreUser = findViewById(R.id.txtVw_nombreUsuario)
         imgPerfil = findViewById(R.id.imgVw_imagenPerfil)
         txtTip = findViewById(R.id.txtVw_contenidoTip)
+        txtStock = findViewById(R.id.txtVw_contenidoStock)
 
         // inicializa DAO y sesión
         dao = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
@@ -76,28 +77,29 @@ class PantallaPrincipal : BaseActivity() {
     override fun onResume() {
         super.onResume()
 
-        // 1) Leemos el stock y sumamos madejas
         lifecycleScope.launch {
+            // 1) Leemos el stock y sumamos madejas
             val totalMadejas = withContext(Dispatchers.IO) {
                 dao.obtenerStockPorUsuario(userId)
                     .sumOf { it.madejas }
             }
-            // 2) Mostramos el total
-            val txtGrafico = findViewById<TextView>(R.id.txtVw_contenidoGrafico)
 
+            // 2) Mostramos el total de stock
+            txtStock.text = "$totalMadejas"
+
+            // 3) Obtenemos el último gráfico en curso y lo mostramos
+            val txtGrafico = findViewById<TextView>(R.id.txtVw_contenidoGrafico)
             val ultimoGrafico = withContext(Dispatchers.IO) {
-                ThreadlyDatabase.getDatabase(applicationContext)
-                    .graficoDao()
-                    .obtenerUltimoGraficoEnCurso(userId)
+                graficoDao.obtenerUltimoGraficoEnCurso(userId)
             }
 
             txtGrafico.text = if (ultimoGrafico != null) {
-              ultimoGrafico.nombre
+                ultimoGrafico.nombre
             } else {
                 "Ahora mismo no hay ningún pedido en curso"
             }
 
-            // 3) Consejo y usuarios
+            // 4) Consejo aleatorio y recarga de usuario
             consejoAleatorio()
             cargarUsuario()
         }

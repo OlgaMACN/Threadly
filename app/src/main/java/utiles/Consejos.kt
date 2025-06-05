@@ -19,7 +19,7 @@ object Consejos {
         "Es recomendable lavarse tus manos antes de bordar, no querrás ensuciar la tela",
         "Evita trabajar con hilos demasiado largos, se enredan y es un fastidio",
         "Descansa cada cierto tiempo para no forzar la vista",
-        "Mejor marcar la tela con jaboncillo o lápiz de sastre,en vez de usar un bolígrafo",
+        "Mejor marcar la tela con jaboncillo o lápiz de sastre, en vez de usar un bolígrafo",
         "Te recomendamos hilvanar cuando necesites más precisión para tu labor",
         "Prelavar las telas antes de cortar evita el encogimiento y la decoloración",
         "Si la tela resbala, rocía un poquito de almidón antes de cortar",

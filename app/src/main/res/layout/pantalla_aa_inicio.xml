@@ -165,7 +165,7 @@
         android:autoSizeMinTextSize="12sp"
         android:autoSizeMaxTextSize="25sp"
         android:autoSizeStepGranularity="1sp"
-        android:textSize="25sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/imgBtn_configuracion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
