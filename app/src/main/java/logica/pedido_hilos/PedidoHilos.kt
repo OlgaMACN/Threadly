@@ -1,6 +1,7 @@
 package logica.pedido_hilos
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
@@ -8,6 +9,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -197,32 +199,63 @@ class PedidoHilos : BaseActivity() {
      * Permite al usuario escribir y resaltar coincidencias.
      */
     private fun buscador() {
-        val buscarPedido = findViewById<EditText>(R.id.edTxt_buscadorPedido)
-        val btnLupaPedido = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
-        val tablaPedido = findViewById<RecyclerView>(R.id.tabla_pedido)
-        val txtNoResultadosPedido = findViewById<TextView>(R.id.txtVw_sinResultadosPedido)
-
-        txtNoResultadosPedido.visibility = View.GONE
+        val buscarPedido       = findViewById<EditText>(R.id.edTxt_buscadorPedido)
+        val btnLupaPedido      = findViewById<ImageButton>(R.id.imgBtn_lupaPedido)
+        val tablaPedido        = findViewById<RecyclerView>(R.id.tabla_pedido)
+        val txtNoResultados    = findViewById<TextView>(R.id.txtVw_sinResultadosPedido)
+        txtNoResultados.visibility = View.GONE
 
         btnLupaPedido.setOnClickListener {
-            val graficoBuscado = buscarPedido.text.toString().trim().uppercase()
-            val coincidencia = listaGraficos.find { it.nombre.uppercase() == graficoBuscado }
+            // 1) Ocultar el teclado
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(buscarPedido.windowToken, 0)
 
-            if (coincidencia != null) {
-                adaptadorPedido.resaltarGrafico(coincidencia.nombre)
+            // 2) Tomar el texto de búsqueda en mayúsculas y sin espacios sobrantes
+            val query = buscarPedido.text.toString().trim().uppercase()
+            if (query.isEmpty()) {
+                // Si el usuario no escribió nada, restauramos todo y salimos
+                adaptadorPedido.resaltarGrafico(null)
+                adaptadorPedido.actualizarLista(listaGraficos)
+                actualizarTotalMadejas()
                 tablaPedido.visibility = View.VISIBLE
-                txtNoResultadosPedido.visibility = View.GONE
+                txtNoResultados.visibility = View.GONE
+                return@setOnClickListener
+            }
 
-                val index = listaGraficos.indexOf(coincidencia)
+            // 3) Filtrar todos los gráficos cuyo nombre contenga la subcadena query (insensible a mayúsculas)
+            val coincidencias = listaGraficos.filter {
+                it.nombre.uppercase().contains(query)
+            }
+
+            if (coincidencias.isNotEmpty()) {
+                // 4) Ordenar esas coincidencias alfabéticamente por nombre (lowercase para ser consistente)
+                val primera = coincidencias
+                    .sortedBy { it.nombre.lowercase() }
+                    .first()
+
+                // 5) Calcular su índice original en listaGraficos
+                val indexOriginal = listaGraficos.indexOfFirst {
+                    it.nombre == primera.nombre
+                }
+
+                // 6) Resaltar y desplazar al elemento encontrado
+                adaptadorPedido.resaltarGrafico(primera.nombre)
+                adaptadorPedido.actualizarLista(listaGraficos) // para que aplique el resaltado
+                tablaPedido.visibility = View.VISIBLE
+                txtNoResultados.visibility = View.GONE
+
+                // desplazamiento (post para asegurarnos de que RecyclerView ya está listo)
                 tablaPedido.post {
-                    tablaPedido.scrollToPosition(index)
+                    tablaPedido.scrollToPosition(indexOriginal)
                 }
             } else {
+                // 7) Si no hay coincidencias, ocultar la tabla y mostrar "Sin resultados"
                 tablaPedido.visibility = View.GONE
-                txtNoResultadosPedido.visibility = View.VISIBLE
+                txtNoResultados.visibility = View.VISIBLE
             }
         }
-        /* si se borra la búsqueda la tabla vuelve a aparecer */
+
+        // 8) Si el texto de búsqueda queda vacío, restauramos la vista completa sin resaltados
         buscarPedido.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
@@ -230,14 +263,14 @@ class PedidoHilos : BaseActivity() {
                     adaptadorPedido.actualizarLista(listaGraficos)
                     actualizarTotalMadejas()
                     tablaPedido.visibility = View.VISIBLE
-                    txtNoResultadosPedido.visibility = View.GONE
+                    txtNoResultados.visibility = View.GONE
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
+
 
     /**
      * Actualiza el total de madejas mostradas en la interfaz.
