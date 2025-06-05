@@ -102,6 +102,7 @@ class GraficoPedido : BaseActivity() {
                     ).toInt()
                 }
                 graficoId = existingId
+
             }
 
             if (graficoId < 0) {
@@ -253,43 +254,59 @@ class GraficoPedido : BaseActivity() {
 
         btnG.setOnClickListener {
             val hiloCode = inpH.text.toString().trim().uppercase()
-            val punt = inpP.text.toString().trim().toIntOrNull()
+            val punt      = inpP.text.toString().trim().toIntOrNull()
 
-            // 2) Si countTelaGlobal es null, pedimos de inpC; si ya existe, lo volvemos a usar
-            val count = countTelaGlobal ?: inpC.text.toString().trim().toIntOrNull()
-                ?.takeIf { it in listOf(14, 16, 18, 20, 25) }
-                ?.also { countTelaGlobal = it }
-
-            // 3) Si el hilo ya está en listaDominio, mostramos Toast y salimos
+            // 2) Si el hilo ya está en listaDominio, mostramos Toast y salimos
             if (listaDominio.any { it.hilo == hiloCode }) {
-                Toast.makeText(this, "El hilo ya se ha añadido al gráfico", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this, "El hilo ya se ha añadido al gráfico", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (hiloCode.isEmpty() || punt == null || count == null) {
+            // 3) Validamos campos obligatorios: hiloCode y punt deben ser no nulos
+            if (hiloCode.isEmpty() || punt == null) {
                 Toast.makeText(this, "Campos inválidos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val madejas = calcularMadejas(punt, count)
-
+            // 4) Ahora comprobamos existencia en catálogo ANTES de manejar el countTela
             lifecycleScope.launch {
-                val existe = withContext(Dispatchers.IO) {
+                val existeEnCatalogo = withContext(Dispatchers.IO) {
                     ThreadlyDatabase.getDatabase(applicationContext)
                         .hiloCatalogoDao()
                         .obtenerHiloPorNumYUsuario(hiloCode, userId) != null
                 }
 
-                if (!existe) {
-                    Toast.makeText(
-                        this@GraficoPedido,
-                        "El hilo no está en tu catálogo. Añádelo primero.",
-                        Toast.LENGTH_LONG
-                    ).show()
+                if (!existeEnCatalogo) {
+                    // Si no existe en catálogo, mostramos Toast y salimos: NO tocamos countTelaGlobal
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@GraficoPedido,
+                            "El hilo no está en tu catálogo. Añádelo primero.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                     return@launch
                 }
 
+                // 5) A estas alturas sabemos que el hilo existe. Ahora sí tomamos el countTela,
+                //    Y SI countTelaGlobal es null, leemos el valor y lo guardamos.
+                val countIntroducido: Int? = if (countTelaGlobal == null) {
+                    inpC.text.toString().trim().toIntOrNull()?.takeIf { it in listOf(14, 16, 18, 20, 25) }
+                        ?.also { countTelaGlobal = it }
+                } else {
+                    countTelaGlobal
+                }
+
+                if (countIntroducido == null) {
+                    // Si no hay count válido (ni global ni ingreso actual), error
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@GraficoPedido, "Count de tela inválido", Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+
+                // 6) Calculamos madejas y grabamos en BD
+                val madejas = calcularMadejas(punt, countIntroducido)
                 withContext(Dispatchers.IO) {
                     daoGrafico.insertarHiloEnGrafico(
                         HiloGraficoEntity(
@@ -300,9 +317,11 @@ class GraficoPedido : BaseActivity() {
                     )
                 }
 
-                // 4) Tras insertar, recargamos la lista y cerramos el diálogo
-                configurarRecycler()
-                dialog.dismiss()
+                // 7) Tras insertar, recargamos la lista y cerramos el diálogo en el hilo principal
+                withContext(Dispatchers.Main) {
+                    configurarRecycler()
+                    dialog.dismiss()
+                }
             }
         }
 
@@ -317,24 +336,36 @@ class GraficoPedido : BaseActivity() {
         }
 
         val btnConf = dialog.findViewById<Button>(R.id.btn_guardarHilo_dialog_deleteHilo)
-        val btnVol = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_deleteHilo)
-        val txtMsg = dialog.findViewById<TextView>(R.id.txtVw_textoInfo_dialog_deleteHilo)
+        val btnVol  = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_deleteHilo)
+        val txtMsg  = dialog.findViewById<TextView>(R.id.txtVw_textoInfo_dialog_deleteHilo)
 
+        // Pintamos el nombre “en rojo” dentro del mensaje
         val texto = getString(R.string.textoInfo_dialog_deleteHilo).replace("%s", h.hilo)
         txtMsg.text = SpannableString(texto).apply {
             val start = texto.indexOf(h.hilo)
-            val end = start + h.hilo.length
+            val end   = start + h.hilo.length
             setSpan(ForegroundColorSpan(Color.RED), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
 
         btnVol.setOnClickListener { dialog.dismiss() }
         btnConf.setOnClickListener {
             lifecycleScope.launch {
+                // 1) Borramos de Room
                 withContext(Dispatchers.IO) {
                     daoGrafico.eliminarHiloDeGrafico(graficoId, h.hilo)
                 }
-                configurarRecycler()
-                dialog.dismiss()
+
+                // 2) Recargamos la lista
+                withContext(Dispatchers.Main) {
+                    configurarRecycler()
+
+                    // 3) Si tras recargar no queda ningún hilo, reseteamos countTelaGlobal
+                    if (listaDominio.isEmpty()) {
+                        countTelaGlobal = null
+                    }
+
+                    dialog.dismiss()
+                }
             }
         }
 

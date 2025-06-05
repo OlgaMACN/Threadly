@@ -278,37 +278,37 @@ class AlmacenPedidos : BaseActivity() {
      */
     private fun marcarPedidoComoRealizadoYActualizarStock(pedido: PedidoGuardado) {
         lifecycleScope.launch(Dispatchers.IO) {
-            // 1) Marcar el pedido como realizado en la tabla 'pedidos'
+            // 1) Marcar el pedido como realizado
             pedido.realizado = true
             pedidoDao.actualizar(pedido.toEntity())
 
-            // 2) Para cada gráfico y cada hilo en ese pedido,
-            //    sumamos madejas al stock personal (insertar o actualizar).
+            // 2) Recorrer cada hilo de cada gráfico y sumar madejas al stock
             pedido.graficos.forEach { grafico ->
                 grafico.listaHilos.forEach { hiloGrafico ->
                     val codigoHilo = hiloGrafico.hilo
-                    val madejasNuevo = hiloGrafico.madejas
+                    val madejasNuevas = hiloGrafico.madejas
 
-                    // Obtenemos las madejas actuales (si existen) para este usuario y ese hilo
-                    val actual = stockDao.obtenerMadejas(userId, codigoHilo)
+                    // 2a) Intentamos obtener la entidad HiloStockEntity para este usuario + hilo
+                    val entidadExistente = stockDao.obtenerPorHiloUsuario(codigoHilo, userId)
 
-                    if (actual == null) {
-                        // No existe registro => insertamos uno nuevo
+                    if (entidadExistente == null) {
+                        // No existía stock para este hilo → insertamos uno nuevo
                         val nuevaEntidad = persistencia.entidades.HiloStockEntity(
                             usuarioId = userId,
                             hiloId = codigoHilo,
-                            madejas = madejasNuevo
+                            madejas = madejasNuevas
                         )
                         stockDao.insertarStock(nuevaEntidad)
                     } else {
-                        // Ya existe => actualizamos sumando las madejas
-                        val acumulado = actual + madejasNuevo
-                        stockDao.actualizarMadejas(userId, codigoHilo, acumulado)
+                        // Ya existe: sumamos madejas y actualizamos la entidad
+                        val acumulado = entidadExistente.madejas + madejasNuevas
+                        val entidadActualizada = entidadExistente.copy(madejas = acumulado)
+                        stockDao.actualizarStock(entidadActualizada)
                     }
                 }
             }
 
-            // 3) De vuelta al hilo principal, mostramos Toast y recargamos la lista de pedidos
+            // 3) Volver al hilo principal: toast y recargar la lista de pedidos
             withContext(Dispatchers.Main) {
                 Toast.makeText(
                     this@AlmacenPedidos,
@@ -319,5 +319,6 @@ class AlmacenPedidos : BaseActivity() {
             }
         }
     }
+
 
 }

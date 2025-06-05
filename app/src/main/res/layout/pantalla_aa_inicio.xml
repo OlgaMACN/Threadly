@@ -59,12 +59,12 @@
         android:fontFamily="@font/catchy_mager"
         android:text="nombre"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/txtVw_mensaje_Stock"
+        app:layout_constraintBottom_toTopOf="@+id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintHorizontal_bias="0.032"
         app:layout_constraintStart_toEndOf="@+id/imgVw_imagenPerfil"
         app:layout_constraintTop_toBottomOf="@+id/txtvw_saludo"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.025" />
 
     <TextView
         android:id="@+id/txtVw_mensaje_Stock"
@@ -165,7 +165,7 @@
         android:autoSizeMinTextSize="12sp"
         android:autoSizeMaxTextSize="25sp"
         android:autoSizeStepGranularity="1sp"
-        android:textSize="20sp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toTopOf="@id/imgBtn_configuracion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -174,8 +174,8 @@
 
     <ImageButton
         android:id="@+id/imgBtn_configuracion"
-        android:layout_width="70dp"
-        android:layout_height="65dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:background="@drawable/reutilizable_boton_redondo"
         android:padding="6dp"
         android:scaleType="centerInside"

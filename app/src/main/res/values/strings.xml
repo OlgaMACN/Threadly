@@ -52,6 +52,7 @@
     <string name="botonAgregarMadejaStk">Añadir Madeja</string>
     <string name="botonEliminarMadejaStk">Eliminar Madeja</string>
     <string name="no_hay_resultados">No tienes ese hilo en tu stock :( Borra la búsqueda para volver a ver el contenido de la tabla</string>
+    <string name="ordenStock">Ordenar por cantidad</string>
     <!-- tabla stock cabecera (stock_tabla_filas_cabecera) -->
     <string name="numeroHiloStk">HILO</string>
     <string name="numeroMadejasStk">MADEJAS</string>
@@ -199,4 +200,5 @@
     <string name="cabeceraDialogEditarPedido">EDITAR PEDIDO</string>
     <string name="confirmarEditarPedido">¿Quieres volver a editar el pedido "%s" de tu almacén?</string>
     <string name="botonEditarPedido">Sí</string>
+
 </resources>

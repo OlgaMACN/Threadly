@@ -86,6 +86,22 @@
         app:layout_constraintTop_toBottomOf="@id/txtVw_cabeceraStockPersonal"
         app:layout_constraintVertical_bias="0.048" />
 
+    <Switch
+        android:id="@+id/switch_orden_stock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:fontFamily="@font/catchy_mager"
+        android:text="@string/ordenStock"
+        android:textSize="18sp"
+        android:thumbTint="@color/Cabeceras_y_Toolbar"
+        android:trackTint="@color/morado_palo"
+        app:layout_constraintBottom_toTopOf="@id/cabecera_tabla_stock"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_agregarHiloStk"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
     <!-- Cabecera fija para que no se mueva al hacer scroll -->
     <include
         android:id="@+id/cabecera_tabla_stock"
@@ -105,9 +121,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabla_stock"
         android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
-        android:layout_height="0dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@id/btn_agregarMadejaStk"
         app:layout_constraintEnd_toEndOf="parent"

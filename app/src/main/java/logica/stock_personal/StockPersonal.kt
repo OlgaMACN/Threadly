@@ -5,6 +5,8 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.SpannableString
 import android.text.Spanned
@@ -15,6 +17,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -47,10 +50,13 @@ class StockPersonal : BaseActivity() {
     private lateinit var adaptadorStock: AdaptadorStock
     private lateinit var dao: HiloStockDao
     private var userId: Int = -1
+    private var ordenarPorCantidad = false
+
 
     // Trabajamos siempre sobre esta lista local:
     private val listaStock = mutableListOf<HiloStock>()
 
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.stock_aa_principal)
@@ -67,6 +73,17 @@ class StockPersonal : BaseActivity() {
         tablaStock.layoutManager = LinearLayoutManager(this)
         tablaStock.adapter = adaptadorStock
 
+        val switchOrdenar = findViewById<Switch>(R.id.switch_orden_stock)
+
+        switchOrdenar.setOnCheckedChangeListener { _, isChecked ->
+            ordenarListaYActualizarUI(isChecked)
+            switchOrdenar.isEnabled = false
+            /* espera entre clics */
+            Handler(Looper.getMainLooper()).postDelayed({
+                switchOrdenar.isEnabled = true
+            }, 500)
+        }
+
         // Primera carga: si no hay stock para este usuario, cargo el XML
         lifecycleScope.launch(Dispatchers.IO) {
             refrescarUI()
@@ -80,26 +97,40 @@ class StockPersonal : BaseActivity() {
         buscadorStock()
     }
 
+    private fun ordenarListaYActualizarUI(ordenPorCantidad: Boolean) {
+        val ordenada = if (ordenPorCantidad) {
+            // Ordenar por madejas DESC, luego por hiloId (como estaba antes)
+            listaStock.sortedWith(compareByDescending<HiloStock> { it.madejas }
+                .thenBy { it.hiloId })
+        } else {
+            // Orden por defecto (alfabético según tu lógica)
+            ordenarHilos(listaStock) { it.hiloId }
+        }
+
+        listaStock.clear()
+        listaStock.addAll(ordenada)
+        adaptadorStock.actualizarLista(listaStock)
+    }
+
     /** Refresca la RV leyendo de Room y ordenando. */
     private fun refrescarUI() {
         lifecycleScope.launch(Dispatchers.IO) {
             val entidades = dao.obtenerStockPorUsuario(userId)
             val dominio = entidades.map { HiloStock(it.hiloId, it.madejas) }
-            val ordenada = ordenarHilos(dominio) { it.hiloId }
 
             withContext(Dispatchers.Main) {
                 listaStock.clear()
-                listaStock.addAll(ordenada)
-                adaptadorStock.actualizarLista(listaStock)
+                listaStock.addAll(dominio)
+                ordenarListaYActualizarUI(findViewById<Switch>(R.id.switch_orden_stock).isChecked)
             }
         }
     }
 
     /** Buscador: resalta o muestra mensaje si no hay. */
     private fun buscadorStock() {
-        val edt       = findViewById<EditText>(R.id.edTxt_buscadorHilo)
-        val btn       = findViewById<ImageButton>(R.id.imgBtn_lupaStock)
-        val txtNo     = findViewById<TextView>(R.id.txtVw_sinResultados)
+        val edt = findViewById<EditText>(R.id.edTxt_buscadorHilo)
+        val btn = findViewById<ImageButton>(R.id.imgBtn_lupaStock)
+        val txtNo = findViewById<TextView>(R.id.txtVw_sinResultados)
         txtNo.visibility = View.GONE
 
         btn.setOnClickListener {
@@ -129,11 +160,11 @@ class StockPersonal : BaseActivity() {
 
                 // 4d) Asegurarnos de que la tabla está visible y el texto “no resultados” oculto
                 tablaStock.visibility = View.VISIBLE
-                txtNo.visibility     = View.GONE
+                txtNo.visibility = View.GONE
             } else {
                 // 5) Si no hay coincidencia, ocultamos la tabla y mostramos “Sin resultados”
                 tablaStock.visibility = View.GONE
-                txtNo.visibility     = View.VISIBLE
+                txtNo.visibility = View.VISIBLE
             }
         }
 
@@ -144,14 +175,14 @@ class StockPersonal : BaseActivity() {
                     adaptadorStock.resaltarHilo(null)
                     adaptadorStock.actualizarLista(listaStock)
                     tablaStock.visibility = View.VISIBLE
-                    txtNo.visibility     = View.GONE
+                    txtNo.visibility = View.GONE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
-
 
     /** Diálogo para añadir un hilo nuevo. */
     private fun dialogAgregarHilo() {
@@ -163,52 +194,75 @@ class StockPersonal : BaseActivity() {
 
         val inpHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
         val inpMadejas = dialog.findViewById<EditText>(R.id.edTxt_introducirMadeja_dialog_addHilo)
+
         dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_agregarHilo)
             .setOnClickListener { dialog.dismiss() }
-        dialog.findViewById<Button>(R.id.btn_botonAgregarHiloStk)
-            .setOnClickListener {
-                val hilo = inpHilo.text.toString().trim().uppercase()
-                val madejas = inpMadejas.text.toString().toIntOrNull() ?: -1
-                if (hilo.isEmpty() || madejas < 0) {
-                    Toast.makeText(this, "Campos inválidos", Toast.LENGTH_LONG).show()
-                    return@setOnClickListener
-                }
-                if (!ValidarFormatoHilos.formatoValidoHilo(hilo)) {
-                    Toast.makeText(this, "Formato inválido", Toast.LENGTH_LONG).show()
-                    return@setOnClickListener
-                }
 
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val existe = dao.obtenerPorHiloUsuario(hilo, userId)
-                    if (existe != null) {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                this@StockPersonal,
-                                "Ya existe ese hilo",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    } else {
-                        dao.insertarStock(
-                            HiloStockEntity(
-                                usuarioId = userId,
-                                hiloId = hilo,
-                                madejas = madejas
-                            )
-                        )
+        dialog.findViewById<Button>(R.id.btn_botonAgregarHiloStk).setOnClickListener {
+            val hilo = inpHilo.text.toString().trim().uppercase()
+            val madejas = inpMadejas.text.toString().toIntOrNull() ?: -1
 
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(this@StockPersonal, "Hilo añadido", Toast.LENGTH_SHORT)
-                                .show()
-                            refrescarUI()
-                            dialog.dismiss()
-                        }
+            if (hilo.isEmpty() || madejas < 0) {
+                Toast.makeText(this, "Campos inválidos", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if (!ValidarFormatoHilos.formatoValidoHilo(hilo)) {
+                Toast.makeText(this, "Formato inválido", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                val db = ThreadlyDatabase.getDatabase(applicationContext)
+                val daoStock = db.hiloStockDao()
+                val daoCatalogo = db.hiloCatalogoDao()
+
+                // ❗ Paso 1: ¿existe en catálogo?
+                val existeEnCatalogo = daoCatalogo.obtenerHiloPorNumYUsuario(hilo, userId) != null
+                if (!existeEnCatalogo) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@StockPersonal,
+                            "El hilo no está en tu catálogo. Añádelo primero.",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
+                    return@launch
+                }
+
+                // Paso 2: ¿ya está en el stock?
+                val yaExisteStock = daoStock.obtenerPorHiloUsuario(hilo, userId) != null
+                if (yaExisteStock) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@StockPersonal,
+                            "Ya tienes ese hilo en el stock.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    return@launch
+                }
+
+                // Paso 3: insertar en stock
+                daoStock.insertarStock(
+                    HiloStockEntity(
+                        usuarioId = userId,
+                        hiloId = hilo,
+                        madejas = madejas
+                    )
+                )
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@StockPersonal, "Hilo añadido", Toast.LENGTH_SHORT).show()
+                    refrescarUI()
+                    dialog.dismiss()
                 }
             }
+        }
 
         dialog.show()
     }
+
 
     /** Diálogo para sumar madejas a un hilo existente. */
     private fun dialogAgregarMadeja() {
