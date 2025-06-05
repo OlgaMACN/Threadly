@@ -2,6 +2,7 @@ package logica.stock_personal
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -10,6 +11,7 @@ import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -75,7 +77,7 @@ class StockPersonal : BaseActivity() {
         findViewById<Button>(R.id.btn_agregarMadejaStk).setOnClickListener { dialogAgregarMadeja() }
         findViewById<Button>(R.id.btn_eliminarMadejaStk).setOnClickListener { dialogEliminarMadeja() }
 
-        buscadorHilo()
+        buscadorStock()
     }
 
     /** Refresca la RV leyendo de Room y ordenando. */
@@ -94,41 +96,62 @@ class StockPersonal : BaseActivity() {
     }
 
     /** Buscador: resalta o muestra mensaje si no hay. */
-    private fun buscadorHilo() {
-        val edt = findViewById<EditText>(R.id.edTxt_buscadorHilo)
-        val btn = findViewById<ImageButton>(R.id.imgBtn_lupaStock)
-        val txtNo = findViewById<TextView>(R.id.txtVw_sinResultados)
+    private fun buscadorStock() {
+        val edt       = findViewById<EditText>(R.id.edTxt_buscadorHilo)
+        val btn       = findViewById<ImageButton>(R.id.imgBtn_lupaStock)
+        val txtNo     = findViewById<TextView>(R.id.txtVw_sinResultados)
         txtNo.visibility = View.GONE
 
         btn.setOnClickListener {
+            // 1) Ocultar el teclado
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(edt.windowToken, 0)
+
+            // 2) Tomar el texto que ha escrito el usuario, en mayúsculas
             val code = edt.text.toString().trim().uppercase()
+
+            // 3) Buscar el primer “HiloStock” cuyo hiloId coincida exactamente
             val found = listaStock.find { it.hiloId == code }
+
             if (found != null) {
+                val idx = listaStock.indexOf(found)
+
+                // 4a) Marcarlo para que el adaptador lo resalte
                 adaptadorStock.resaltarHilo(found.hiloId)
-                adaptadorStock.actualizarLista(listaStock)
-                tablaStock.scrollToPosition(listaStock.indexOf(found))
+
+                // 4b) Como cambia solo el resaltado, basta notificar el adaptador (no necesitamos
+                //     volver a “actualizarLista” completa, pero si prefieres refrescar todo, puedes
+                //     usar adaptadorStock.actualizarLista(listaStock) en su lugar)
+                adaptadorStock.notifyDataSetChanged()
+
+                // 4c) Mover el RecyclerView hasta esa posición
+                tablaStock.scrollToPosition(idx)
+
+                // 4d) Asegurarnos de que la tabla está visible y el texto “no resultados” oculto
                 tablaStock.visibility = View.VISIBLE
-                txtNo.visibility = View.GONE
+                txtNo.visibility     = View.GONE
             } else {
+                // 5) Si no hay coincidencia, ocultamos la tabla y mostramos “Sin resultados”
                 tablaStock.visibility = View.GONE
-                txtNo.visibility = View.VISIBLE
+                txtNo.visibility     = View.VISIBLE
             }
         }
 
+        // 6) Si el usuario borra todo el texto, restauramos la tabla completa sin resaltados
         edt.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     adaptadorStock.resaltarHilo(null)
                     adaptadorStock.actualizarLista(listaStock)
                     tablaStock.visibility = View.VISIBLE
-                    txtNo.visibility = View.GONE
+                    txtNo.visibility     = View.GONE
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
+
 
     /** Diálogo para añadir un hilo nuevo. */
     private fun dialogAgregarHilo() {
