@@ -46,7 +46,7 @@ class Splash : AppCompatActivity() {
      * Método llamado al crear la actividad.
      * Configura la vista, animaciones y la transición automática.
      *
-     * @param savedInstanceState Bundle con el estado previo, si existiera.
+     * @param savedInstanceState Bundle con el estado previo, si existiera
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         /* forzar modo claro para toda la actividad */
