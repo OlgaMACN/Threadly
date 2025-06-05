@@ -7,11 +7,13 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import persistencia.entidades.GraficoEntity
 import persistencia.entidades.PedidoConGraficos
 import persistencia.entidades.PedidoEntity
 
 @Dao
 interface PedidoDao {
+
 
     /*
      * Inserta un pedido en la tabla "pedidos" y devuelve su id generado.
@@ -22,6 +24,8 @@ interface PedidoDao {
     @Transaction
     @Query("SELECT * FROM pedidos WHERE userId = :userId ORDER BY nombre")
     suspend fun obtenerTodosPorUsuario(userId: Int): List<PedidoEntity>
+    @Query("SELECT * FROM graficos WHERE idPedido = :pedidoId AND userId = :userId")
+    suspend fun obtenerGraficoPorPedido(userId: Int, pedidoId: Int): List<GraficoEntity>
 
     @Transaction
     @Query("SELECT * FROM pedidos WHERE id = :pedidoId")
