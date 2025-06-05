@@ -1,6 +1,7 @@
 package logica.almacen_pedidos
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -12,6 +13,8 @@ import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
@@ -27,7 +30,6 @@ import modelo.toPedidoGuardado
 import persistencia.bbdd.ThreadlyDatabase
 import persistencia.daos.HiloStockDao
 import persistencia.daos.PedidoDao
-import persistencia.entidades.PedidoEntity
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
@@ -89,7 +91,7 @@ class AlmacenPedidos : BaseActivity() {
         tablaAlmacen.layoutManager = LinearLayoutManager(this)
         tablaAlmacen.adapter = adaptador
 
-        buscadorPedido()
+        buscadorAlmacen()
         cargarPedidosDesdeRoom()
     }
 
@@ -110,39 +112,65 @@ class AlmacenPedidos : BaseActivity() {
         }
     }
 
-    private fun buscadorPedido() {
+    private fun buscadorAlmacen() {
         val edtBuscador = findViewById<EditText>(R.id.edTxt_buscadorAlmacen)
         val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaAlmacen)
         val txtNoResultados = findViewById<TextView>(R.id.txtVw_sinResultadosAlmacen)
+        val recycler = findViewById<RecyclerView>(R.id.tabla_almacen) // ajustar id real
 
-        txtNoResultados.visibility = TextView.GONE
+        txtNoResultados.visibility = View.GONE
 
         btnLupa.setOnClickListener {
+            // 1) Ocultamos el teclado antes de la búsqueda
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(edtBuscador.windowToken, 0)
+
+            // 1) Obtenemos el texto a buscar
             val texto = edtBuscador.text.toString().trim().uppercase()
+
+            // 2) Si el usuario borró todo, restablecemos
             if (texto.isEmpty()) {
                 adaptador.actualizarLista(listaPedidos)
-                txtNoResultados.visibility = TextView.GONE
+                adaptador.resaltarPedido(null)
+                txtNoResultados.visibility = View.GONE
                 return@setOnClickListener
             }
-            val listaFiltrada = listaPedidos.filter {
+
+            // 3) Buscamos todas las coincidencias (contains)
+            val coincidencias = listaPedidos.filter {
                 it.nombre.uppercase().contains(texto)
             }
-            if (listaFiltrada.isNotEmpty()) {
-                adaptador.actualizarLista(listaFiltrada)
-                txtNoResultados.visibility = TextView.GONE
+
+            if (coincidencias.isNotEmpty()) {
+                // 4) Tomamos la primera (será la más antigua si listaPedidos ya está ordenada)
+                val primerMatch = coincidencias.first()
+                val indiceEnListaCompleta = listaPedidos.indexOf(primerMatch)
+
+                // 5) Resaltamos ese nombre en el adaptador y nos desplazamos a dicha posición
+                adaptador.resaltarPedido(primerMatch.nombre)
+                adaptador.actualizarLista(listaPedidos) // restauramos lista completa
+                recycler.post {
+                    recycler.scrollToPosition(indiceEnListaCompleta)
+                }
+                txtNoResultados.visibility = View.GONE
             } else {
+                // 6) No hay coincidencias: vaciamos el adaptador y mostramos “sin resultados”
                 adaptador.actualizarLista(emptyList())
-                txtNoResultados.visibility = TextView.VISIBLE
+                adaptador.resaltarPedido(null)
+                txtNoResultados.visibility = View.VISIBLE
             }
         }
 
         edtBuscador.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
+                    // Al borrar todo, volvemos a mostrar lista completa sin resaltado
                     adaptador.actualizarLista(listaPedidos)
-                    txtNoResultados.visibility = TextView.GONE
+                    adaptador.resaltarPedido(null)
+                    txtNoResultados.visibility = View.GONE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -258,8 +286,8 @@ class AlmacenPedidos : BaseActivity() {
             //    sumamos madejas al stock personal (insertar o actualizar).
             pedido.graficos.forEach { grafico ->
                 grafico.listaHilos.forEach { hiloGrafico ->
-                    val codigoHilo      = hiloGrafico.hilo
-                    val madejasNuevo    = hiloGrafico.madejas
+                    val codigoHilo = hiloGrafico.hilo
+                    val madejasNuevo = hiloGrafico.madejas
 
                     // Obtenemos las madejas actuales (si existen) para este usuario y ese hilo
                     val actual = stockDao.obtenerMadejas(userId, codigoHilo)
@@ -268,8 +296,8 @@ class AlmacenPedidos : BaseActivity() {
                         // No existe registro => insertamos uno nuevo
                         val nuevaEntidad = persistencia.entidades.HiloStockEntity(
                             usuarioId = userId,
-                            hiloId    = codigoHilo,
-                            madejas   = madejasNuevo
+                            hiloId = codigoHilo,
+                            madejas = madejasNuevo
                         )
                         stockDao.insertarStock(nuevaEntidad)
                     } else {

@@ -523,21 +523,26 @@ class PedidoHilos : BaseActivity() {
      * Genera un nombre único para el nuevo pedido con formato "PyyyyMMdd" o "PyyyyMMdd(n)".
      */
     private suspend fun nombrePedidoUnico(): String {
-        val fechaHoy = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
-        var baseNombre = "P$fechaHoy"
+        // 1) Creamos la fecha en formato "ddMMyy"
+        val fechaHoy = SimpleDateFormat("ddMMyy", Locale.getDefault()).format(Date())
+        var baseNombre = "P$fechaHoy"  // p.ej. "P050625"
         var nombreCandidato = baseNombre
         var contador = 1
 
-        // Leer los pedidos ya existentes en BD para comprobar duplicados
+        // 2) Obtenemos todos los nombres de pedidos existentes para este usuario
         val pedidosExistentes = withContext(Dispatchers.IO) {
             pedidoDao.obtenerPedidosConGraficos(userId).map { it.pedido.nombre }
         }
+
+        // 3) Si ya existe ese mismo nombre, lo repetimos añadiendo (1), (2), etc.
         while (pedidosExistentes.any { it == nombreCandidato }) {
             nombreCandidato = "$baseNombre($contador)"
             contador++
         }
+
         return nombreCandidato
     }
+
 
 
     /**

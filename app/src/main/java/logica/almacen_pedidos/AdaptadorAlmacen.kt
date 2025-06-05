@@ -1,5 +1,7 @@
 package logica.almacen_pedidos
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +28,9 @@ class AdaptadorAlmacen(
     private val onNombrePedidoClick: (PedidoGuardado) -> Unit
 ) : RecyclerView.Adapter<AdaptadorAlmacen.PedidoViewHolder>() {
 
+    // nombre del pedido que debe resaltarse (o null para ningún resaltado)
+    private var pedidoResaltado: String? = null
+
     inner class PedidoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val txtNombrePedido: TextView = itemView.findViewById(R.id.txtVw_contenidoNombrePedido)
         val btnDescargar: ImageButton = itemView.findViewById(R.id.imgBtn_descargaPedido)
@@ -41,7 +46,7 @@ class AdaptadorAlmacen(
     override fun onBindViewHolder(holder: PedidoViewHolder, position: Int) {
         val pedido = listaPedidos[position]
 
-        // 1) clic en el nombre abre el CSV
+        // 1) texto del nombre
         holder.txtNombrePedido.text = pedido.nombre
         holder.txtNombrePedido.setOnClickListener {
             onNombrePedidoClick(pedido)
@@ -78,13 +83,35 @@ class AdaptadorAlmacen(
             contexto.dialogEliminarPedido(position)
             true
         }
+
+        // 5) Resaltar si coincide con `pedidoResaltado`
+        if (pedidoResaltado != null && pedidoResaltado.equals(pedido.nombre, ignoreCase = true)) {
+            // Usamos el drawable o color de resaltado
+            holder.itemView.setBackgroundResource(R.drawable.reutilizable_resaltar_busqueda)
+        } else {
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT)
+        }
     }
 
     override fun getItemCount(): Int = listaPedidos.size
 
+    /**
+     * Actualiza toda la lista de pedidos (sin alterar el resaltado).
+     */
+    @SuppressLint("NotifyDataSetChanged")
     fun actualizarLista(nuevaLista: List<PedidoGuardado>) {
         Log.d("AdaptadorAlmacen", "Actualizando lista. Tamaño nuevo: ${nuevaLista.size}")
         listaPedidos = nuevaLista
+        notifyDataSetChanged()
+    }
+
+    /**
+     * Fija el nombre de pedido que debe resaltarse y vuelve a dibujar.
+     * Si `nombre` es null, quita el resaltado.
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    fun resaltarPedido(nombre: String?) {
+        pedidoResaltado = nombre
         notifyDataSetChanged()
     }
 }
