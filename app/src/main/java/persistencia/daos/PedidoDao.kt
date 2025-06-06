@@ -24,6 +24,7 @@ interface PedidoDao {
     @Transaction
     @Query("SELECT * FROM pedidos WHERE userId = :userId ORDER BY nombre")
     suspend fun obtenerTodosPorUsuario(userId: Int): List<PedidoEntity>
+
     @Query("SELECT * FROM graficos WHERE idPedido = :pedidoId AND userId = :userId")
     suspend fun obtenerGraficoPorPedido(userId: Int, pedidoId: Int): List<GraficoEntity>
 

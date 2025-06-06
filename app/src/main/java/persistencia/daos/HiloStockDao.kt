@@ -11,14 +11,18 @@ import persistencia.entidades.HiloStockEntity
 @Dao
 interface HiloStockDao {
 
-    @Query("SELECT * FROM hilo_stock WHERE usuarioId = :uid")
-    suspend fun obtenerStockPorUsuario(uid: Int): List<HiloStockEntity>
+    @Query("SELECT COUNT(*) FROM hilo_stock WHERE usuarioId = :userId")
+    suspend fun contarStocksPorUsuario(userId: Int): Int
+
 
     @Query("SELECT * FROM hilo_stock WHERE usuarioId = :uid AND hiloId = :h")
     suspend fun obtenerPorHiloUsuario(h: String, uid: Int): HiloStockEntity?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertarStock(ent: HiloStockEntity): Long
+
+    @Query("SELECT * FROM hilo_stock WHERE usuarioId = :userId")
+    suspend fun obtenerStockPorUsuario(userId: Int): List<HiloStockEntity>
 
 
     @Query("SELECT * FROM hilo_stock WHERE usuarioId = :userId")

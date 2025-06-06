@@ -15,8 +15,10 @@ import persistencia.daos.HiloStockDao
 import persistencia.daos.PedidoDao
 import utiles.BaseActivity
 import utiles.Consejos
+import utiles.PrecargaDatos.precargarCatalogoYStockSiNoExisten
 import utiles.SesionUsuario
 import utiles.funciones.funcionToolbar
+
 
 /**
  * Pantalla principal de bienvenida de la aplicación Threadly.
@@ -25,7 +27,7 @@ import utiles.funciones.funcionToolbar
  *
  * Esta clase extiende de [BaseActivity] para aprovechar la funcionalidad común.
  *
- * @ author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
  */
 class PantallaPrincipal : BaseActivity() {
 
@@ -38,10 +40,11 @@ class PantallaPrincipal : BaseActivity() {
     private lateinit var txtStock: TextView
     private var userId: Int = -1
 
-
     /**
      * Se ejecuta al crear la actividad. Inicializa el toolbar, carga el usuario,
      * muestra el stock actual, un consejo aleatorio y permite ir a la pantalla de configuración.
+     *
+     * Además, precarga el catálogo y stock si aún no existen para este usuario.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,18 +52,30 @@ class PantallaPrincipal : BaseActivity() {
         funcionToolbar(this) /* carga el toolbar personalizado */
 
         txtNombreUser = findViewById(R.id.txtVw_nombreUsuario)
-        imgPerfil = findViewById(R.id.imgVw_imagenPerfil)
-        txtTip = findViewById(R.id.txtVw_contenidoTip)
-        txtStock = findViewById(R.id.txtVw_contenidoStock)
+        imgPerfil     = findViewById(R.id.imgVw_imagenPerfil)
+        txtTip        = findViewById(R.id.txtVw_contenidoTip)
+        txtStock      = findViewById(R.id.txtVw_contenidoStock)
 
         // inicializa DAO y sesión
-        dao = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
-        pedidoDao = ThreadlyDatabase.getDatabase(applicationContext).pedidoDao()
+        dao        = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
+        pedidoDao  = ThreadlyDatabase.getDatabase(applicationContext).pedidoDao()
         graficoDao = ThreadlyDatabase.getDatabase(applicationContext).graficoDao()
 
-
         userId = SesionUsuario.obtenerSesion(this)
-        if (userId < 0) finish()
+        if (userId < 0) {
+            finish()
+            return
+        }
+
+        // --------- NUEVO: Precargar catálogo y stock para este userId si aún no existen ---------
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                precargarCatalogoYStockSiNoExisten(applicationContext, userId)
+            }
+            // Al terminar la precarga ya es seguro leer el stock, gráficos, etc.
+            // (no hace falta hacer nada extra aquí, todo se refresca en onResume).
+        }
+        // -----------------------------------------------------------------------------------------
 
         cargarUsuario() /* muestra imagen y nombre del usuario */
 
@@ -142,5 +157,4 @@ class PantallaPrincipal : BaseActivity() {
         val consejo = Consejos.obtenerAleatorio()
         this.txtTip.text = consejo
     }
-
 }

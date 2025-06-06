@@ -271,7 +271,6 @@ class PedidoHilos : BaseActivity() {
         })
     }
 
-
     /**
      * Actualiza el total de madejas mostradas en la interfaz.
      */
@@ -525,7 +524,7 @@ class PedidoHilos : BaseActivity() {
     private suspend fun nombrePedidoUnico(): String {
         // 1) Creamos la fecha en formato "ddMMyy"
         val fechaHoy = SimpleDateFormat("ddMMyy", Locale.getDefault()).format(Date())
-        var baseNombre = "P$fechaHoy"  // p.ej. "P050625"
+        val baseNombre = "P$fechaHoy" // Ejemplo: "P060625"
         var nombreCandidato = baseNombre
         var contador = 1
 
@@ -534,9 +533,9 @@ class PedidoHilos : BaseActivity() {
             pedidoDao.obtenerPedidosConGraficos(userId).map { it.pedido.nombre }
         }
 
-        // 3) Si ya existe ese mismo nombre, lo repetimos añadiendo (1), (2), etc.
-        while (pedidosExistentes.any { it == nombreCandidato }) {
-            nombreCandidato = "$baseNombre($contador)"
+        // 3) Si ya existe un pedido con ese nombre, añadimos sufijos "_1", "_2", etc.
+        while (pedidosExistentes.contains(nombreCandidato)) {
+            nombreCandidato = "${baseNombre}_$contador"
             contador++
         }
 

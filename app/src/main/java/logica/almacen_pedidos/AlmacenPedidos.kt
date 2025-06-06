@@ -95,8 +95,7 @@ class AlmacenPedidos : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        cargarPedidosDesdeRoom()
-    }
+           }
 
     private fun cargarPedidosDesdeRoom() {
         lifecycleScope.launch {

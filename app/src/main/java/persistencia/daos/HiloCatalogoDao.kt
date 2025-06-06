@@ -12,9 +12,15 @@ import persistencia.entidades.HiloGraficoEntity
 /*** @author Olga y Sandra Macías Aragón*/
 @Dao
 interface HiloCatalogoDao {
+    @Query("SELECT COUNT(*) FROM hilo_catalogo WHERE userId = :userId")
+    suspend fun contarHilosPorUsuario(userId: Int): Int
+
 
     @Query("SELECT * FROM hilo_catalogo WHERE userId = :userId ORDER BY numHilo ASC")
     fun obtenerHilosPorUsuario(userId: Int): List<HiloCatalogoEntity>
+
+    @Query("SELECT * FROM hilo_catalogo WHERE userId = :userId")
+    suspend fun obtenerTodosPorUsuario(userId: Int): List<HiloCatalogoEntity>
 
     @Query("SELECT COUNT(*) FROM hilo_catalogo WHERE userId = :usuarioId")
     suspend fun contarHilos(usuarioId: Int): Int
