@@ -12,7 +12,11 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,12 +24,12 @@ import com.threadly.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import logica.pedido_hilos.Grafico
 import persistencia.bbdd.ThreadlyDatabase
 import persistencia.daos.HiloGraficoDao
 import persistencia.daos.HiloStockDao
 import persistencia.entidades.GraficoEntity
 import persistencia.entidades.HiloGraficoEntity
-import logica.pedido_hilos.Grafico
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
@@ -229,108 +233,126 @@ class GraficoPedido : BaseActivity() {
      * Dialog para añadir un hilo al gráfico. Solo pide “count de tela” la primera vez.
      * Además, si el hilo ya existe en este gráfico, muestra un Toast y no lo inserta.
      */
+    /**
+     * Diálogo para añadir un hilo al gráfico. Solo pide “count de tela” la primera vez.
+     * Además, si el hilo ya existe en este gráfico, muestra un Toast y no lo inserta.
+     */
     private fun dialogAgregarHiloGrafico() {
-        val dialog = Dialog(this).apply {
-            setContentView(R.layout.pedidob_dialog_agregar_hilo)
-            window?.setBackgroundDrawableResource(android.R.color.transparent)
-            ajustarDialog(this)
-            setCancelable(false)
-        }
-
-        val inpH = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
-        val inpP = dialog.findViewById<EditText>(R.id.edTxt_introducirPuntadas_dialog_addHilo)
-        val inpC = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
-        val btnG = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
-
-        dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
-            .setOnClickListener { dialog.dismiss() }
-
-        // 1) Si countTelaGlobal ya existe, ocultamos el campo completo (solo se pide una vez)
-        if (countTelaGlobal != null) {
-            inpC.visibility = View.GONE
-        } else {
-            inpC.visibility = View.VISIBLE
-        }
-
-        btnG.setOnClickListener {
-            val hiloCode = inpH.text.toString().trim().uppercase()
-            val punt = inpP.text.toString().trim().toIntOrNull()
-
-            if (listaDominio.any { it.hilo == hiloCode }) {
-                Toast.makeText(this, "El hilo ya se ha añadido al gráfico", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        lifecycleScope.launch {
+            // 1) Comprobar cuántos hilos ya hay en este gráfico
+            val cantidadHilosExistentes = withContext(Dispatchers.IO) {
+                daoGrafico.countHilosDeGrafico(graficoId)
             }
 
-            if (hiloCode.isEmpty() || punt == null) {
-                Toast.makeText(this, "Campos inválidos", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            lifecycleScope.launch {
-                val existeEnCatalogo = withContext(Dispatchers.IO) {
-                    ThreadlyDatabase.getDatabase(applicationContext)
-                        .hiloCatalogoDao()
-                        .obtenerHiloPorNumYUsuario(hiloCode, userId) != null
+            withContext(Dispatchers.Main) {
+                // 2) Crear el diálogo en el hilo principal
+                val dialog = Dialog(this@GraficoPedido).apply {
+                    setContentView(R.layout.pedidob_dialog_agregar_hilo)
+                    window?.setBackgroundDrawableResource(android.R.color.transparent)
+                    ajustarDialog(this)
+                    setCancelable(false)
                 }
-                if (!existeEnCatalogo) {
-                    withContext(Dispatchers.Main) {
+
+                val inpH = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
+                val inpP = dialog.findViewById<EditText>(R.id.edTxt_introducirPuntadas_dialog_addHilo)
+                val inpC = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
+                val btnG = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
+
+                dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
+                    .setOnClickListener { dialog.dismiss() }
+
+                // 3) Si ya había hilos, ocultamos el campo count; si no, lo mostramos
+                if (cantidadHilosExistentes > 0) {
+                    inpC.visibility = View.GONE
+                } else {
+                    inpC.visibility = View.VISIBLE
+                }
+
+                btnG.setOnClickListener {
+                    val hiloCode = inpH.text.toString().trim().uppercase()
+                    val punt = inpP.text.toString().trim().toIntOrNull()
+
+                    // 4) Validar campos obligatorios: hilo y puntadas
+                    if (hiloCode.isEmpty() || punt == null) {
+                        Toast.makeText(this@GraficoPedido, "Campos inválidos", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
+                    // 5) Evitar duplicados en memoria
+                    if (listaDominio.any { it.hilo == hiloCode }) {
                         Toast.makeText(
                             this@GraficoPedido,
-                            "El hilo no está en tu catálogo. Añádelo primero.",
-                            Toast.LENGTH_LONG
+                            "El hilo ya se ha añadido al gráfico",
+                            Toast.LENGTH_SHORT
                         ).show()
+                        return@setOnClickListener
                     }
-                    return@launch
-                }
 
-                // --- Aquí la nueva parte que agrega la comprobación ---
-                val cantidadHilos = withContext(Dispatchers.IO) {
-                    daoGrafico.countHilosDeGrafico(graficoId)
-                }
-
-                // Solo pedir count si no hay ningún hilo asociado aún (y countTelaGlobal es null)
-                if (cantidadHilos == 0 && countTelaGlobal == null) {
-                    // Pedir count de tela (tomarlo del input)
-                    val countIntroducido = inpC.text.toString().trim().toIntOrNull()?.takeIf {
-                        it in listOf(14, 16, 18, 20, 25)
-                    }
-                    if (countIntroducido == null) {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(this@GraficoPedido, "Count de tela inválido", Toast.LENGTH_SHORT).show()
+                    lifecycleScope.launch {
+                        // 6) Comprobar que el hilo existe en catálogo
+                        val existeEnCatalogo = withContext(Dispatchers.IO) {
+                            ThreadlyDatabase.getDatabase(applicationContext)
+                                .hiloCatalogoDao()
+                                .obtenerHiloPorNumYUsuario(hiloCode, userId) != null
                         }
-                        return@launch
+                        if (!existeEnCatalogo) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    this@GraficoPedido,
+                                    "El hilo no está en tu catálogo. Añádelo primero.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                            return@launch
+                        }
+
+                        // 7) Si es el primer hilo (cantidadHilosExistentes == 0), recogemos y validamos count
+                        if (cantidadHilosExistentes == 0) {
+                            val countTela = inpC.text.toString().trim().toIntOrNull()
+                            if (countTela == null || countTela <= 0) {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        this@GraficoPedido,
+                                        "Count de tela inválido",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                                return@launch
+                            }
+                            countTelaGlobal = countTela
+                        }
+
+                        // 8) Calcular madejas con el count ya definido para este gráfico
+                        val madejas = calcularMadejas(punt, countTelaGlobal!!)
+
+                        // 9) Insertar en Room
+                        withContext(Dispatchers.IO) {
+                            daoGrafico.insertarHiloEnGrafico(
+                                HiloGraficoEntity(
+                                    graficoId = graficoId,
+                                    hilo = hiloCode,
+                                    madejas = madejas
+                                )
+                            )
+                        }
+
+                        // 10) Actualizar la lista local en memoria
+                        listaDominio.add(HiloGrafico(hiloCode, madejas))
+                        listaDominio = ordenarHilos(listaDominio) { it.hilo }.toMutableList()
+
+                        withContext(Dispatchers.Main) {
+                            adaptadorGrafico.actualizarLista(listaDominio)
+                            txtTotal.text = "Total Madejas: ${listaDominio.sumOf { it.madejas }}"
+                            dialog.dismiss()
+                        }
                     }
-                    countTelaGlobal = countIntroducido
                 }
 
-                // Si ya hay countTelaGlobal, no pedimos de nuevo
-                if (countTelaGlobal == null) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@GraficoPedido, "Count de tela inválido", Toast.LENGTH_SHORT).show()
-                    }
-                    return@launch
-                }
-
-                val madejas = calcularMadejas(punt, countTelaGlobal!!)
-                withContext(Dispatchers.IO) {
-                    daoGrafico.insertarHiloEnGrafico(
-                        HiloGraficoEntity(
-                            graficoId = graficoId,
-                            hilo = hiloCode,
-                            madejas = madejas
-                        )
-                    )
-                }
-                withContext(Dispatchers.Main) {
-                    configurarRecycler()
-                    dialog.dismiss()
-                }
+                dialog.show()
             }
         }
-
-
-        dialog.show()
     }
+
 
     private fun dialogBorrarHilo(h: HiloGrafico) {
         val dialog = Dialog(this).apply {
@@ -340,14 +362,14 @@ class GraficoPedido : BaseActivity() {
         }
 
         val btnConf = dialog.findViewById<Button>(R.id.btn_guardarHilo_dialog_deleteHilo)
-        val btnVol  = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_deleteHilo)
-        val txtMsg  = dialog.findViewById<TextView>(R.id.txtVw_textoInfo_dialog_deleteHilo)
+        val btnVol = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_deleteHilo)
+        val txtMsg = dialog.findViewById<TextView>(R.id.txtVw_textoInfo_dialog_deleteHilo)
 
         // Pintamos el nombre “en rojo” dentro del mensaje
         val texto = getString(R.string.textoInfo_dialog_deleteHilo).replace("%s", h.hilo)
         txtMsg.text = SpannableString(texto).apply {
             val start = texto.indexOf(h.hilo)
-            val end   = start + h.hilo.length
+            val end = start + h.hilo.length
             setSpan(ForegroundColorSpan(Color.RED), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
 

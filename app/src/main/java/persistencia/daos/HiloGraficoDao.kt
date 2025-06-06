@@ -13,6 +13,13 @@ interface HiloGraficoDao {
     @Query("SELECT * FROM hilos_grafico WHERE graficoId = :graficoId")
     suspend fun obtenerHilosDeGrafico(graficoId: Int): List<HiloGraficoEntity>
 
+
+    @Query("SELECT count FROM graficos WHERE id = :graficoId")
+    fun obtenerCountTela(graficoId: Int): Int?
+
+    @Query("UPDATE graficos SET count = :nuevoCount WHERE id = :graficoId")
+    fun actualizarCountTela(graficoId: Int, nuevoCount: Int)
+
     @Query("SELECT id FROM graficos WHERE nombre = :nombre LIMIT 1")
     suspend fun obtenerIdPorNombre(nombre: String): Int?
 
