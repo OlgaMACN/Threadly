@@ -9,14 +9,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,12 +21,12 @@ import com.threadly.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import logica.pedido_hilos.Grafico
 import persistencia.bbdd.ThreadlyDatabase
 import persistencia.daos.HiloGraficoDao
 import persistencia.daos.HiloStockDao
 import persistencia.entidades.GraficoEntity
 import persistencia.entidades.HiloGraficoEntity
+import logica.pedido_hilos.Grafico
 import utiles.BaseActivity
 import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
@@ -42,7 +39,7 @@ import utiles.funciones.ordenarHilos
  * Permite mostrar la lista de hilos asociados al gráfico, agregar nuevos hilos,
  * eliminar hilos existentes, buscar hilos en la lista y mostrar el stock disponible.
  *
- * - Se oculta el campo "count de tela" después de haberlo introducido por primera vez.
+ * - Se oculta el campo "count de tela" después de haberlo introducido por primera vez (persistido en Room).
  * - Al pulsar sobre el nombre de un hilo, se consulta el stock actual en Room y se muestra en pantalla.
  *
  * Cuando se pulsa “volver”, este activity devuelve al caller (PedidoHilos) un objeto Grafico
@@ -63,7 +60,7 @@ class GraficoPedido : BaseActivity() {
     private var graficoNombre: String = ""
     private var graficoId: Int = -1
 
-    // countTelaGlobal se mantiene para ocultar el campo tras la primera inserción
+    // countTelaGlobal se carga/almacena en Room; persistirá más allá de cerrar esta Activity
     private var countTelaGlobal: Int? = null
     private var userId: Int = -1
 
@@ -95,23 +92,26 @@ class GraficoPedido : BaseActivity() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
+                // 1) Obtener o insertar el gráfico en Room
                 var existingId = daoGrafico.obtenerIdPorNombre(graficoNombre)
                 if (existingId == null) {
                     existingId = daoGrafico.insertarGrafico(
                         GraficoEntity(
                             nombre = graficoNombre,
                             idPedido = null,
-                            userId = userId
+                            userId = userId,
+                            count = null
                         )
                     ).toInt()
                 }
                 graficoId = existingId
 
+                // 2) Recuperar el countTela guardado (si existe)
+                countTelaGlobal = daoGrafico.obtenerCountTela(graficoId)
             }
 
             if (graficoId < 0) {
-                Toast.makeText(this@GraficoPedido, "Error cargando gráfico", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this@GraficoPedido, "Error cargando gráfico", Toast.LENGTH_SHORT).show()
                 finish()
                 return@launch
             }
@@ -128,7 +128,7 @@ class GraficoPedido : BaseActivity() {
                 daoGrafico.obtenerHilosPorGrafico(graficoId)
             }
 
-            // Mapeamos entidades a dominio y ordenamos
+            // Mapear entidades a dominio y ordenar
             listaDominio = entidades.map { HiloGrafico(it.hilo, it.madejas) }
                 .let { ordenarHilos(it) { h -> h.hilo } }
                 .toMutableList()
@@ -162,7 +162,7 @@ class GraficoPedido : BaseActivity() {
                 adaptadorGrafico.actualizarLista(listaDominio)
             }
 
-            // Calculamos y mostramos el total inicial
+            // Mostrar total inicial
             val total = listaDominio.sumOf { it.madejas }
             txtTotal.text = "Total Madejas: $total"
             buscadorGrafico()
@@ -179,16 +179,12 @@ class GraficoPedido : BaseActivity() {
     }
 
     private fun buscadorGrafico() {
-
         val edt = findViewById<EditText>(R.id.edTxt_buscadorGrafico)
         val btn = findViewById<ImageView>(R.id.imgVw_lupaGrafico)
         val txtNo = findViewById<TextView>(R.id.txtVw_sinResultadosGrafico)
-
         txtNo.visibility = View.GONE
 
         btn.setOnClickListener {
-
-            // 1) Ocultar el teclado
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(edt.windowToken, 0)
             val code = edt.text.toString().trim().uppercase()
@@ -205,7 +201,7 @@ class GraficoPedido : BaseActivity() {
             }
         }
 
-        edt.addTextChangedListener(object : android.text.TextWatcher {
+        edt.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     adaptadorGrafico.resaltarHiloBusqueda(null)
@@ -214,7 +210,6 @@ class GraficoPedido : BaseActivity() {
                     recyclerView.visibility = View.VISIBLE
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -230,22 +225,16 @@ class GraficoPedido : BaseActivity() {
     }
 
     /**
-     * Dialog para añadir un hilo al gráfico. Solo pide “count de tela” la primera vez.
-     * Además, si el hilo ya existe en este gráfico, muestra un Toast y no lo inserta.
-     */
-    /**
      * Diálogo para añadir un hilo al gráfico. Solo pide “count de tela” la primera vez.
      * Además, si el hilo ya existe en este gráfico, muestra un Toast y no lo inserta.
+     * El campo count se persiste en Room (GraficoEntity.countTela).
      */
     private fun dialogAgregarHiloGrafico() {
         lifecycleScope.launch {
-            // 1) Comprobar cuántos hilos ya hay en este gráfico
-            val cantidadHilosExistentes = withContext(Dispatchers.IO) {
-                daoGrafico.countHilosDeGrafico(graficoId)
-            }
+            // No es necesario recontar; basta con revisar si countTelaGlobal ya está cargado
+            val necesitaCount = (countTelaGlobal == null)
 
             withContext(Dispatchers.Main) {
-                // 2) Crear el diálogo en el hilo principal
                 val dialog = Dialog(this@GraficoPedido).apply {
                     setContentView(R.layout.pedidob_dialog_agregar_hilo)
                     window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -261,8 +250,8 @@ class GraficoPedido : BaseActivity() {
                 dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
                     .setOnClickListener { dialog.dismiss() }
 
-                // 3) Si ya había hilos, ocultamos el campo count; si no, lo mostramos
-                if (cantidadHilosExistentes > 0) {
+                // Ocultar el campo count si ya existe en Room
+                if (!necesitaCount) {
                     inpC.visibility = View.GONE
                 } else {
                     inpC.visibility = View.VISIBLE
@@ -272,24 +261,19 @@ class GraficoPedido : BaseActivity() {
                     val hiloCode = inpH.text.toString().trim().uppercase()
                     val punt = inpP.text.toString().trim().toIntOrNull()
 
-                    // 4) Validar campos obligatorios: hilo y puntadas
+                    // 1) Validar campos obligatorios
                     if (hiloCode.isEmpty() || punt == null) {
                         Toast.makeText(this@GraficoPedido, "Campos inválidos", Toast.LENGTH_SHORT).show()
                         return@setOnClickListener
                     }
-
-                    // 5) Evitar duplicados en memoria
+                    // 2) Evitar duplicados en memoria
                     if (listaDominio.any { it.hilo == hiloCode }) {
-                        Toast.makeText(
-                            this@GraficoPedido,
-                            "El hilo ya se ha añadido al gráfico",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(this@GraficoPedido, "El hilo ya se ha añadido al gráfico", Toast.LENGTH_SHORT).show()
                         return@setOnClickListener
                     }
 
                     lifecycleScope.launch {
-                        // 6) Comprobar que el hilo existe en catálogo
+                        // 3) Comprobar existencia en catálogo
                         val existeEnCatalogo = withContext(Dispatchers.IO) {
                             ThreadlyDatabase.getDatabase(applicationContext)
                                 .hiloCatalogoDao()
@@ -306,8 +290,8 @@ class GraficoPedido : BaseActivity() {
                             return@launch
                         }
 
-                        // 7) Si es el primer hilo (cantidadHilosExistentes == 0), recogemos y validamos count
-                        if (cantidadHilosExistentes == 0) {
+                        // 4) Si hace falta count (primera inserción), capturarlo y persistirlo
+                        if (necesitaCount) {
                             val countTela = inpC.text.toString().trim().toIntOrNull()
                             if (countTela == null || countTela <= 0) {
                                 withContext(Dispatchers.Main) {
@@ -319,13 +303,18 @@ class GraficoPedido : BaseActivity() {
                                 }
                                 return@launch
                             }
+                            // Guardar en memoria
                             countTelaGlobal = countTela
+                            // Persistir en Room
+                            withContext(Dispatchers.IO) {
+                                daoGrafico.actualizarCountTela(graficoId, countTela)
+                            }
                         }
 
-                        // 8) Calcular madejas con el count ya definido para este gráfico
+                        // 5) Ya tenemos countTelaGlobal; calcular madejas
                         val madejas = calcularMadejas(punt, countTelaGlobal!!)
 
-                        // 9) Insertar en Room
+                        // 6) Insertar en Room
                         withContext(Dispatchers.IO) {
                             daoGrafico.insertarHiloEnGrafico(
                                 HiloGraficoEntity(
@@ -336,7 +325,7 @@ class GraficoPedido : BaseActivity() {
                             )
                         }
 
-                        // 10) Actualizar la lista local en memoria
+                        // 7) Actualizar lista en memoria y adaptador
                         listaDominio.add(HiloGrafico(hiloCode, madejas))
                         listaDominio = ordenarHilos(listaDominio) { it.hilo }.toMutableList()
 
@@ -353,7 +342,6 @@ class GraficoPedido : BaseActivity() {
         }
     }
 
-
     private fun dialogBorrarHilo(h: HiloGrafico) {
         val dialog = Dialog(this).apply {
             setContentView(R.layout.pedidob_dialog_borrar_hilo)
@@ -365,7 +353,7 @@ class GraficoPedido : BaseActivity() {
         val btnVol = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_deleteHilo)
         val txtMsg = dialog.findViewById<TextView>(R.id.txtVw_textoInfo_dialog_deleteHilo)
 
-        // Pintamos el nombre “en rojo” dentro del mensaje
+        // Pintar el nombre en rojo
         val texto = getString(R.string.textoInfo_dialog_deleteHilo).replace("%s", h.hilo)
         txtMsg.text = SpannableString(texto).apply {
             val start = texto.indexOf(h.hilo)
@@ -376,20 +364,20 @@ class GraficoPedido : BaseActivity() {
         btnVol.setOnClickListener { dialog.dismiss() }
         btnConf.setOnClickListener {
             lifecycleScope.launch {
-                // 1) Borramos de Room
+                // 1) Borrar de Room
                 withContext(Dispatchers.IO) {
                     daoGrafico.eliminarHiloDeGrafico(graficoId, h.hilo)
                 }
-
-                // 2) Recargamos la lista
+                // 2) Recargar lista
                 withContext(Dispatchers.Main) {
                     configurarRecycler()
-
-                    // 3) Si tras recargar no queda ningún hilo, reseteamos countTelaGlobal
+                    // Si ya no quedan hilos, resetear countTelaGlobal (y en DB)
                     if (listaDominio.isEmpty()) {
                         countTelaGlobal = null
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            daoGrafico.actualizarCountTela(graficoId, null)
+                        }
                     }
-
                     dialog.dismiss()
                 }
             }

@@ -18,7 +18,7 @@ interface HiloGraficoDao {
     fun obtenerCountTela(graficoId: Int): Int?
 
     @Query("UPDATE graficos SET count = :nuevoCount WHERE id = :graficoId")
-    fun actualizarCountTela(graficoId: Int, nuevoCount: Int)
+    fun actualizarCountTela(graficoId: Int, nuevoCount: Int?)
 
     @Query("SELECT id FROM graficos WHERE nombre = :nombre LIMIT 1")
     suspend fun obtenerIdPorNombre(nombre: String): Int?
