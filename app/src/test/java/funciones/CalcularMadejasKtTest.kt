@@ -1,8 +1,9 @@
-package utiles.funciones
+package funciones
 
 import org.junit.Assert.*
 
 import org.junit.Test
+import utiles.funciones.calcularMadejas
 
 class CalcularMadejasTest {
 
