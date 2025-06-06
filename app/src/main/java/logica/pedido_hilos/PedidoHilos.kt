@@ -489,34 +489,64 @@ class PedidoHilos : BaseActivity() {
      *     3) Limpiamos la lista en memoria y la interfaz.
      */
     private fun guardarPedidoEnBD() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            // 1) Generar un nombre único para el pedido
-            val nombreFinal = nombrePedidoUnico()
-            // 2) Insertar en la tabla "pedidos"
-            val nuevoPedidoId = pedidoDao.insertarPedido(
-                PedidoEntity(
-                    nombre = nombreFinal,
-                    userId = userId
-                )
-            ).toInt()
+        lifecycleScope.launch {
+            // 1) Antes de acceder a Room, definimos algunas variables que usaremos más abajo
+            val fechaHoy = SimpleDateFormat("ddMMyy", Locale.getDefault()).format(Date())
+            val baseNombre = "P$fechaHoy"  // p.ej. "P060625"
+            var contador = 0
+            var nombreFinal: String
+            var nuevoPedidoId: Int? = null
 
-            // 3) Asociar todos los gráficos “en curso” (idPedido = null) de este userId al nuevoPedidoId
-            graficoDao.asociarGraficosAlPedido(userId, nuevoPedidoId)
+            // 2) Hacemos todo el trabajo de lectura/inserción en IO
+            withContext(Dispatchers.IO) {
+                while (nuevoPedidoId == null) {
+                    // 2.a) Generar candidato de nombre. Si contador = 0, uso "P060625". Si >0, uso "P060625_1", etc.
+                    nombreFinal = if (contador == 0) {
+                        baseNombre
+                    } else {
+                        "${baseNombre}_$contador"
+                    }
 
-            // En el hilo principal, limpiar la UI
-            withContext(Dispatchers.Main) {
-                listaGraficos.clear()
-                adaptadorPedido.actualizarLista(listaGraficos)
-                actualizarTotalMadejas()
-                validarBotonGuardar()
-                Toast.makeText(
-                    this@PedidoHilos,
-                    "Pedido guardado como \"$nombreFinal\"",
-                    Toast.LENGTH_LONG
-                ).show()
+                    try {
+                        // 2.b) Intentamos insertar el nuevo PedioEntity
+                        //      Si falla por UNIQUE sobre “nombre”, saltará SQLiteConstraintException
+                        nuevoPedidoId = pedidoDao.insertarPedido(
+                            PedidoEntity(
+                                nombre = nombreFinal,
+                                userId = userId
+                            )
+                        ).toInt()
+
+                        // 2.c) Si la inserción tuvo éxito, podemos asociar los gráficos
+                        graficoDao.asociarGraficosAlPedido(userId, nuevoPedidoId!!)
+                        //     y salimos del bucle porque ya tenemos el ID.
+                    }
+                    catch (e: android.database.sqlite.SQLiteConstraintException) {
+                        // Si aquí entra, es que "nombreFinal" ya existe en la tabla `pedidos`.
+                        // Incrementamos el sufijo y volvemos a probar.
+                        contador++
+                        // nota: no hacemos nada más, solo dejamos que termine este catch y repita el while
+                    }
+                }
             }
+
+            // 3) Llegados aquí, la inserción ha funcionado y nuevoPedidoId != null
+            //    Limpiamos la UI en el hilo principal:
+            listaGraficos.clear()
+            adaptadorPedido.actualizarLista(listaGraficos)
+            actualizarTotalMadejas()
+            validarBotonGuardar()
+            Toast.makeText(
+                this@PedidoHilos,
+                "Pedido guardado como \"${
+                    // reconstruimos el nombre que realmente se usó:
+                    if (contador == 0) baseNombre else "${baseNombre}_$contador"
+                }\"",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
+
 
     /**
      * Genera un nombre único para el nuevo pedido con formato "PyyyyMMdd" o "PyyyyMMdd(n)".
