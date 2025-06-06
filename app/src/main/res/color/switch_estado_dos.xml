@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Si está ON, track en morado_palo_translucido -->
+    <item android:color="@color/fondoTextField" android:state_checked="true" />
+    <!-- En OFF, track en grisClaro_translucido -->
+    <item android:color="@color/grisDesactivado" />
+</selector>
+

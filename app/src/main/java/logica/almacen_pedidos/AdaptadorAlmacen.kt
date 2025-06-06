@@ -55,7 +55,7 @@ class AdaptadorAlmacen(
             holder.btnPedidoRealizado.isEnabled = false
             holder.btnPedidoRealizado.setImageResource(R.drawable.img_tick_pedido)
             holder.btnPedidoRealizado.setColorFilter(
-                ContextCompat.getColor(holder.itemView.context, R.color.grisPedidoRealizado),
+                ContextCompat.getColor(holder.itemView.context, R.color.grisDesactivado),
                 android.graphics.PorterDuff.Mode.SRC_IN
             )
         } else {
