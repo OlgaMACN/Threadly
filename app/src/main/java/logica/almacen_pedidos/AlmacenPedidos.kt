@@ -2,9 +2,7 @@ package logica.almacen_pedidos
 
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -15,7 +13,6 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,8 +34,6 @@ import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
 import utiles.funciones.exportarPedidoCSV
 import utiles.funciones.funcionToolbar
-import java.io.File
-import java.io.FileWriter
 
 class AlmacenPedidos : BaseActivity() {
 
@@ -89,9 +84,6 @@ class AlmacenPedidos : BaseActivity() {
             },
             onPedidoRealizadoClick = { pedido ->
                 marcarPedidoComoRealizadoYActualizarStock(pedido)
-            },
-            onNombrePedidoClick = { pedido ->
-                mostrarCsvEnVista(pedido)
             }
         )
         tablaAlmacen.layoutManager = LinearLayoutManager(this)
@@ -173,7 +165,7 @@ class AlmacenPedidos : BaseActivity() {
         val edtBuscador = findViewById<EditText>(R.id.edTxt_buscadorAlmacen)
         val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaAlmacen)
         val txtNoResultados = findViewById<TextView>(R.id.txtVw_sinResultadosAlmacen)
-        val recycler = findViewById<RecyclerView>(R.id.tabla_almacen) // ajustar id real
+        val recycler = findViewById<RecyclerView>(R.id.tabla_almacen)
 
         txtNoResultados.visibility = View.GONE
 
@@ -182,10 +174,10 @@ class AlmacenPedidos : BaseActivity() {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(edtBuscador.windowToken, 0)
 
-            // 1) Obtenemos el texto a buscar
+            // 2) Obtenemos el texto a buscar
             val texto = edtBuscador.text.toString().trim().uppercase()
 
-            // 2) Si el usuario borró todo, restablecemos
+            // 3) Si está vacío, restauramos
             if (texto.isEmpty()) {
                 adaptador.actualizarLista(listaPedidos)
                 adaptador.resaltarPedido(null)
@@ -193,25 +185,25 @@ class AlmacenPedidos : BaseActivity() {
                 return@setOnClickListener
             }
 
-            // 3) Buscamos todas las coincidencias (contains)
+            // 4) Filtrar coincidencias
             val coincidencias = listaPedidos.filter {
                 it.nombre.uppercase().contains(texto)
             }
 
             if (coincidencias.isNotEmpty()) {
-                // 4) Tomamos la primera (será la más antigua si listaPedidos ya está ordenada)
+                // Tomamos la primera (la más antigua)
                 val primerMatch = coincidencias.first()
                 val indiceEnListaCompleta = listaPedidos.indexOf(primerMatch)
 
-                // 5) Resaltamos ese nombre en el adaptador y nos desplazamos a dicha posición
+                // Resaltamos y desplazamos
                 adaptador.resaltarPedido(primerMatch.nombre)
-                adaptador.actualizarLista(listaPedidos) // restauramos lista completa
+                adaptador.actualizarLista(listaPedidos)
                 recycler.post {
                     recycler.scrollToPosition(indiceEnListaCompleta)
                 }
                 txtNoResultados.visibility = View.GONE
             } else {
-                // 6) No hay coincidencias: vaciamos el adaptador y mostramos “sin resultados”
+                // Si no hay coincidencias, vaciamos y mostramos “sin resultados”
                 adaptador.actualizarLista(emptyList())
                 adaptador.resaltarPedido(null)
                 txtNoResultados.visibility = View.VISIBLE
@@ -221,13 +213,11 @@ class AlmacenPedidos : BaseActivity() {
         edtBuscador.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
-                    // Al borrar todo, volvemos a mostrar lista completa sin resaltado
                     adaptador.actualizarLista(listaPedidos)
                     adaptador.resaltarPedido(null)
                     txtNoResultados.visibility = View.GONE
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -279,57 +269,6 @@ class AlmacenPedidos : BaseActivity() {
     }
 
     /**
-     * Genera un CSV temporal y lo abre con un lector de CSV instalado.
-     */
-    private fun mostrarCsvEnVista(pedido: PedidoGuardado) {
-        lifecycleScope.launch {
-            // 1) Agrupamos madejas por hilo
-            val agregados = mutableMapOf<String, Int>()
-            pedido.graficos.forEach { grafico ->
-                grafico.listaHilos.forEach { hiloGrafico ->
-                    val prev = agregados[hiloGrafico.hilo] ?: 0
-                    agregados[hiloGrafico.hilo] = prev + hiloGrafico.madejas
-                }
-            }
-
-            // 2) Creamos archivo CSV en cacheDir
-            val nombreArchivo = "pedido_${pedido.id}.csv"
-            val archivo = File(cacheDir, nombreArchivo)
-            FileWriter(archivo).use { writer ->
-                writer.append("Hilo,Madejas\n")
-                agregados.forEach { (hilo, total) ->
-                    writer.append("$hilo,$total\n")
-                }
-            }
-
-            // 3) URI a través de FileProvider
-            val authority = "${packageName}.fileprovider"
-            val uri: Uri = FileProvider.getUriForFile(
-                this@AlmacenPedidos,
-                authority,
-                archivo
-            )
-
-            // 4) Intent ACTION_VIEW con MIME "text/csv"
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, "text/csv")
-                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-
-            // 5) Verificar que exista app capaz de abrir CSV
-            if (intent.resolveActivity(packageManager) != null) {
-                startActivity(Intent.createChooser(intent, "Abrir con"))
-            } else {
-                Toast.makeText(
-                    this@AlmacenPedidos,
-                    "No se encontró ninguna aplicación para ver archivos CSV.",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
-    }
-
-    /**
      * Marca el pedido como realizado en la base de datos y, a la vez,
      * añade las madejas de cada hilo al stock personal del usuario.
      */
@@ -345,11 +284,11 @@ class AlmacenPedidos : BaseActivity() {
                     val codigoHilo = hiloGrafico.hilo
                     val madejasNuevas = hiloGrafico.madejas
 
-                    // 2a) Intentamos obtener la entidad HiloStockEntity para este usuario + hilo
+                    // 2a) Intentamos obtener la entidad HiloStockEntity para este usuario+hilo
                     val entidadExistente = stockDao.obtenerPorHiloUsuario(codigoHilo, userId)
 
                     if (entidadExistente == null) {
-                        // No existía stock para este hilo → insertamos uno nuevo
+                        // No existía stock → insertamos uno nuevo
                         val nuevaEntidad = persistencia.entidades.HiloStockEntity(
                             usuarioId = userId,
                             hiloId = codigoHilo,
@@ -357,7 +296,7 @@ class AlmacenPedidos : BaseActivity() {
                         )
                         stockDao.insertarStock(nuevaEntidad)
                     } else {
-                        // Ya existe: sumamos madejas y actualizamos la entidad
+                        // Ya existe: sumamos madejas y actualizamos
                         val acumulado = entidadExistente.madejas + madejasNuevas
                         val entidadActualizada = entidadExistente.copy(madejas = acumulado)
                         stockDao.actualizarStock(entidadActualizada)
@@ -365,7 +304,7 @@ class AlmacenPedidos : BaseActivity() {
                 }
             }
 
-            // 3) Volver al hilo principal: toast y recargar la lista de pedidos
+            // 3) Volver al hilo principal: toast y recargar la lista
             withContext(Dispatchers.Main) {
                 Toast.makeText(
                     this@AlmacenPedidos,
@@ -376,6 +315,4 @@ class AlmacenPedidos : BaseActivity() {
             }
         }
     }
-
-
 }

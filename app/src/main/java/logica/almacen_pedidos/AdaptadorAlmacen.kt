@@ -15,16 +15,14 @@ import com.threadly.R
 /**
  * Adaptador para el RecyclerView de pedidos almacenados.
  *
- * @param listaPedidos               Lista de PedidoGuardado a mostrar.
- * @param onDescargarClick           Lambda que se llama al pulsar el botón de descarga.
- * @param onPedidoRealizadoClick     Lambda que se llama al pulsar el botón "realizado".
- * @param onNombrePedidoClick        Lambda que se llama al pulsar el TextView de nombre.
+ * @param listaPedidos           Lista de PedidoGuardado a mostrar.
+ * @param onDescargarClick       Lambda que se llama al pulsar el botón de descarga.
+ * @param onPedidoRealizadoClick Lambda que se llama al pulsar el botón "realizado".
  */
 class AdaptadorAlmacen(
     private var listaPedidos: List<PedidoGuardado>,
     private val onDescargarClick: (PedidoGuardado) -> Unit,
-    private val onPedidoRealizadoClick: (PedidoGuardado) -> Unit,
-    private val onNombrePedidoClick: (PedidoGuardado) -> Unit
+    private val onPedidoRealizadoClick: (PedidoGuardado) -> Unit
 ) : RecyclerView.Adapter<AdaptadorAlmacen.PedidoViewHolder>() {
 
     // nombre del pedido que debe resaltarse (o null para ningún resaltado)
@@ -44,12 +42,8 @@ class AdaptadorAlmacen(
 
     override fun onBindViewHolder(holder: PedidoViewHolder, position: Int) {
         val pedido = listaPedidos[position]
-
-        // 1) texto del nombre
         holder.txtNombrePedido.text = pedido.nombre
-        holder.txtNombrePedido.setOnClickListener {
-            onNombrePedidoClick(pedido)
-        }
+
 
         // 2) Botón de descarga
         holder.btnDescargar.setOnClickListener {
@@ -76,7 +70,7 @@ class AdaptadorAlmacen(
             }
         }
 
-        // 4) Pulsación larga para eliminar
+        // 4) Pulsación larga para eliminar (esto ya lo tenías)
         holder.itemView.setOnLongClickListener {
             val contexto = holder.itemView.context as AlmacenPedidos
             contexto.dialogEliminarPedido(position)
@@ -85,7 +79,6 @@ class AdaptadorAlmacen(
 
         // 5) Resaltar si coincide con `pedidoResaltado`
         if (pedidoResaltado != null && pedidoResaltado.equals(pedido.nombre, ignoreCase = true)) {
-            // Usamos el drawable o color de resaltado
             holder.itemView.setBackgroundResource(R.drawable.reutilizable_resaltar_busqueda)
         } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT)
@@ -94,9 +87,7 @@ class AdaptadorAlmacen(
 
     override fun getItemCount(): Int = listaPedidos.size
 
-    /**
-     * Actualiza toda la lista de pedidos (sin alterar el resaltado).
-     */
+    /** Actualiza toda la lista de pedidos (sin alterar el resaltado). */
     @SuppressLint("NotifyDataSetChanged")
     fun actualizarLista(nuevaLista: List<PedidoGuardado>) {
         Log.d("AdaptadorAlmacen", "Actualizando lista. Tamaño nuevo: ${nuevaLista.size}")
