@@ -53,7 +53,7 @@ class StockPersonal : BaseActivity() {
     private var ordenarPorCantidad = false
 
 
-    // Trabajamos siempre sobre esta lista local:
+    // Trabajamos siempre sobre esta lista local
     private val listaStock = mutableListOf<HiloStock>()
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
