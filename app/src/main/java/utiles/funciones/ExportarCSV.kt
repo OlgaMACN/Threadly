@@ -30,7 +30,7 @@ import logica.almacen_pedidos.PedidoGuardado
  * 321,5
  * ...
  * ```
- * * @author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
  */
 @RequiresApi(Build.VERSION_CODES.Q)
 fun exportarPedidoCSV(context: Context, pedido: PedidoGuardado): Boolean {

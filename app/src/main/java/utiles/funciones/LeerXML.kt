@@ -12,6 +12,9 @@ import javax.xml.parsers.DocumentBuilderFactory
  * internas `<codigo>`, `<nombre>` y `<color>`, generando una lista de hilos que
  * representan el catálogo base de la aplicación.
  *
+ * Para ello utiliza el modelo DOM (Document Object Model), que carga el XML completo en memoria
+ * y permite navegar por su estructura de nodos para extraer la información requerida.
+ *
  * @param context El contexto de la aplicación para acceder a los recursos.
  * @param resourceId El ID del recurso XML ubicado en la carpeta `res/raw`.
  * @return Una lista de objetos [HiloCatalogo] extraídos del XML.
@@ -30,7 +33,7 @@ import javax.xml.parsers.DocumentBuilderFactory
  *
  * - Si la etiqueta `<color>` está vacía, se interpretará como `null`.
  *
- * * @author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
  */
 fun leerXML(context: Context, resourceId: Int): List<HiloCatalogo> {
     val listaHilos = mutableListOf<HiloCatalogo>()
@@ -48,7 +51,7 @@ fun leerXML(context: Context, resourceId: Int): List<HiloCatalogo> {
             val codigo = nodo.getElementsByTagName("codigo").item(0).textContent.trim()
             val nombre = nodo.getElementsByTagName("nombre").item(0).textContent.trim()
             val color = nodo.getElementsByTagName("color").
-        item(0).textContent.trim()
+            item(0).textContent.trim()
 
             listaHilos.add(
                 HiloCatalogo(

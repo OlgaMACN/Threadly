@@ -30,7 +30,7 @@ private var ultimoClick = 0L
  * - `botonPedido`: Navega al pedido actual.
  * - `botonAlmacenPedido`: Navega al almacén de pedidos guardados.
  *
- * * @author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
  */
 fun funcionToolbar(activity: BaseActivity) {
     /* inicialización de los botones del toolbar */
@@ -64,6 +64,7 @@ fun funcionToolbar(activity: BaseActivity) {
     }
 
     /* configuración de cada botón del toolbar */
+
     btn_catalogo.setOnClickListener {
         clicSeguro {
             siNoEsActivityActual(CatalogoHilos::class.java)
