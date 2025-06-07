@@ -35,6 +35,7 @@ import java.util.TimerTask
  * @constructor Crea la actividad splash que se ejecuta al iniciar la app.
  *
  * @author Olga y Sandra Macías Aragón
+ *
  */
 class Splash : AppCompatActivity() {
 // Todo clase en desarollo, en fase producción se eliminará el usuario de prueba

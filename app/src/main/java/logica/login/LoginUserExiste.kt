@@ -1,6 +1,5 @@
 package logica.login
 
-import LoginUserNoExiste
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -27,7 +26,8 @@ import utiles.SesionUsuario
  * También permite alternar la visibilidad de la contraseña y navegar a la pantalla de
  * creación de cuenta nueva si el usuario no está registrado.
  *
- *  * @author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
+ *
  */
 class LoginUserExiste : AppCompatActivity() {
 

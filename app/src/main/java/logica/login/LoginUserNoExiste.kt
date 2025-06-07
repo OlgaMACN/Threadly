@@ -29,6 +29,7 @@ import utiles.SesionUsuario
  * se crea un nuevo usuario, se guarda la sesión y se redirige a la pantalla principal.
  *
  * @author Olga y Sandra Macías Aragón
+ *
  */
 class LoginUserNoExiste : AppCompatActivity() {
 
