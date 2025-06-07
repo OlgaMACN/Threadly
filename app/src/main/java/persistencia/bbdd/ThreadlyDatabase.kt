@@ -24,7 +24,7 @@ import utiles.SesionUsuario
  * - Gráficos asociados a pedidos
  * - Hilos asignados a cada gráfico
  *
- * @version 18 (fase de desarrollo, aún no estable para producción)
+ * @version 19 (fase de desarrollo, aún no estable para producción)
  * @author Olga y Sandra Macías Aragón
  *
  * TODO IMPORTANTE: Esta versión de la base de datos está en desarrollo y usa `fallbackToDestructiveMigration()`,
@@ -39,7 +39,7 @@ import utiles.SesionUsuario
         GraficoEntity::class,
         PedidoEntity::class
     ],
-    version = 18,
+    version = 19,
     exportSchema = false
 )
 abstract class ThreadlyDatabase : RoomDatabase() {
