@@ -20,8 +20,15 @@ import utiles.SesionUsuario
 
 /**
  * Actividad que permite a un nuevo usuario registrarse en Threadly.
- * * @author Olga y Sandra Macías Aragón
  *
+ * Esta pantalla se presenta cuando el usuario aún no tiene cuenta. Permite ingresar un nombre de usuario
+ * y una contraseña, valida los datos, y registra al usuario en la base de datos.
+ * También gestiona la visibilidad del campo de contraseña mediante un botón con icono de ojo.
+ *
+ * Si el nombre de usuario no está en uso y los campos cumplen con los requisitos,
+ * se crea un nuevo usuario, se guarda la sesión y se redirige a la pantalla principal.
+ *
+ * @author Olga y Sandra Macías Aragón
  */
 class LoginUserNoExiste : AppCompatActivity() {
 
@@ -43,7 +50,7 @@ class LoginUserNoExiste : AppCompatActivity() {
     }
 
     /**
-     * Inicializa las vistas desde el layout XML.
+     * Inicializa los campos de texto e imagen del layout.
      */
     private fun inicializarVistas() {
         usuario = findViewById(R.id.edTxt_ingresarNombreNewUser)
@@ -52,7 +59,7 @@ class LoginUserNoExiste : AppCompatActivity() {
     }
 
     /**
-     * Configura el botón para mostrar u ocultar la contraseña escrita.
+     * Configura el botón del ojo para alternar la visibilidad del campo de contraseña.
      */
     private fun configurarBotonOjo() {
         botonOjo.setOnClickListener {
@@ -70,7 +77,8 @@ class LoginUserNoExiste : AppCompatActivity() {
     }
 
     /**
-     * Configura el botón de "crear cuenta" para registrar un nuevo usuario simulado.
+     * Configura el botón que permite registrar una nueva cuenta.
+     * Al pulsarlo, se realiza la validación e inserción del usuario.
      */
     private fun configurarBotonCrearCuenta() {
         val btnEntrar = findViewById<Button>(R.id.btn_ingresarThreadly)
@@ -78,8 +86,12 @@ class LoginUserNoExiste : AppCompatActivity() {
     }
 
     /**
-     * Intenta registrar un nuevo usuario validando los campos.
-     * Si el nombre está disponible, se guarda en la lista simulada y se inicia la sesión.
+     * Intenta registrar un nuevo usuario tras validar los campos introducidos.
+     *
+     * - Si los campos están vacíos, muestra un mensaje de error.
+     * - Si superan el límite de caracteres o la contraseña es demasiado corta, también muestra errores.
+     * - Si el nombre de usuario ya existe, solicita uno diferente.
+     * - Si es válido, inserta el nuevo usuario en la base de datos, guarda su sesión y abre la pantalla principal.
      */
     private fun intentarCrearCuenta() {
         val usuarioEntrada = usuario.text.toString().trim()
@@ -97,13 +109,12 @@ class LoginUserNoExiste : AppCompatActivity() {
                 contrasena.text.clear()
             }
 
-            contrasenaEntrada.length < 8 -> {
-                mostrarToast("Mínimo contraseña: 8 caracteres")
+            contrasenaEntrada.length < 5 -> {
+                mostrarToast("Mínimo contraseña: 5 caracteres")
                 contrasena.text.clear()
             }
 
             else -> {
-                /* verifica si el usuario ya existe (ignorando mayúsculas/minúsculas) */
                 lifecycleScope.launch {
                     val usuarioDAO = ThreadlyDatabase.getDatabase(applicationContext).usuarioDAO()
 
@@ -124,7 +135,6 @@ class LoginUserNoExiste : AppCompatActivity() {
                             usuarioDAO.insertar(nuevoUsuario)
                         }
 
-                        /* guarda la sesión a través del id del usuario */
                         SesionUsuario.guardarSesion(applicationContext, userId.toInt())
 
                         val intent =
@@ -141,9 +151,9 @@ class LoginUserNoExiste : AppCompatActivity() {
     }
 
     /**
-     * Muestra un mensaje Toast corto en pantalla.
+     * Muestra un mensaje de tipo Toast en la pantalla.
      *
-     * @param mensaje Texto del mensaje a mostrar.
+     * @param mensaje El texto que se desea mostrar al usuario.
      */
     private fun mostrarToast(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
