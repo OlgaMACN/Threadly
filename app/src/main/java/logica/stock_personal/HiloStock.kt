@@ -2,16 +2,16 @@ package logica.stock_personal
 
 /**
  * Representa un hilo dentro del inventario personal del usuario.
- * Esta clase se utiliza para mostrar, modificar y persistir la cantidad de madejas
- * que posee el usuario para un hilo determinado.
+ * Contiene el identificador del hilo y la cantidad de madejas disponibles.
  *
- * Es una clase de datos (data class), lo que significa que proporciona automáticamente
- * funcionalidades útiles como `equals()`, `hashCode()` y `toString()`.
+ * Se utiliza en la gestión del stock para mostrar, actualizar y persistir
+ * la cantidad de madejas de cada hilo que el usuario posee.
  *
  * @property hiloId Identificador único del hilo (por ejemplo, su código en el catálogo).
- * @property madejas Número de madejas disponibles del hilo.
+ * @property madejas Cantidad de madejas disponibles para este hilo.
  *
- * * @author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
+ *
  */
 data class HiloStock(
     val hiloId: String,

@@ -124,6 +124,7 @@
         android:background="@color/morado_palo"
         android:fontFamily="@font/catchy_mager"
         android:gravity="center"
+
         android:text="grafico"
         android:textAlignment="center"
         android:textColor="@color/white"
