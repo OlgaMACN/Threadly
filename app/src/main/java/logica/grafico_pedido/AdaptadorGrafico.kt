@@ -81,12 +81,12 @@ class AdaptadorGrafico(
 
     /**
      * Asocia los datos de [HiloGrafico] a la vista de la fila:
-     * 1. Muestra código y madejas.
-     * 2. Inicializa el [EditText] con cualquier valor pendiente de edición.
-     * 3. Configura el IME "Done" y la acción Enter para confirmar edición.
-     * 4. Al perder foco, también confirma la edición.
-     * 5. Aplica el fondo según resaltado de búsqueda o clic.
-     * 6. Gestiona clic y pulsación larga.
+     * - Muestra código y madejas.
+     * - Inicializa el [EditText] con cualquier valor pendiente de edición.
+     * - Configura el IME "Done" y la acción Enter para confirmar edición.
+     * - Al perder foco, también confirma la edición.
+     * - Aplica el fondo según resaltado de búsqueda o clic.
+     * - Gestiona clic y pulsación larga.
      */
     override fun onBindViewHolder(holder: HiloViewHolder, position: Int) {
         val hiloItem = hilos[position]

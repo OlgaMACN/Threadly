@@ -35,38 +35,80 @@ import utiles.funciones.ajustarDialog
 import utiles.funciones.exportarPedidoCSV
 import utiles.funciones.funcionToolbar
 
+/**
+ * Actividad que muestra el almacén de pedidos guardados para el usuario.
+ * Permite:
+ *  - Listar todos los pedidos guardados.
+ *  - Buscar pedidos por nombre.
+ *  - Eliminar pedidos.
+ *  - Descargar un pedido en CSV (Android Q+).
+ *  - Marcar un pedido como realizado y actualizar el stock personal.
+ *
+ * Se conecta a Room mediante DAOs [PedidoDao], [HiloStockDao], [GraficoDao] y [HiloGraficoDao].
+ * Utiliza [AdaptadorAlmacen] para renderizar la lista de [PedidoGuardado].
+ *
+ * @author Olga y Sandra Macías Aragón
+ *
+ */
 class AlmacenPedidos : BaseActivity() {
 
+    /** RecyclerView que muestra la lista de pedidos en el almacén */
     private lateinit var tablaAlmacen: RecyclerView
+
+    /** Adaptador para renderizar y gestionar eventos sobre los pedidos */
     private lateinit var adaptador: AdaptadorAlmacen
+
+    /** DAO para operaciones sobre la entidad PedidoEntity */
     private lateinit var pedidoDao: PedidoDao
+
+    /** DAO para operaciones sobre HiloStockEntity (stock personal) */
     private lateinit var stockDao: HiloStockDao
+
+    /** DAO para operaciones sobre GraficoEntity */
     private lateinit var graficoDao: GraficoDao
+
+    /** DAO para operaciones sobre HiloGraficoEntity */
     private lateinit var hiloGraficoDao: HiloGraficoDao
+
+    /** Lista en memoria de pedidos guardados mostrados en el adaptador */
     private val listaPedidos = mutableListOf<PedidoGuardado>()
+
+    /** Identificador del usuario obtenido de sesión */
     private var userId: Int = -1
 
+    /**
+     * Punto de entrada de la actividad.
+     * - Infla el layout `almacen_aa_pedidos`.
+     * - Configura toolbar con [funcionToolbar].
+     * - Obtiene `userId` de [SesionUsuario].
+     * - Inicializa DAOs.
+     * - Configura RecyclerView y [AdaptadorAlmacen] con callbacks:
+     *   - Descargar CSV.
+     *   - Marcar pedido como realizado y actualizar stock.
+     * - Inicializa buscador y carga pedidos desde Room.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.almacen_aa_pedidos)
         funcionToolbar(this)
 
-        // Obtenemos el userId de la sesión
+        /* obtener sesión de usuario */
         userId = SesionUsuario.obtenerSesion(this)
         if (userId < 0) finish()
 
-        // 1) Inicializar DAOs
+        /* inicializar DAOs */
         val db = ThreadlyDatabase.getDatabase(applicationContext)
         pedidoDao = db.pedidoDao()
         stockDao = db.hiloStockDao()
         graficoDao = db.graficoDao()
         hiloGraficoDao = db.hiloGraficoDao()
 
-        // 2) Configurar RecyclerView y Adaptador
+        /* configurar RecyclerView y adaptador */
         tablaAlmacen = findViewById(R.id.tabla_almacen)
         adaptador = AdaptadorAlmacen(
             listaPedidos,
             onDescargarClick = { pedido ->
+                /* descargar CSV en Android */
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val ok = exportarPedidoCSV(this, pedido)
                     Toast.makeText(
@@ -93,55 +135,45 @@ class AlmacenPedidos : BaseActivity() {
         cargarPedidosDesdeRoom()
     }
 
-    override fun onResume() {
-        super.onResume()
-           }
-
+    /**
+     * Carga todos los pedidos del usuario desde Room.
+     * Para cada [PedidoEntity]:
+     *  - Obtiene sus [GraficoEntity].
+     *  - Para cada gráfico, obtiene sus [HiloGraficoEntity] y los mapea a [HiloGrafico].
+     *  - Construye [Grafico] y finalmente [PedidoGuardado].
+     * Actualiza [listaPedidos] y notifica al adaptador.
+     */
     private fun cargarPedidosDesdeRoom() {
         lifecycleScope.launch {
-            // 1) Leer todos los pedidos para este usuario
             val pedidosEnt = withContext(Dispatchers.IO) {
                 pedidoDao.obtenerTodosPorUsuario(userId)
             }
-
             listaPedidos.clear()
 
-            // 2) Por cada PedidoEntity, traemos sus gráficos y luego los hilos de cada gráfico
             for (pedidoEnt in pedidosEnt) {
                 val pedidoId = pedidoEnt.id
                 val nombrePedido = pedidoEnt.nombre
 
-                // 2.2) Obtener todos los GraficoEntity que pertenecen a este pedido
-                val graficosEntidades: List<GraficoEntity> = withContext(Dispatchers.IO) {
+                /* obtener gráficos asociados */
+                val graficosEntidades = withContext(Dispatchers.IO) {
                     graficoDao.obtenerGraficoPorPedido(userId, pedidoId)
                 }
 
-                // 2.3) Para cada GraficoEntity, leemos sus hilos
+                /* mapear cada gráfico a dominio */
                 val listaGraficoDominio = mutableListOf<Grafico>()
                 for (graficoEnt in graficosEntidades) {
-                    // 2.3.1) Traer los HiloGraficoEntity de este grafico
-                    val hilosEntidades: List<HiloGraficoEntity> = withContext(Dispatchers.IO) {
+                    val hilosEntidades = withContext(Dispatchers.IO) {
                         hiloGraficoDao.obtenerHilosDeGrafico(graficoEnt.id)
                     }
-
-                    // 2.3.2) Mapear cada HiloGraficoEntity a tu modelo de dominio HiloGrafico
                     val listaHilosDominio = hilosEntidades.map { hiloEnt ->
-                        HiloGrafico(
-                            hilo = hiloEnt.hilo,
-                            madejas = hiloEnt.madejas
-                        )
+                        HiloGrafico(hilo = hiloEnt.hilo, madejas = hiloEnt.madejas)
                     }.toMutableList()
-
-                    // 2.3.3) Construir el objeto Grafico (dominio) con su lista de hilos
                     listaGraficoDominio.add(
-                        Grafico(
-                            nombre = graficoEnt.nombre,
-                            listaHilos = listaHilosDominio
-                        )
+                        Grafico(nombre = graficoEnt.nombre, listaHilos = listaHilosDominio)
                     )
                 }
 
-                // 2.4) Construir el objeto PedidoGuardado incluyendo userId
+                /* construir objeto PedidoGuardado */
                 val pedidoDominio = PedidoGuardado(
                     id = pedidoId,
                     nombre = nombrePedido,
@@ -149,67 +181,62 @@ class AlmacenPedidos : BaseActivity() {
                     realizado = pedidoEnt.realizado,
                     graficos = listaGraficoDominio
                 )
-
                 listaPedidos.add(pedidoDominio)
             }
 
-            // 3) Actualizar el adaptador en el hilo principal
             withContext(Dispatchers.Main) {
                 adaptador.actualizarLista(listaPedidos)
             }
         }
     }
 
+    /**
+     * Configura el buscador de pedidos:
+     * - Oculta teclado al buscar.
+     * - Si el texto está vacío, restaura la lista completa.
+     * - Filtra pedidos por nombre (insensible a mayúsculas), resalta y desplaza al primero.
+     * - Muestra “sin resultados” si no hay coincidencias.
+     */
     private fun buscadorAlmacen() {
-        val edtBuscador = findViewById<EditText>(R.id.edTxt_buscadorAlmacen)
+        val buscarPedido = findViewById<EditText>(R.id.edTxt_buscadorAlmacen)
         val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaAlmacen)
         val txtNoResultados = findViewById<TextView>(R.id.txtVw_sinResultadosAlmacen)
-        val recycler = findViewById<RecyclerView>(R.id.tabla_almacen)
-
+        val tablaAlmacen = findViewById<RecyclerView>(R.id.tabla_almacen)
         txtNoResultados.visibility = View.GONE
 
         btnLupa.setOnClickListener {
-            // 1) Ocultamos el teclado antes de la búsqueda
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(edtBuscador.windowToken, 0)
+            imm.hideSoftInputFromWindow(buscarPedido.windowToken, 0)
 
-            // 2) Obtenemos el texto a buscar
-            val texto = edtBuscador.text.toString().trim().uppercase()
-
-            // 3) Si está vacío, restauramos
+            val texto = buscarPedido.text.toString().trim().uppercase()
             if (texto.isEmpty()) {
+                /* restaurar lista completa */
                 adaptador.actualizarLista(listaPedidos)
                 adaptador.resaltarPedido(null)
                 txtNoResultados.visibility = View.GONE
                 return@setOnClickListener
             }
 
-            // 4) Filtrar coincidencias
+            /* filtrar coincidencias */
             val coincidencias = listaPedidos.filter {
                 it.nombre.uppercase().contains(texto)
             }
-
             if (coincidencias.isNotEmpty()) {
-                // Tomamos la primera (la más antigua)
                 val primerMatch = coincidencias.first()
-                val indiceEnListaCompleta = listaPedidos.indexOf(primerMatch)
-
-                // Resaltamos y desplazamos
+                val idx = listaPedidos.indexOf(primerMatch)
                 adaptador.resaltarPedido(primerMatch.nombre)
                 adaptador.actualizarLista(listaPedidos)
-                recycler.post {
-                    recycler.scrollToPosition(indiceEnListaCompleta)
-                }
+                tablaAlmacen.post { tablaAlmacen.scrollToPosition(idx) }
                 txtNoResultados.visibility = View.GONE
             } else {
-                // Si no hay coincidencias, vaciamos y mostramos “sin resultados”
+                /* sin resultados */
                 adaptador.actualizarLista(emptyList())
                 adaptador.resaltarPedido(null)
                 txtNoResultados.visibility = View.VISIBLE
             }
         }
 
-        edtBuscador.addTextChangedListener(object : TextWatcher {
+        buscarPedido.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     adaptador.actualizarLista(listaPedidos)
@@ -217,11 +244,19 @@ class AlmacenPedidos : BaseActivity() {
                     txtNoResultados.visibility = View.GONE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
+    /**
+     * Muestra un diálogo de confirmación antes de eliminar un pedido:
+     * - Resalta el nombre en rojo en el mensaje.
+     * - Al confirmar, elimina del adaptador, muestra Toast y borra en Room.
+     *
+     * @param posicion Índice en [listaPedidos] del pedido a eliminar.
+     */
     fun dialogEliminarPedido(posicion: Int) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.almacen_dialog_eliminar_pedido)
@@ -235,75 +270,70 @@ class AlmacenPedidos : BaseActivity() {
 
         val pedido = listaPedidos[posicion]
         val nombrePedido = pedido.nombre
-        val textoOriginal = getString(R.string.confirmarEliminarPedido)
-        val textoConPedido = textoOriginal.replace("%s", nombrePedido)
-
-        val spannable = SpannableString(textoConPedido)
-        val start = textoConPedido.indexOf(nombrePedido)
-        val end = start + nombrePedido.length
-        if (start != -1) {
-            spannable.setSpan(
-                ForegroundColorSpan(Color.RED),
-                start,
-                end,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+        val textoOrig = getString(R.string.confirmarEliminarPedido)
+        val textoCon = textoOrig.replace("%s", nombrePedido)
+        val spannable = SpannableString(textoCon).apply {
+            val inicio = textoCon.indexOf(nombrePedido)
+            val fin = inicio + nombrePedido.length
+            if (inicio != -1) {
+                setSpan(
+                    ForegroundColorSpan(Color.RED),
+                    inicio,
+                    fin,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
         }
         txtMensaje.text = spannable
 
         btnVolver.setOnClickListener { dialog.dismiss() }
-
         btnEliminar.setOnClickListener {
             listaPedidos.removeAt(posicion)
             adaptador.actualizarLista(listaPedidos)
-            Toast.makeText(this, "Pedido '$nombrePedido' eliminado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Pedido '$nombrePedido' eliminado correctamente", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
-
             lifecycleScope.launch(Dispatchers.IO) {
                 pedidoDao.eliminar(pedido.toEntity())
             }
         }
-
         dialog.show()
     }
 
     /**
-     * Marca el pedido como realizado en la base de datos y, a la vez,
-     * añade las madejas de cada hilo al stock personal del usuario.
+     * Marca un pedido como realizado y actualiza el stock personal:
+     * - Cambia `realizado` a true en DB.
+     * - Recorre cada hilo de cada gráfico y suma madejas al stock (insert o update).
+     * - Muestra un Toast y recarga la lista.
+     *
+     * @param pedido PedidoGuardado que se marca como realizado.
      */
     private fun marcarPedidoComoRealizadoYActualizarStock(pedido: PedidoGuardado) {
         lifecycleScope.launch(Dispatchers.IO) {
-            // 1) Marcar el pedido como realizado
+            /* marcar pedido */
             pedido.realizado = true
             pedidoDao.actualizar(pedido.toEntity())
 
-            // 2) Recorrer cada hilo de cada gráfico y sumar madejas al stock
+            /* actualizar stock para cada hilo de cada gráfico */
             pedido.graficos.forEach { grafico ->
                 grafico.listaHilos.forEach { hiloGrafico ->
-                    val codigoHilo = hiloGrafico.hilo
-                    val madejasNuevas = hiloGrafico.madejas
-
-                    // 2a) Intentamos obtener la entidad HiloStockEntity para este usuario+hilo
-                    val entidadExistente = stockDao.obtenerPorHiloUsuario(codigoHilo, userId)
-
-                    if (entidadExistente == null) {
-                        // No existía stock → insertamos uno nuevo
-                        val nuevaEntidad = persistencia.entidades.HiloStockEntity(
-                            usuarioId = userId,
-                            hiloId = codigoHilo,
-                            madejas = madejasNuevas
+                    val codigo = hiloGrafico.hilo
+                    val nuevas = hiloGrafico.madejas
+                    val hiloStock = stockDao.obtenerPorHiloUsuario(codigo, userId)
+                    if (hiloStock == null) {
+                        stockDao.insertarStock(
+                            persistencia.entidades.HiloStockEntity(
+                                usuarioId = userId,
+                                hiloId = codigo,
+                                madejas = nuevas
+                            )
                         )
-                        stockDao.insertarStock(nuevaEntidad)
                     } else {
-                        // Ya existe: sumamos madejas y actualizamos
-                        val acumulado = entidadExistente.madejas + madejasNuevas
-                        val entidadActualizada = entidadExistente.copy(madejas = acumulado)
-                        stockDao.actualizarStock(entidadActualizada)
+                        val actualizado = hiloStock.copy(madejas = hiloStock.madejas + nuevas)
+                        stockDao.actualizarStock(actualizado)
                     }
                 }
             }
-
-            // 3) Volver al hilo principal: toast y recargar la lista
+            /* informar de que se ha guardado el pedido y se ha actualizado el stock */
             withContext(Dispatchers.Main) {
                 Toast.makeText(
                     this@AlmacenPedidos,

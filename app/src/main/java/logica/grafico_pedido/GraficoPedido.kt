@@ -357,7 +357,7 @@ class GraficoPedido : BaseActivity() {
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(
                                     this@GraficoPedido,
-                                    "El hilo no está en tu catálogo. Añádelo primero.",
+                                    "El hilo no está en tu catálogo. Añádelo primero...",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
