@@ -9,8 +9,18 @@ import com.threadly.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import persistencia.daos.*
-import persistencia.entidades.*
+import persistencia.daos.GraficoDao
+import persistencia.daos.HiloCatalogoDao
+import persistencia.daos.HiloGraficoDao
+import persistencia.daos.HiloStockDao
+import persistencia.daos.PedidoDao
+import persistencia.daos.UsuarioDAO
+import persistencia.entidades.GraficoEntity
+import persistencia.entidades.HiloCatalogoEntity
+import persistencia.entidades.HiloGraficoEntity
+import persistencia.entidades.HiloStockEntity
+import persistencia.entidades.PedidoEntity
+import persistencia.entidades.Usuario
 import utiles.SesionUsuario
 
 /**
@@ -52,6 +62,8 @@ abstract class ThreadlyDatabase : RoomDatabase() {
     abstract fun graficoDao(): GraficoDao
     abstract fun pedidoDao(): PedidoDao
 
+    /* las clases que hacen de relación no se introducen en la BdD */
+
     companion object {
         @Volatile
         private var INSTANCE: ThreadlyDatabase? = null
@@ -70,7 +82,7 @@ abstract class ThreadlyDatabase : RoomDatabase() {
                     ThreadlyDatabase::class.java,
                     "threadly_database"
                 )
-                    .fallbackToDestructiveMigration() // IMPORTANTE: reinicia datos al cambiar la versión
+                    .fallbackToDestructiveMigration() /* IMPORTANTE: reinicia datos al cambiar la versión */
                     .addCallback(object : Callback() {
 
                         /**

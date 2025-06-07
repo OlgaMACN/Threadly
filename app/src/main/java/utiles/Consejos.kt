@@ -6,7 +6,14 @@ package utiles
  * No es una entidad persistente, por lo que no se guarda ni modifica en la base de datos.
  * Está diseñado para estar disponible globalmente y accesible desde cualquier parte de la aplicación.
  *
- * * @author Olga y Sandra Macías Aragón
+ * Propiedades:
+ * - [lista]: Lista inmutable con consejos prácticos para bordar.
+ *
+ * Funciones:
+ * - [obtenerAleatorio]: Devuelve un consejo aleatorio de la lista.
+ *
+ * @author Olga y Sandra Macías Aragón
+ *
  */
 object Consejos {
 
@@ -38,12 +45,12 @@ object Consejos {
         "Disfruta cada cruz: es un mimo hecho hilo",
         "¿Has probado a usar una guía imantada o regla para no perderte?",
         "Cose en un espacio bien iluminado, no queremos que tus ojitos sufran"
-        )
+    )
 
     /**
      * Devuelve un consejo aleatorio de la lista.
      *
-     * @return Un String con un consejo seleccionado al azar.
+     * @return Un [String] con un consejo seleccionado al azar.
      */
     fun obtenerAleatorio(): String {
         return lista.random()
