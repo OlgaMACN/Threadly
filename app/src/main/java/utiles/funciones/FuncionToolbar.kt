@@ -63,7 +63,11 @@ fun funcionToolbar(activity: BaseActivity) {
         }
     }
 
-    /* configuración de cada botón del toolbar */
+    /*
+     * ┌─────────────────────────────────────────────┐
+     * │ Configuración de cada botón del toolbar :D  │
+     * └─────────────────────────────────────────────┘
+     */
 
     btn_catalogo.setOnClickListener {
         clicSeguro {
