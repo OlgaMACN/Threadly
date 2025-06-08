@@ -18,6 +18,7 @@
     <color name="filaResaltadaBusqueda">#BDB0B1</color>
     <color name="filaResaltadaClicStock">#B9D9DA</color>
     <color name="referenciaImparseable">#928A8A</color>
-    <color name="grisPedidoRealizado">#808080</color>
+    <color name="grisDesactivado">#808080</color>
+    <color name="morado_palo_translucido">#808E44AD</color>
 
 </resources>

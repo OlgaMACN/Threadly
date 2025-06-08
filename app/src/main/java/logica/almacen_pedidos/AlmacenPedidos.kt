@@ -1,6 +1,7 @@
 package logica.almacen_pedidos
 
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -9,77 +10,113 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import logica.grafico_pedido.HiloGrafico
+import logica.pedido_hilos.Grafico
+import persistencia.bbdd.ThreadlyDatabase
+import persistencia.daos.GraficoDao
+import persistencia.daos.HiloGraficoDao
+import persistencia.daos.HiloStockDao
+import persistencia.daos.PedidoDao
+import persistencia.entidades.GraficoEntity
+import persistencia.entidades.HiloGraficoEntity
 import utiles.BaseActivity
+import utiles.SesionUsuario
 import utiles.funciones.ajustarDialog
 import utiles.funciones.exportarPedidoCSV
 import utiles.funciones.funcionToolbar
 
 /**
- * Clase que representa la pantalla de almacenamiento de pedidos en la aplicación Threadly.
+ * Actividad que muestra el almacén de pedidos guardados para el usuario.
+ * Permite:
+ *  - Listar todos los pedidos guardados.
+ *  - Buscar pedidos por nombre.
+ *  - Eliminar pedidos.
+ *  - Descargar un pedido en CSV (Android Q+).
+ *  - Marcar un pedido como realizado y actualizar el stock personal.
  *
- * Permite a los usuarios:
- * - Visualizar todos los pedidos realizados.
- * - Buscar pedidos por nombre.
- * - Descargar un pedido como archivo CSV (Android 10 o superior).
- * - Marcar un pedido como realizado y actualizar el stock personal.
- * - Eliminar pedidos con confirmación mediante diálogo.
- *
- * Esta clase extiende de [BaseActivity] que proporciona una barra de herramientas común
- * y otras utilidades generales para actividades.
+ * Se conecta a Room mediante DAOs [PedidoDao], [HiloStockDao], [GraficoDao] y [HiloGraficoDao].
+ * Utiliza [AdaptadorAlmacen] para renderizar la lista de [PedidoGuardado].
  *
  * @author Olga y Sandra Macías Aragón
+ *
  */
 class AlmacenPedidos : BaseActivity() {
 
-    /* recyclerView para mostrar la lista de pedidos almacenados */
+    /** RecyclerView que muestra la lista de pedidos en el almacén */
     private lateinit var tablaAlmacen: RecyclerView
 
-    /* adaptador personalizado que gestiona la vista y acciones de cada pedido */
+    /** Adaptador para renderizar y gestionar eventos sobre los pedidos */
     private lateinit var adaptador: AdaptadorAlmacen
 
+    /** DAO para operaciones sobre la entidad PedidoEntity */
+    private lateinit var pedidoDao: PedidoDao
+
+    /** DAO para operaciones sobre HiloStockEntity (stock personal) */
+    private lateinit var stockDao: HiloStockDao
+
+    /** DAO para operaciones sobre GraficoEntity */
+    private lateinit var graficoDao: GraficoDao
+
+    /** DAO para operaciones sobre HiloGraficoEntity */
+    private lateinit var hiloGraficoDao: HiloGraficoDao
+
+    /** Lista en memoria de pedidos guardados mostrados en el adaptador */
+    private val listaPedidos = mutableListOf<PedidoGuardado>()
+
+    /** Identificador del usuario obtenido de sesión */
+    private var userId: Int = -1
+
     /**
-     * Método llamado cuando se crea la actividad.
-     * Configura la interfaz, el adaptador y funcionalidades de búsqueda, descarga y procesamiento de pedidos.
+     * Punto de entrada de la actividad.
+     * - Infla el layout `almacen_aa_pedidos`.
+     * - Configura toolbar con [funcionToolbar].
+     * - Obtiene `userId` de [SesionUsuario].
+     * - Inicializa DAOs.
+     * - Configura RecyclerView y [AdaptadorAlmacen] con callbacks:
+     *   - Descargar CSV.
+     *   - Marcar pedido como realizado y actualizar stock.
+     * - Inicializa buscador y carga pedidos desde Room.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.almacen_aa_pedidos)
-
-        /* configura la barra de herramientas */
         funcionToolbar(this)
 
-        /* inicializa el RecyclerView desde el layout */
-        tablaAlmacen = findViewById(R.id.tabla_almacen)
+        /* obtener sesión de usuario */
+        userId = SesionUsuario.obtenerSesion(this)
+        if (userId < 0) finish()
 
-        /* crea el adaptador con acciones de descarga y marcar como realizado */
+        /* inicializar DAOs */
+        val db = ThreadlyDatabase.getDatabase(applicationContext)
+        pedidoDao = db.pedidoDao()
+        stockDao = db.hiloStockDao()
+        graficoDao = db.graficoDao()
+        hiloGraficoDao = db.hiloGraficoDao()
+
+        /* configurar RecyclerView y adaptador */
+        tablaAlmacen = findViewById(R.id.tabla_almacen)
         adaptador = AdaptadorAlmacen(
-            PedidoSingleton.listaPedidos,
+            listaPedidos,
             onDescargarClick = { pedido ->
-                /* verifica si la versión del sistema permite exportar archivos */
+                /* descargar CSV en Android */
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    val resultado = exportarPedidoCSV(this, pedido)
-                    /* muestra mensaje según el resultado */
-                    if (resultado) {
-                        Toast.makeText(
-                            this,
-                            "Pedido guardado en Descargas/Threadly",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        Toast.makeText(this, "Error al descargar :(", Toast.LENGTH_SHORT).show()
-                    }
+                    val ok = exportarPedidoCSV(this, pedido)
+                    Toast.makeText(
+                        this,
+                        if (ok) "Pedido guardado en Descargas/Threadly" else "Error al descargar :(",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
-                    /* dispositivo no compatible con exportación */
                     Toast.makeText(
                         this,
                         "Exportación disponible solo en Android 10 o superior",
@@ -88,84 +125,122 @@ class AlmacenPedidos : BaseActivity() {
                 }
             },
             onPedidoRealizadoClick = { pedido ->
-                /* añade las madejas pedidas al stock del usuario */
-                pedido.graficos.forEach { grafico ->
-                    grafico.listaHilos.forEach { hiloGrafico ->
-                        //StockSingleton.agregarMadejas(hiloGrafico.hilo, hiloGrafico.madejas)
-                    }
-                }
-                pedido.realizado = true /* marca el pedido como realizado */
-                Toast.makeText(this, "Pedido realizado y stock actualizado", Toast.LENGTH_SHORT)
-                    .show()
+                marcarPedidoComoRealizadoYActualizarStock(pedido)
             }
         )
-
-        /* configura el RecyclerView con un layout lineal y asigna el adaptador */
         tablaAlmacen.layoutManager = LinearLayoutManager(this)
         tablaAlmacen.adapter = adaptador
 
-        /* imprime en log la cantidad inicial de pedidos y sus nombres (para depuración) */
-        Log.d("AlmacenPedidos", "Cantidad de pedidos inicial: ${PedidoSingleton.listaPedidos.size}")
-        PedidoSingleton.listaPedidos.forEach {
-            Log.d("AlmacenPedidos", "Pedido: ${it.nombre}")
+        buscadorAlmacen()
+        cargarPedidosDesdeRoom()
+    }
+
+    /**
+     * Carga todos los pedidos del usuario desde Room.
+     * Para cada [PedidoEntity]:
+     *  - Obtiene sus [GraficoEntity].
+     *  - Para cada gráfico, obtiene sus [HiloGraficoEntity] y los mapea a [HiloGrafico].
+     *  - Construye [Grafico] y finalmente [PedidoGuardado].
+     * Actualiza [listaPedidos] y notifica al adaptador.
+     */
+    private fun cargarPedidosDesdeRoom() {
+        lifecycleScope.launch {
+            val pedidosEnt = withContext(Dispatchers.IO) {
+                pedidoDao.obtenerTodosPorUsuario(userId)
+            }
+            listaPedidos.clear()
+
+            for (pedidoEnt in pedidosEnt) {
+                val pedidoId = pedidoEnt.id
+                val nombrePedido = pedidoEnt.nombre
+
+                /* obtener gráficos asociados */
+                val graficosEntidades = withContext(Dispatchers.IO) {
+                    graficoDao.obtenerGraficoPorPedido(userId, pedidoId)
+                }
+
+                /* mapear cada gráfico a dominio */
+                val listaGraficoDominio = mutableListOf<Grafico>()
+                for (graficoEnt in graficosEntidades) {
+                    val hilosEntidades = withContext(Dispatchers.IO) {
+                        hiloGraficoDao.obtenerHilosDeGrafico(graficoEnt.id)
+                    }
+                    val listaHilosDominio = hilosEntidades.map { hiloEnt ->
+                        HiloGrafico(hilo = hiloEnt.hilo, madejas = hiloEnt.madejas)
+                    }.toMutableList()
+                    listaGraficoDominio.add(
+                        Grafico(nombre = graficoEnt.nombre, listaHilos = listaHilosDominio)
+                    )
+                }
+
+                /* construir objeto PedidoGuardado */
+                val pedidoDominio = PedidoGuardado(
+                    id = pedidoId,
+                    nombre = nombrePedido,
+                    userId = pedidoEnt.userId,
+                    realizado = pedidoEnt.realizado,
+                    graficos = listaGraficoDominio
+                )
+                listaPedidos.add(pedidoDominio)
+            }
+
+            withContext(Dispatchers.Main) {
+                adaptador.actualizarLista(listaPedidos)
+            }
         }
-
-        /* activa el buscador de pedidos */
-        buscadorPedido()
     }
 
     /**
-     * Método ejecutado al reanudar la actividad.
-     * Refresca la lista del adaptador con los pedidos actuales.
+     * Configura el buscador de pedidos:
+     * - Oculta teclado al buscar.
+     * - Si el texto está vacío, restaura la lista completa.
+     * - Filtra pedidos por nombre (insensible a mayúsculas), resalta y desplaza al primero.
+     * - Muestra “sin resultados” si no hay coincidencias.
      */
-    override fun onResume() {
-        super.onResume()
-        adaptador.actualizarLista(PedidoSingleton.listaPedidos)
-    }
-
-    /**
-     * Habilita la funcionalidad de búsqueda de pedidos por nombre.
-     * También permite restaurar la lista completa si el campo se borra.
-     */
-    private fun buscadorPedido() {
-        val edtBuscador = findViewById<EditText>(R.id.edTxt_buscadorAlmacen)
+    private fun buscadorAlmacen() {
+        val buscarPedido = findViewById<EditText>(R.id.edTxt_buscadorAlmacen)
         val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaAlmacen)
         val txtNoResultados = findViewById<TextView>(R.id.txtVw_sinResultadosAlmacen)
-
-        txtNoResultados.visibility = View.GONE // Oculta el mensaje al iniciar
+        val tablaAlmacen = findViewById<RecyclerView>(R.id.tabla_almacen)
+        txtNoResultados.visibility = View.GONE
 
         btnLupa.setOnClickListener {
-            val texto = edtBuscador.text.toString().trim().uppercase()
-            Log.d("Buscador", "Texto introducido: '$texto'")
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(buscarPedido.windowToken, 0)
 
-            /* si el texto está vacío, muestra todos los pedidos */
+            val texto = buscarPedido.text.toString().trim().uppercase()
             if (texto.isEmpty()) {
-                adaptador.actualizarLista(PedidoSingleton.listaPedidos)
+                /* restaurar lista completa */
+                adaptador.actualizarLista(listaPedidos)
+                adaptador.resaltarPedido(null)
                 txtNoResultados.visibility = View.GONE
                 return@setOnClickListener
             }
 
-            /* filtra los pedidos por nombre (ignorando mayúsculas/minúsculas) */
-            val listaFiltrada = PedidoSingleton.listaPedidos.filter {
+            /* filtrar coincidencias */
+            val coincidencias = listaPedidos.filter {
                 it.nombre.uppercase().contains(texto)
             }
-
-            /* actualiza la lista con los resultados encontrados */
-            if (listaFiltrada.isNotEmpty()) {
-                adaptador.actualizarLista(listaFiltrada)
+            if (coincidencias.isNotEmpty()) {
+                val primerMatch = coincidencias.first()
+                val idx = listaPedidos.indexOf(primerMatch)
+                adaptador.resaltarPedido(primerMatch.nombre)
+                adaptador.actualizarLista(listaPedidos)
+                tablaAlmacen.post { tablaAlmacen.scrollToPosition(idx) }
                 txtNoResultados.visibility = View.GONE
             } else {
-                /* si no hay coincidencias, muestra mensaje */
+                /* sin resultados */
                 adaptador.actualizarLista(emptyList())
+                adaptador.resaltarPedido(null)
                 txtNoResultados.visibility = View.VISIBLE
             }
         }
 
-        /* lListener para restaurar la lista si el usuario borra el contenido del buscador */
-        edtBuscador.addTextChangedListener(object : TextWatcher {
+        buscarPedido.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
-                    adaptador.actualizarLista(PedidoSingleton.listaPedidos)
+                    adaptador.actualizarLista(listaPedidos)
+                    adaptador.resaltarPedido(null)
                     txtNoResultados.visibility = View.GONE
                 }
             }
@@ -176,58 +251,97 @@ class AlmacenPedidos : BaseActivity() {
     }
 
     /**
-     * Muestra un diálogo personalizado para confirmar la eliminación de un pedido.
-     * Resalta el nombre del pedido en rojo dentro del texto del diálogo.
+     * Muestra un diálogo de confirmación antes de eliminar un pedido:
+     * - Resalta el nombre en rojo en el mensaje.
+     * - Al confirmar, elimina del adaptador, muestra Toast y borra en Room.
      *
-     * @param posicion Índice del pedido en la lista que se desea eliminar.
+     * @param posicion Índice en [listaPedidos] del pedido a eliminar.
      */
     fun dialogEliminarPedido(posicion: Int) {
-        /* crea y configura el diálogo de eliminación */
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.almacen_dialog_eliminar_pedido)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         ajustarDialog(dialog)
-        dialog.setCancelable(false) /* impide cerrar el diálogo sin pulsar un botón */
+        dialog.setCancelable(false)
 
-        /* obtiene referencias a los elementos del diálogo */
         val btnEliminar = dialog.findViewById<Button>(R.id.btn_botonEliminarPedido)
         val txtMensaje = dialog.findViewById<TextView>(R.id.txtVw_confirmarEliminarPedido)
         val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_almacen)
 
-        val pedido = PedidoSingleton.listaPedidos[posicion]
+        val pedido = listaPedidos[posicion]
         val nombrePedido = pedido.nombre
-        val textoOriginal = getString(R.string.confirmarEliminarPedido)
-        val textoConPedido = textoOriginal.replace("%s", nombrePedido)
-
-        /* crea un texto enriquecido (Spannable) para destacar el nombre del pedido */
-        val spannable = SpannableString(textoConPedido)
-        val start = textoConPedido.indexOf(nombrePedido)
-        val end = start + nombrePedido.length
-
-        if (start != -1) {
-            spannable.setSpan(
-                ForegroundColorSpan(Color.RED),
-                start,
-                end,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+        val textoOrig = getString(R.string.confirmarEliminarPedido)
+        val textoCon = textoOrig.replace("%s", nombrePedido)
+        val spannable = SpannableString(textoCon).apply {
+            val inicio = textoCon.indexOf(nombrePedido)
+            val fin = inicio + nombrePedido.length
+            if (inicio != -1) {
+                setSpan(
+                    ForegroundColorSpan(Color.RED),
+                    inicio,
+                    fin,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
         }
-
-        /* asigna el texto enriquecido al mensaje del diálogo */
         txtMensaje.text = spannable
 
-        /* si el usuario cancela, se cierra el diálogo */
         btnVolver.setOnClickListener { dialog.dismiss() }
-
-        /* si el usuario confirma, elimina el pedido, actualiza la lista y muestra mensaje */
         btnEliminar.setOnClickListener {
-            PedidoSingleton.listaPedidos.removeAt(posicion)
-            adaptador.actualizarLista(PedidoSingleton.listaPedidos)
-            Toast.makeText(this, "Pedido '$nombrePedido' eliminado", Toast.LENGTH_SHORT).show()
+            listaPedidos.removeAt(posicion)
+            adaptador.actualizarLista(listaPedidos)
+            Toast.makeText(this, "Pedido '$nombrePedido' eliminado correctamente", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
+            lifecycleScope.launch(Dispatchers.IO) {
+                pedidoDao.eliminar(pedido.toEntity())
+            }
         }
-
-        /* muestra el diálogo al usuario */
         dialog.show()
+    }
+
+    /**
+     * Marca un pedido como realizado y actualiza el stock personal:
+     * - Cambia `realizado` a true en DB.
+     * - Recorre cada hilo de cada gráfico y suma madejas al stock (insert o update).
+     * - Muestra un Toast y recarga la lista.
+     *
+     * @param pedido PedidoGuardado que se marca como realizado.
+     */
+    private fun marcarPedidoComoRealizadoYActualizarStock(pedido: PedidoGuardado) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            /* marcar pedido */
+            pedido.realizado = true
+            pedidoDao.actualizar(pedido.toEntity())
+
+            /* actualizar stock para cada hilo de cada gráfico */
+            pedido.graficos.forEach { grafico ->
+                grafico.listaHilos.forEach { hiloGrafico ->
+                    val codigo = hiloGrafico.hilo
+                    val nuevas = hiloGrafico.madejas
+                    val hiloStock = stockDao.obtenerPorHiloUsuario(codigo, userId)
+                    if (hiloStock == null) {
+                        stockDao.insertarStock(
+                            persistencia.entidades.HiloStockEntity(
+                                usuarioId = userId,
+                                hiloId = codigo,
+                                madejas = nuevas
+                            )
+                        )
+                    } else {
+                        val actualizado = hiloStock.copy(madejas = hiloStock.madejas + nuevas)
+                        stockDao.actualizarStock(actualizado)
+                    }
+                }
+            }
+            /* informar de que se ha guardado el pedido y se ha actualizado el stock */
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    this@AlmacenPedidos,
+                    "Pedido marcado como realizado y stock actualizado",
+                    Toast.LENGTH_SHORT
+                ).show()
+                cargarPedidosDesdeRoom()
+            }
+        }
     }
 }

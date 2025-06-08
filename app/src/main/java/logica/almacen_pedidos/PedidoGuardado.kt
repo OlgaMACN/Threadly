@@ -1,26 +1,61 @@
 package logica.almacen_pedidos
 
 import logica.pedido_hilos.Grafico
+import persistencia.entidades.PedidoEntity
 import java.io.Serializable
 
 /**
- * Clase de datos que representa un pedido guardado en el almacenamiento local.
+ * Clase de datos que representa un pedido guardado completo, incluyendo su lista de gráficos.
  *
- * Un pedido está compuesto por:
- * - Un nombre que lo identifica (por ejemplo, "P2405_1").
- * - Una lista de gráficos asociados, donde cada gráfico tiene sus propios hilos.
- * - Un estado booleano que indica si el pedido ya ha sido realizado (es decir, si se ha actualizado el stock).
+ * Se utiliza en la capa lógica y de interfaz, y puede convertirse a/desde [PedidoEntity]
+ * para persistencia en Room.
  *
- * Esta clase implementa Serializable para permitir su paso entre actividades mediante Intents.
+ * @property id        Identificador único del pedido.
+ * @property nombre    Nombre asignado al pedido.
+ * @property userId    ID del usuario propietario del pedido.
+ * @property realizado Indica si el pedido ha sido marcado como realizado.
+ * @property graficos  Lista de gráficos (con hilos) que forman el pedido.
  *
- * @property nombre Nombre único e identificador del pedido guardado.
- * @property graficos Lista de gráficos incluidos en el pedido.
- * @property realizado Indica si el pedido ha sido marcado como completado o no.
- * * @author Olga y Sandra Macías Aragón
+ * @see PedidoEntity   Versión persistente del pedido.
+ * @see toEntity       Conversión desde [PedidoGuardado] a [PedidoEntity].
+ * @see toPedidoGuardado Conversión desde [PedidoEntity] a [PedidoGuardado].
+ *
+ * @author Olga y Sandra Macías Aragón
  *
  */
 data class PedidoGuardado(
+    val id: Int,
     val nombre: String,
-    val graficos: List<Grafico>,
-    var realizado: Boolean = false
-) : Serializable /* implementa Serializable para enviar entre Activities */
+    val userId: Int,
+    var realizado: Boolean = false,
+    val graficos: List<Grafico>
+) : Serializable
+
+/**
+ * Convierte un [PedidoGuardado] a su entidad persistente [PedidoEntity].
+ *
+ * Los gráficos no se incluyen aquí, ya que se almacenan por separado en otras tablas relacionadas.
+ */
+fun PedidoGuardado.toEntity(): PedidoEntity {
+    return PedidoEntity(
+        id = id,
+        nombre = nombre,
+        userId = userId,
+        realizado = realizado
+    )
+}
+
+/**
+ * Convierte una entidad [PedidoEntity] a un [PedidoGuardado] vacío (sin gráficos).
+ *
+ * Los gráficos se cargan posteriormente mediante relaciones Room.
+ */
+fun PedidoEntity.toPedidoGuardado(): PedidoGuardado {
+    return PedidoGuardado(
+        id = id,
+        nombre = nombre,
+        userId = userId,
+        realizado = realizado,
+        graficos = mutableListOf() /* se asignarán después desde la relación */
+    )
+}

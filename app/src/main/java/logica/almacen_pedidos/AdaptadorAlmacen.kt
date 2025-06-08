@@ -1,5 +1,7 @@
 package logica.almacen_pedidos
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +13,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.threadly.R
 
 /**
- * Adaptador personalizado para el RecyclerView que muestra los pedidos almacenados en la pantalla AlmacenPedidos.
+ * Adaptador para el RecyclerView que muestra los pedidos almacenados.
  *
- * Gestiona las acciones disponibles para cada pedido:
- * - Descargar el pedido como CSV.
- * - Marcar el pedido como realizado (actualiza stock y cambia el icono).
- * - Eliminar el pedido mediante pulsación larga.
+ * Cada fila incluye:
+ *  - El nombre del pedido.
+ *  - Botón para descargar el pedido en CSV.
+ *  - Botón para marcar el pedido como realizado.
+ *  - Pulsación larga para eliminar el pedido.
+ *  - Resaltado visual tras búsquedas.
+ *
+ * @property listaPedidos           Lista de [PedidoGuardado] a mostrar.
+ * @property onDescargarClick       Lambda que se invoca al pulsar el botón de descarga.
+ * @property onPedidoRealizadoClick Lambda que se invoca al pulsar el botón "realizado".
+ *
+ * @author Olga y Sandra Macías Aragón
  *
  * @param listaPedidos Lista de pedidos guardados que se mostrarán.
  * @param onDescargarClick Función lambda que se ejecuta al pulsar el botón de descarga.
@@ -30,92 +40,111 @@ class AdaptadorAlmacen(
     private val onPedidoRealizadoClick: (PedidoGuardado) -> Unit
 ) : RecyclerView.Adapter<AdaptadorAlmacen.PedidoViewHolder>() {
 
+    /** Nombre de pedido que debe mostrarse resaltado (o null para ninguno). */
+    private var pedidoResaltado: String? = null
+
     /**
-     * ViewHolder personalizado para representar cada fila de la tabla de pedidos.
-     * Contiene el nombre del pedido y botones de acción.
+     * ViewHolder que encapsula las vistas de una fila:
+     *  - [txtNombrePedido]: TextView con el nombre del pedido.
+     *  - [btnDescargar]: ImageButton para descargar el pedido.
+     *  - [btnPedidoRealizado]: ImageButton para marcar como realizado.
      */
     inner class PedidoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val txtNombrePedido: TextView = itemView.findViewById(R.id.txtVw_contenidoNombrePedido)
-        val btnDescargar: ImageButton = itemView.findViewById(R.id.imgBtn_descargaPedido)
+        val txtNombrePedido: TextView   = itemView.findViewById(R.id.txtVw_contenidoNombrePedido)
+        val btnDescargar: ImageButton   = itemView.findViewById(R.id.imgBtn_descargaPedido)
         val btnPedidoRealizado: ImageButton = itemView.findViewById(R.id.imgBtn_pedidoRealizado)
     }
 
     /**
-     * Crea y retorna un nuevo ViewHolder inflando el layout de cada fila del RecyclerView.
+     * Infla el layout de la fila y crea un [PedidoViewHolder].
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PedidoViewHolder {
-        /* convierte (infla) el layout de una fila de pedido desde XML */
         val vista = LayoutInflater.from(parent.context)
             .inflate(R.layout.almacen_tabla_filas_contenido, parent, false)
         return PedidoViewHolder(vista)
     }
 
     /**
-     * Vincula los datos de un pedido con los elementos de la vista.
+     * Vincula los datos de un [PedidoGuardado] a las vistas de la fila:
+     * - Muestra el nombre del pedido.
+     * - Configura el botón de descarga.
+     * - Ajusta el estado e icono del botón "realizado".
+     * - Asigna pulsación larga para eliminar mediante [AlmacenPedidos.dialogEliminarPedido].
+     * - Aplica resaltado si coincide con [pedidoResaltado].
      *
-     * @param holder ViewHolder que contiene las vistas a actualizar.
-     * @param position Índice del pedido en la lista.
+     * @param holder   ViewHolder que contiene las vistas a poblar.
+     * @param position Posición del pedido en [listaPedidos].
      */
     override fun onBindViewHolder(holder: PedidoViewHolder, position: Int) {
-        /* obtiene el pedido correspondiente a esta posición */
         val pedido = listaPedidos[position]
-
-        /* asigna el nombre del pedido al TextView de la fila */
         holder.txtNombrePedido.text = pedido.nombre
 
-        /* configura el botón de descarga con su evento */
         holder.btnDescargar.setOnClickListener {
-            onDescargarClick(pedido) /* ejecuta la lambda definida al crear el adaptador */
+            onDescargarClick(pedido)
         }
 
-        /* si el pedido ya ha sido marcado como realizado */
+        /* icono y estado "realizado" */
         if (pedido.realizado) {
-            /* desactiva el botón y cambia el icono y color a gris */
             holder.btnPedidoRealizado.isEnabled = false
             holder.btnPedidoRealizado.setImageResource(R.drawable.img_tick_pedido)
             holder.btnPedidoRealizado.setColorFilter(
-                ContextCompat.getColor(holder.itemView.context, R.color.grisPedidoRealizado),
+                ContextCompat.getColor(holder.itemView.context, R.color.grisDesactivado),
                 android.graphics.PorterDuff.Mode.SRC_IN
             )
         } else {
-            /* si el pedido no está realizado, muestra el icono activo */
             holder.btnPedidoRealizado.isEnabled = true
             holder.btnPedidoRealizado.setImageResource(R.drawable.img_tick_pedido)
             holder.btnPedidoRealizado.clearColorFilter()
         }
-
-        /* al hacer clic en el botón de "pedido realizado" */
         holder.btnPedidoRealizado.setOnClickListener {
             if (holder.btnPedidoRealizado.isEnabled) {
-                /* ejecuta la lambda que actualiza el estado del pedido y el stock */
                 onPedidoRealizadoClick(pedido)
-                /* notifica al adaptador para refrescar esta posición */
                 notifyItemChanged(holder.adapterPosition)
             }
         }
 
-        /* evento de pulsación larga para eliminar el pedido */
+        /* pulsación larga para eliminar */
         holder.itemView.setOnLongClickListener {
-            /* obtiene el contexto como actividad AlmacenPedidos y lanza el diálogo de eliminación */
             val contexto = holder.itemView.context as AlmacenPedidos
             contexto.dialogEliminarPedido(position)
-            true /* retorna true para indicar que se ha consumido el evento */
+            true
+        }
+
+        /* resaltar si coincide con `pedidoResaltado` */
+        if (pedidoResaltado != null && pedidoResaltado.equals(pedido.nombre, ignoreCase = true)) {
+            holder.itemView.setBackgroundResource(R.drawable.reutilizable_resaltar_busqueda)
+        } else {
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT)
         }
     }
 
     /**
-     * Devuelve el número total de elementos en la lista.
+     * Devuelve el número de pedidos en la lista.
      */
     override fun getItemCount(): Int = listaPedidos.size
 
     /**
-     * Actualiza la lista de pedidos mostrada en el RecyclerView.
+     * Reemplaza la lista completa de pedidos por [nuevaLista] y notifica al adaptador.
+     * Mantiene el estado de resaltado hasta que se llame a [resaltarPedido].
      *
-     * @param nuevaLista Nueva lista de pedidos a mostrar.
+     * @param nuevaLista Nueva lista de [PedidoGuardado] a mostrar.
      */
+    @SuppressLint("NotifyDataSetChanged")
     fun actualizarLista(nuevaLista: List<PedidoGuardado>) {
-        Log.d("Adaptador", "Actualizando lista. Tamaño nuevo: ${nuevaLista.size}")
+        Log.d("AdaptadorAlmacen", "Actualizando lista. Tamaño nuevo: ${nuevaLista.size}")
         listaPedidos = nuevaLista
-        notifyDataSetChanged() /* refresca el RecyclerView */
+        notifyDataSetChanged()
+    }
+
+    /**
+     * Fija qué nombre de pedido debe resaltarse visualmente.
+     * Si [nombre] es null, quita cualquier resaltado previo.
+     *
+     * @param nombre Nombre de pedido a resaltar, o null para ninguno.
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    fun resaltarPedido(nombre: String?) {
+        pedidoResaltado = nombre
+        notifyDataSetChanged()
     }
 }

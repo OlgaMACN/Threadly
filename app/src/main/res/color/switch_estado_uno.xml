@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Si está ON (checked=true), usa morado_palo -->
+    <item android:color="@color/morado_palo" android:state_checked="true" />
+    <!-- En cualquier otro caso (unchecked), usa grisClaro -->
+    <item android:color="@color/fondoTextField" />
+</selector>

@@ -105,31 +105,33 @@
         android:id="@+id/btn_agregarHiloConsulta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/morado_palo"
+        android:backgroundTint="@color/fondoBoton"
+        android:textColor="@color/textoCabecera_y_Botones"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/boton_agregarHiloConsulta"
+        android:textStyle="bold"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toStartOf="@+id/btn_modificarHiloConsulta"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabla_catalogo"
-        tools:layout_editor_absoluteX="24dp"
-        tools:layout_editor_absoluteY="695dp" />
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado"
+        app:layout_constraintVertical_bias="0.95"  />
 
     <Button
         android:id="@+id/btn_modificarHiloConsulta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/morado_palo"
+        android:backgroundTint="@color/fondoBoton"
+        android:textColor="@color/textoCabecera_y_Botones"
         android:fontFamily="@font/catchy_mager"
         android:text="@string/boton_ModificarHiloConsulta"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/reutil_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_agregarHiloConsulta"
-        app:layout_constraintTop_toBottomOf="@+id/tabla_catalogo"
-        tools:layout_editor_absoluteX="204dp"
-        tools:layout_editor_absoluteY="695dp" />
+        app:layout_constraintTop_toBottomOf="@+id/txtVw_consultarHilosEncabezado"
+        app:layout_constraintVertical_bias="0.95"  />
 
     <include
         android:id="@+id/reutil_toolbar"

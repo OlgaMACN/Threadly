@@ -22,7 +22,7 @@ import android.view.ViewGroup
  * dialogo.show()
  * ```
  *
- * * @author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
  */
 fun ajustarDialog(dialog: Dialog, anchoPorcentaje: Double = 0.85) {
     /* se obtienen las dimensiones de la pantalla para que funcione en cualquier dispositivo */

@@ -8,9 +8,16 @@ import android.content.Context
  * Proporciona métodos para guardar, obtener, comprobar y cerrar la sesión
  * mediante el almacenamiento del ID del usuario en preferencias privadas.
  *
- * Evita acceder a la BdD cada vez que se abra la app.
+ * Evita acceder a la base de datos cada vez que se abra la aplicación,
+ * permitiendo un acceso rápido y persistente al estado de sesión.
  *
- * * @author Olga y Sandra Macías Aragón
+ * Uso típico:
+ * - Al iniciar sesión se llama a [guardarSesion] con el ID del usuario.
+ * - Para verificar si hay sesión activa se usa [haySesionActiva].
+ * - Para obtener el ID del usuario en sesión se usa [obtenerSesion].
+ * - Para cerrar sesión se llama a [cerrarSesion].
+ *
+ * @author Olga y Sandra Macías Aragón
  *
  */
 object SesionUsuario {
