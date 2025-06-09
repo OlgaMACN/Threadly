@@ -77,7 +77,7 @@ class PantallaPrincipal : BaseActivity() {
      *
      * - Asigna el layout de la pantalla.
      * - Configura el toolbar personalizado.
-     * - Obtiene referencias a las vistas (TextViews, ImageView, etc.).
+     * - Obtiene referencias a las vistas (TextViews, ImageView, etc).
      * - Inicializa DAOs para operaciones de base de datos.
      * - Comprueba sesión de usuario y finaliza si no hay sesión.
      * - Lanza una corrutina para precargar catálogo y stock si no existen.
