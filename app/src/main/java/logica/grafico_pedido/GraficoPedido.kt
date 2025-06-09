@@ -241,30 +241,44 @@ class GraficoPedido : BaseActivity() {
         sinResultados.visibility = View.GONE
 
         btnLupa.setOnClickListener {
+            /* ocultar teclado */
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(hiloBuscar.windowToken, 0)
 
-            val codigoHilo = hiloBuscar.text.toString().trim().uppercase()
-            val encontrado = listaDominio.find { it.hilo == codigoHilo }
-            if (encontrado != null) {
-                adaptadorGrafico.resaltarHiloBusqueda(encontrado.hilo)
-                adaptadorGrafico.actualizarLista(listaDominio)
-                recyclerView.scrollToPosition(listaDominio.indexOf(encontrado))
-                sinResultados.visibility = View.GONE
+            val query = hiloBuscar.text.toString().trim().uppercase()
+            if (query.isEmpty()) {
+                /* si está vacío, ni caso */
+                adaptadorGrafico.resaltarHiloBusqueda(null)
+                adaptadorGrafico.notifyDataSetChanged()
                 recyclerView.visibility = View.VISIBLE
+                sinResultados.visibility = View.GONE
+                return@setOnClickListener
+            }
+
+            /* buscar por coincidencia exacta */
+            val encontrado = listaDominio.find { it.hilo == query }
+            if (encontrado != null) {
+                val idx = listaDominio.indexOf(encontrado)
+                adaptadorGrafico.resaltarHiloBusqueda(encontrado.hilo)
+                adaptadorGrafico.notifyDataSetChanged()
+                recyclerView.scrollToPosition(idx)
+                recyclerView.visibility = View.VISIBLE
+                sinResultados.visibility = View.GONE
             } else {
-                sinResultados.visibility = View.VISIBLE
+                /* si no hay resultados, se oculta la tabla y se muestra el mensaje configurado */
                 recyclerView.visibility = View.GONE
+                sinResultados.visibility = View.VISIBLE
             }
         }
 
         hiloBuscar.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
+                    /* al borrar, restaurar */
                     adaptadorGrafico.resaltarHiloBusqueda(null)
-                    adaptadorGrafico.actualizarLista(listaDominio)
-                    sinResultados.visibility = View.GONE
+                    adaptadorGrafico.notifyDataSetChanged()
                     recyclerView.visibility = View.VISIBLE
+                    sinResultados.visibility = View.GONE
                 }
             }
 
@@ -425,7 +439,6 @@ class GraficoPedido : BaseActivity() {
             }
         }
     }
-
 
     /**
      * Diálogo para eliminar un hilo del gráfico:
