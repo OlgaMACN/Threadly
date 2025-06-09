@@ -1,6 +1,7 @@
 package utiles
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
@@ -43,6 +44,8 @@ open class BaseActivity : AppCompatActivity() {
      * @param savedInstanceState Estado previamente guardado, si existe.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        /* forzar la orientación vertical */
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         super.onCreate(savedInstanceState)
 
         /* obtener datos del usuario desde el intent */

@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Icono de la aplicación-->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,23 +14,13 @@
         android:theme="@style/Theme.Threadly"
         tools:targetApi="31">
 
-
-        <!-- Provider para poder pre visualizar el pedido -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths" />
-        </provider>
-        <!-- TODO IMPORTANTE: Declarar todas las activities utilizadas -->
         <!-- Splash: será la que dará inicio a la ejecución -->
         <activity
             android:name="logica.splash.Splash"
             android:exported="true"
-            android:theme="@style/Base.Theme.Threadly">
+            android:screenOrientation="portrait"
+            android:theme="@style/Base.Theme.Threadly"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
 
                 <action android:name="android.intent.action.MAIN" />
@@ -40,48 +31,68 @@
         <!-- Login -->
         <activity
             android:name="logica.login.LoginUserExiste"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name="logica.login.LoginUserNoExiste"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <!-- Pantalla Inicio -->
         <activity
             android:name="logica.pantalla_inicio.PantallaPrincipal"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name="logica.pantalla_inicio.DatosPersonales"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name="logica.pantalla_inicio.ModificarDatos"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <!-- Catálogo -->
         <activity
             android:name="logica.catalogo_hilos.CatalogoHilos"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <!-- Stock Personal -->
         <activity
             android:name="logica.stock_personal.StockPersonal"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <!-- Pedido -->
         <activity
             android:name="logica.pedido_hilos.PedidoHilos"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <!-- Gráfico Pedidos -->
         <activity
             android:name="logica.grafico_pedido.GraficoPedido"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <!-- Almacén Pedidos -->
         <activity
             android:name="logica.almacen_pedidos.AlmacenPedidos"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
     </application>
 
 </manifest>
