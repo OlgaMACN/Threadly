@@ -4,11 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.threadly.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import persistencia.daos.GraficoDao
 import persistencia.daos.HiloCatalogoDao
 import persistencia.daos.HiloGraficoDao
@@ -21,7 +16,6 @@ import persistencia.entidades.HiloGraficoEntity
 import persistencia.entidades.HiloStockEntity
 import persistencia.entidades.PedidoEntity
 import persistencia.entidades.Usuario
-import utiles.SesionUsuario
 
 /**
  * Base de datos principal de la aplicación Threadly.
@@ -37,8 +31,6 @@ import utiles.SesionUsuario
  * @version 19 (fase de desarrollo, aún no estable para producción)
  * @author Olga y Sandra Macías Aragón
  *
- * TODO IMPORTANTE: Esta versión de la base de datos está en desarrollo y usa `fallbackToDestructiveMigration()`,
- * lo que implica que se borrarán los datos con cada cambio de versión.
  */
 @Database(
     entities = [
@@ -82,33 +74,6 @@ abstract class ThreadlyDatabase : RoomDatabase() {
                     ThreadlyDatabase::class.java,
                     "threadly_database"
                 )
-                    .fallbackToDestructiveMigration() /* IMPORTANTE: reinicia datos al cambiar la versión */
-                    .addCallback(object : Callback() {
-
-                        /**
-                         * Callback que se ejecuta al crear por primera vez la base de datos.
-                         *
-                         * Crea automáticamente un usuario de prueba ("prueba"/"1234") con avatar por defecto
-                         * y lo inicia como sesión actual.
-                         */
-                        override fun onCreate(db: SupportSQLiteDatabase) {
-                            super.onCreate(db)
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val dao = getDatabase(context).usuarioDAO()
-                                val usuarios = dao.obtenerTodos()
-
-                                if (usuarios.isEmpty()) {
-                                    val usuarioPrueba = Usuario(
-                                        username = "prueba",
-                                        password = "1234",
-                                        profilePic = R.drawable.img_avatar_defecto
-                                    )
-                                    val id = dao.insertar(usuarioPrueba).toInt()
-                                    SesionUsuario.guardarSesion(context, id)
-                                }
-                            }
-                        }
-                    })
                     .build()
 
                 INSTANCE = instance
