@@ -316,7 +316,7 @@ class GraficoPedido : BaseActivity() {
             val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
             val btnVol = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
 
-                /* ocultar el campo count si ya existe en Room */
+                /* ocultar el campo count si ya existe en room */
                 if (!necesitaCount) {
                     pedirCount.visibility = View.GONE
                 } else {
