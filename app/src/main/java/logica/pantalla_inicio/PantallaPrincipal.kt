@@ -158,7 +158,7 @@ class PantallaPrincipal : BaseActivity() {
                 ultimoGrafico.nombre
             } else {
                 /* mensaje por defecto cuando no hay pedidos en curso */
-                "Ahora mismo no hay ningún pedido en curso"
+                "Sin pedidos en curso"
             }
 
             /* actualizar consejo aleatorio y refrescar los datos del usuario */

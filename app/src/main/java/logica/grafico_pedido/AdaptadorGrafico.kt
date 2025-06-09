@@ -122,7 +122,7 @@ class AdaptadorGrafico(
         /* aplicar resaltado de búsqueda o clic */
         when {
             hiloItem.hilo == hiloResaltadoBusqueda -> {
-              /* búsqueda */
+                /* búsqueda */
                 holder.filaLayout.setBackgroundResource(R.drawable.reutilizable_resaltar_busqueda)
             }
 
