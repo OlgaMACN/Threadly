@@ -20,11 +20,11 @@ import utiles.SesionUsuario
 import utiles.funciones.funcionToolbar
 
 /**
- * Actividad principal de la aplicación, muestra información general del usuario,
+ * Actividad principal de la aplicación, donde se muestra la información general del usuario,
  * estado de sus pedidos y stock, además de ofrecer un consejo aleatorio.
  *
  * Esta clase extiende de [BaseActivity] para incorporar funcionalidades
- * comunes como navegación y configuración de toolbar.
+ * comunes como la navegación y configuración de toolbar, o el registro de la sesión activa.
  *
  * @author Olga y Sandra Macías Aragón
  *
@@ -32,43 +32,43 @@ import utiles.funciones.funcionToolbar
 class PantallaPrincipal : BaseActivity() {
 
     /**
-     * Vista que muestra el texto del consejo aleatorio.
+     * Vista que muestra el texto del consejo aleatorio
      */
     private lateinit var txtTip: TextView
 
     /**
-     * Vista que muestra el nombre de usuario actualmente en sesión.
+     * Vista que muestra el nombre de usuario actualmente en sesión
      */
     private lateinit var txtNombreUser: TextView
 
     /**
-     * Vista que muestra la imagen de perfil del usuario.
+     * Vista que muestra la imagen de perfil del usuario
      */
     private lateinit var imgPerfil: ImageView
 
     /**
-     * DAO para acceder a la tabla de stock de madejas por usuario.
+     * DAO para acceder a la tabla de stock de madejas por usuario
      */
     private lateinit var dao: HiloStockDao
 
     /**
-     * DAO para acceder a la tabla de pedidos del usuario.
+     * DAO para acceder a la tabla de pedidos del usuario
      */
     private lateinit var pedidoDao: PedidoDao
 
     /**
-     * DAO para acceder a datos de gráficos y pedidos en curso.
+     * DAO para acceder a datos de gráficos y pedidos en curso
      */
     private lateinit var graficoDao: GraficoDao
 
     /**
-     * Vista que muestra la cantidad total de madejas en stock.
+     * Vista que muestra la cantidad total de madejas en stock
      */
     private lateinit var txtStock: TextView
 
     /**
      * Identificador del usuario actualmente logueado.
-     * Se inicializa a -1 para indicar si hay ausencia de usuario.
+     * Se inicializa a -1 para indicar si hay ausencia de usuario
      */
     private var userId: Int = -1
 
@@ -77,11 +77,11 @@ class PantallaPrincipal : BaseActivity() {
      *
      * - Asigna el layout de la pantalla.
      * - Configura el toolbar personalizado.
-     * - Obtiene referencias a las vistas (TextViews, ImageView, etc).
-     * - Inicializa DAOs para operaciones de base de datos.
-     * - Comprueba sesión de usuario y finaliza si no hay sesión.
+     * - Obtiene las referencias a las vistas (TextViews, ImageView, etc).
+     * - Inicializa DAOs para las operaciones de la base de datos.
+     * - Comprueba la sesión de usuario y finaliza si no hay sesión.
      * - Lanza una corrutina para precargar catálogo y stock si no existen.
-     * - Carga datos iniciales del usuario (nombre e imagen) y configura
+     * - Carga datos iniciales del usuario (nombre e imagen) y configura la
      *   navegación a la pantalla de configuración.
      *
      * @param savedInstanceState Estado previo de la actividad, si existe.
@@ -171,7 +171,7 @@ class PantallaPrincipal : BaseActivity() {
      * Carga en la interfaz el nombre de usuario y la imagen de perfil.
      *
      * - Obtiene la sesión activa, sale si no hay usuario.
-     * - Recupera datos de la BD en corrutina para no crashear la app.
+     * - Recupera datos de la BdD en corrutina para no crashear la app.
      * - Asigna texto y recurso de imagen a las vistas.
      *
      * @see SesionUsuario
@@ -208,7 +208,8 @@ class PantallaPrincipal : BaseActivity() {
      * Selecciona y muestra un consejo aleatorio.
      *
      * Los consejos están definidos en [Consejos] y no
-     * se almacenan en base de datos.
+     * se almacenan en la base de datos para no consumir
+     * recursos innecesarios.
      *
      * @see Consejos.obtenerAleatorio
      */

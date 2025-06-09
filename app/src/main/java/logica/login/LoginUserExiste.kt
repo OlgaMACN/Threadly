@@ -19,10 +19,10 @@ import persistencia.bbdd.ThreadlyDatabase
 import utiles.SesionUsuario
 
 /**
- * Actividad de inicio de sesión para usuarios existentes en la aplicación.
+ * Actividad de inicio de sesión para usuarios registrados en la aplicación.
  *
  * Permite ingresar el nombre de usuario y la contraseña, validar las credenciales
- * contra la base de datos local Room y acceder a la pantalla principal en caso de éxito.
+ * en la base de datos local de room y acceder a la pantalla principal si son correctas.
  * También permite alternar la visibilidad de la contraseña y navegar a la pantalla de
  * creación de cuenta nueva si el usuario no está registrado.
  *
@@ -41,7 +41,7 @@ class LoginUserExiste : AppCompatActivity() {
      * Método que se ejecuta al crear la actividad.
      * Inicializa las vistas, configura los botones e interacciones del usuario.
      *
-     * @param savedInstanceState Estado previamente guardado de la actividad (no utilizado aquí).
+     * @param savedInstanceState Estado previamente guardado de la actividad (no utilizado aquí tampoco).
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,9 +54,9 @@ class LoginUserExiste : AppCompatActivity() {
     }
 
     /**
-     * Asigna las vistas del layout a variables locales.
+     * Asigna las vistas del layout a las variables locales.
      * Estas vistas incluyen los campos de entrada para el nombre de usuario y contraseña,
-     * y el botón/ícono de mostrar/ocultar contraseña.
+     * y el botón/ícono de mostrar/ocultar contraseña con forma de ojo.
      */
     private fun inicializarVistas() {
         usuario = findViewById(R.id.edTxt_ingresarNombreUser)
@@ -65,8 +65,8 @@ class LoginUserExiste : AppCompatActivity() {
     }
 
     /**
-     * Configura el comportamiento del botón de "ojo" que permite mostrar u ocultar
-     * el contenido del campo de contraseña.
+     * Configura el comportamiento del botón que permite mostrar u ocultar
+     * la constraseña.
      *
      * Cambia dinámicamente el tipo de entrada del campo y la imagen del ícono.
      */
@@ -112,7 +112,7 @@ class LoginUserExiste : AppCompatActivity() {
      * - Valida que los campos no estén vacíos ni excedan los 20 caracteres.
      * - Consulta en la base de datos si las credenciales son correctas.
      * - Si lo son, guarda la sesión y redirige a [PantallaPrincipal].
-     * - Si el usuario no existe o la contraseña es incorrecta, muestra mensajes adecuados.
+     * - Si el usuario no existe o la contraseña es incorrecta, muestra los toasts.
      */
     private fun intentarIniciarSesion() {
         val userEntrada = usuario.text.toString().trim()

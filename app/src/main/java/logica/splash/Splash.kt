@@ -24,13 +24,11 @@ import java.util.TimerTask
 /**
  * Pantalla inicial de la aplicación (Splash)
  *
- * Esta actividad se lanza al iniciar la app. Tiene tres funciones principales:
- * 1. Forzar el modo claro del dispositivo y ocultar la barra superior.
- * 2. Insertar un usuario de prueba si no hay usuarios registrados en la base de datos.
- * 3. Mostrar una animación de aparición del logo, y después redirigir automáticamente
- *    a la pantalla de inicio o de login según haya sesión activa.
+ * Esta actividad se lanza al iniciar la app. Sus funciones principales son:
+ * - Forzar el modo claro del dispositivo y ocultar la barra superior.
+ * - Mostrar una animación de fadeIn del logo, y después redirigir automáticamente
+ *   a la pantalla de inicio o de login según haya sesión activa o no.
  *
- * El usuario "prueba" se crea con username "prueba" y password "1234" y se guarda la sesión automáticamente.
  * La animación del logo se retrasa 2 segundos y la redirección ocurre a los 5 segundos.
  *
  * @constructor Crea la actividad splash que se ejecuta al iniciar la app.
@@ -39,12 +37,11 @@ import java.util.TimerTask
  *
  */
 class Splash : AppCompatActivity() {
-// Todo clase en desarollo, en fase producción se eliminará el usuario de prueba
     /**
-     * Se ejecuta al crear la actividad. Configura el modo visual, crea el usuario de prueba si es necesario,
-     * lanza la animación del logo y redirige al login o pantalla principal después de unos segundos.
+     * Se ejecuta al crear la actividad. Configura el modo claro, y crea el usuario de prueba en modo debug.
+     * Lanza la animación del logo y redirige al login o pantalla principal después de unos segundos.
      *
-     * @param savedInstanceState Estado previamente guardado (no se utiliza en esta implementación realmente).
+     * @param savedInstanceState Estado previamente guardado (no se utiliza realmente en esta implementación).
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         /* forzar modo claro y ocultar Toolbar */

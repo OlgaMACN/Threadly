@@ -31,29 +31,29 @@ import utiles.BaseActivity
 class ModificarDatos : BaseActivity() {
 
     /**
-     * Lista de ImageView que representa las opciones de avatar.
+     * Lista de ImageView que representa las opciones de avatar
      */
     private lateinit var imgOpciones: List<ImageView>
 
     /**
      * EditText para ingresar el nuevo nombre de usuario.
-     * Si permanece vacío, se mantendrá el nombre actual.
+     * Si permanece vacío, se mantiene el nombre actual
      */
     private lateinit var nombreActualizado: EditText
 
     /**
-     * Botón que confirma y guarda los cambios realizados.
+     * Botón que confirma y guarda los cambios realizados
      */
     private lateinit var btnGuardarCambios: Button
 
     /**
-     * Botón que cancela la modificación y regresa a DatosPersonales.
+     * Botón que cancela la modificación y regresa a DatosPersonales
      */
     private lateinit var btnVolverDatosPersonales: Button
 
     /**
      * Identifica el avatar actualmente seleccionado (1..6).
-     * Inicializado con el valor por defecto hasta cargar usuario.
+     * Inicializado con el valor por defecto hasta cargar el usuario
      */
     private var imagenSeleccionada: Int = 1
 

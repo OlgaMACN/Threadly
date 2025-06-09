@@ -21,8 +21,8 @@ import utiles.SesionUsuario
 /**
  * Actividad que permite a un nuevo usuario registrarse en Threadly.
  *
- * Esta pantalla se presenta cuando el usuario aún no tiene cuenta. Permite ingresar un nombre de usuario
- * y una contraseña, valida los datos, y registra al usuario en la base de datos.
+ * Esta pantalla tiene lugar cuando el usuario aún no tiene cuenta. Permite ingresar un nombre de usuario
+ * y una contraseña, valida los datos, y registra al usuario en la base de datos de room.
  * También gestiona la visibilidad del campo de contraseña mediante un botón con icono de ojo.
  *
  * Si el nombre de usuario no está en uso y los campos cumplen con los requisitos,
@@ -152,9 +152,9 @@ class LoginUserNoExiste : AppCompatActivity() {
     }
 
     /**
-     * Muestra un mensaje de tipo Toast en la pantalla.
+     * Muestra un Toast en la pantalla.
      *
-     * @param mensaje El texto que se desea mostrar al usuario.
+     * @param mensaje El texto para mostrar al usuario.
      */
     private fun mostrarToast(mensaje: String) {
         Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()

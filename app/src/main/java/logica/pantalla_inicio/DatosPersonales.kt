@@ -37,22 +37,22 @@ import utiles.funciones.ajustarDialog
 class DatosPersonales : BaseActivity() {
 
     /**
-     * TextView que muestra el nombre de usuario en pantalla.
+     * TextView que muestra el nombre de usuario en pantalla
      */
     private lateinit var txtNombreUsuario: TextView
 
     /**
-     * ImageView que muestra el avatar seleccionado por el usuario.
+     * ImageView que muestra el avatar seleccionado por el usuario
      */
     private lateinit var imgPerfil: ImageView
 
     /**
-     * Botón que lanza la actividad de modificación de datos.
+     * Botón que lanza la actividad de modificación de datos
      */
     private lateinit var btnModificarDatos: Button
 
     /**
-     * Botón que permite volver a la pantalla de inicio.
+     * Botón que permite volver a la pantalla de inicio
      */
     private lateinit var btnVolverInicio: Button
 
@@ -113,7 +113,7 @@ class DatosPersonales : BaseActivity() {
     }
 
     /**
-     * Se ejecuta cuando la actividad recupera el foco.
+     * Se ejecuta cuando la actividad recupera el foco, es decir, está en primer plano.
      *
      * Actualiza la interfaz con los datos más recientes del usuario.
      */
@@ -125,7 +125,7 @@ class DatosPersonales : BaseActivity() {
     /**
      * Carga los datos del usuario (nombre y avatar) desde la base de datos.
      *
-     * - Utiliza una corrutina para operaciones de IO.
+     * - Utiliza una corrutina para operaciones de IO y que los hilos estén sincronizados.
      * - Si el usuario no existe en la BdD, finaliza la actividad.
      */
     private fun cargarDatosUsuario() {
@@ -151,7 +151,7 @@ class DatosPersonales : BaseActivity() {
     /**
      * Devuelve el ID de recurso drawable correspondiente al avatar indicado.
      *
-     * @param id Identificador numérico del avatar en BdD.
+     * @param id Identificador numérico del avatar en la BdD.
      * @return ID de recurso drawable del avatar.
      */
     private fun avatarSeleccionado(id: Int): Int {
