@@ -138,8 +138,7 @@ class GraficoPedido : BaseActivity() {
                         GraficoEntity(
                             nombre = graficoNombre,
                             idPedido = null,
-                            userId = userId
-                        ,
+                            userId = userId,
                             count = null
                         )
                     ).toInt()
@@ -310,11 +309,14 @@ class GraficoPedido : BaseActivity() {
                     setCancelable(false)
                 }
 
-            val numeroHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
-            val pedirPuntadas = dialog.findViewById<EditText>(R.id.edTxt_introducirPuntadas_dialog_addHilo)
-            val pedirCount = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
-            val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
-            val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
+                val numeroHilo =
+                    dialog.findViewById<EditText>(R.id.edTxt_introducirHilo_dialog_addHilo)
+                val pedirPuntadas =
+                    dialog.findViewById<EditText>(R.id.edTxt_introducirPuntadas_dialog_addHilo)
+                val pedirCount = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
+                val btnGuardar =
+                    dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
+                val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
 
                 /* ocultar el campo count si ya existe en room */
                 if (!necesitaCount) {
@@ -360,7 +362,7 @@ class GraficoPedido : BaseActivity() {
                             return@launch
                         }
 
-                    /* si hace falta count (primera inserción), capturarlo y persistirlo */
+                        /* si hace falta count (primera inserción), capturarlo y persistirlo */
                         if (necesitaCount) {
                             val countTela = pedirCount.text.toString().trim().toIntOrNull()
                             if (countTela == null || countTela <= 0) {
@@ -368,6 +370,18 @@ class GraficoPedido : BaseActivity() {
                                     Toast.makeText(
                                         this@GraficoPedido,
                                         "Count de tela inválido",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                                return@launch
+                            }
+                            /* sólo counts permitidos */
+                            val valoresValidos = listOf(14, 16, 18, 20, 25)
+                            if (countTela !in valoresValidos) {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        this@GraficoPedido,
+                                        "Count no permitido",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
