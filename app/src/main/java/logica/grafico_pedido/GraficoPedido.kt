@@ -314,7 +314,7 @@ class GraficoPedido : BaseActivity() {
             val pedirPuntadas = dialog.findViewById<EditText>(R.id.edTxt_introducirPuntadas_dialog_addHilo)
             val pedirCount = dialog.findViewById<EditText>(R.id.edTxt_pedirCountTela)
             val btnGuardar = dialog.findViewById<Button>(R.id.btn_guardar_dialog_pedidob_addHilo)
-            val btnVol = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
+            val btnVolver = dialog.findViewById<Button>(R.id.btn_volver_dialog_pedidob_addHilo)
 
                 /* ocultar el campo count si ya existe en room */
                 if (!necesitaCount) {
@@ -404,7 +404,9 @@ class GraficoPedido : BaseActivity() {
                         }
                     }
                 }
-
+                btnVolver.setOnClickListener {
+                    dialog.dismiss()
+                }
                 dialog.show()
             }
         }
