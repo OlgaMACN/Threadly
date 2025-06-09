@@ -28,7 +28,7 @@ import persistencia.entidades.Usuario
  * - Gráficos asociados a pedidos
  * - Hilos asignados a cada gráfico
  *
- * @version 19 (fase de desarrollo, aún no estable para producción)
+ * @version 19
  * @author Olga y Sandra Macías Aragón
  *
  */
@@ -63,9 +63,6 @@ abstract class ThreadlyDatabase : RoomDatabase() {
         /**
          * Obtiene la instancia única de la base de datos Threadly.
          * Si no existe, la crea y lanza una callback para insertar un usuario de prueba.
-         *
-         * Esta función usa `fallbackToDestructiveMigration()` para reiniciar la base de datos
-         * en cada cambio de versión mientras dure el desarrollo.
          */
         fun getDatabase(context: Context): ThreadlyDatabase {
             return INSTANCE ?: synchronized(this) {

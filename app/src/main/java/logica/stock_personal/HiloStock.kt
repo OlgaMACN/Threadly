@@ -1,7 +1,7 @@
 package logica.stock_personal
 
 /**
- * Representa un hilo dentro del inventario personal del usuario.
+ * Representa un hilo dentro del inventario/stock  personal del usuario.
  * Contiene el identificador del hilo y la cantidad de madejas disponibles.
  *
  * Se utiliza en la gestión del stock para mostrar, actualizar y persistir

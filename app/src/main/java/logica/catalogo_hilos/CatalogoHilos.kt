@@ -37,7 +37,7 @@ import utiles.funciones.ordenarHilos
  * Actividad que muestra y gestiona el catálogo de hilos del usuario.
  *
  * Permite al usuario:
- *  - Visualizar la lista de hilos disponibles en un RecyclerView.
+ *  - Visualizar la lista de hilos disponibles en un RecyclerView, que hace de tabla.
  *  - Buscar hilos por número o nombre, con resaltado de coincidencias.
  *  - Añadir nuevos hilos al catálogo.
  *  - Modificar datos (número y/o nombre) de hilos existentes.
@@ -54,33 +54,33 @@ import utiles.funciones.ordenarHilos
 class CatalogoHilos : BaseActivity() {
 
     /**
-     * Lista interna de hilos, obtenida de la BD.
+     * Lista interna de hilos, obtenida de la BdD
      */
     private var entidades: List<HiloCatalogoEntity> = emptyList()
 
     /**
-     * Lista de objetos de dominio adaptados para mostrar en el RecyclerView.
+     * Lista de objetos de dominio adaptados para mostrar en el RecyclerView
      */
     private var listaCatalogo = mutableListOf<HiloCatalogo>()
 
     /**
-     * RecyclerView que muestra el catálogo de hilos.
+     * RecyclerView que muestra el catálogo de hilos
      */
     private lateinit var tablaCatalogo: RecyclerView
 
     /**
      * Adaptador para el RecyclerView de catálogo.
-     * Recibe la lista y un callback para eliminar.
+     * Recibe la lista y un callback para eliminar
      */
     private lateinit var adaptadorCatalogo: AdaptadorCatalogo
 
     /**
-     * DAO para acceder a la tabla de catálogo de hilos.
+     * DAO para acceder a la tabla de catálogo de hilos
      */
     private lateinit var dao: HiloCatalogoDao
 
     /**
-     * Identificador del usuario en sesión.
+     * Identificador del usuario en sesión
      */
     private var userId: Int = -1
 
@@ -130,11 +130,11 @@ class CatalogoHilos : BaseActivity() {
     }
 
     /**
-     * Refresca la interfaz cargando los hilos de la BD y ordenándolos.
+     * Refresca la interfaz cargando los hilos de la BdD y ordenándolos.
      *
      * - Obtiene lista de entidades del DAO.
-     * - Transforma en lista de objetos de dominio.
-     * - Ordena usando función utilitaria y actualiza el adaptador en Main.
+     * - Transforma en lista de objetos de dominio (entidades a lógica)
+     * - Ordena usando función utilitaria y actualiza el adaptador.
      */
     private fun refrescarUI() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -222,7 +222,7 @@ class CatalogoHilos : BaseActivity() {
      *
      * - Valida campos no vacíos y formato de número de hilo.
      * - Verifica si ya existe antes de insertar.
-     * - Inserta en BD y refresca UI.
+     * - Inserta en BdD y refresca la interfaz.
      * - Feedback con Toasts.
      */
     private fun dialogAgregarHiloCatalogo() {
@@ -287,7 +287,7 @@ class CatalogoHilos : BaseActivity() {
     }
 
     /**
-     * Muestra un diálogo para seleccionar datos a modificar de un hilo existente.
+     * Muestra un diálogo para seleccionar los datos a modificar de un hilo existente.
      *
      * - Permite elegir modificar número, nombre o ambos.
      * - Valida selección y existencia del hilo.
@@ -343,7 +343,7 @@ class CatalogoHilos : BaseActivity() {
      * - Evita duplicados de número al modificar.
      * - Actualiza entidad en BD y refresca UI.
      *
-     * @param entidadVieja Objeto original de la BD a modificar.
+     * @param entidadVieja Objeto original de la BdD a modificar.
      * @param modNum Indica si se modifica el número.
      * @param modNom Indica si se modifica el nombre.
      */
@@ -422,10 +422,10 @@ class CatalogoHilos : BaseActivity() {
      * Diálogo para confirmar y eliminar un hilo del catálogo.
      *
      * - Muestra mensaje con número de hilo resaltado en rojo.
-     * - Gestiona acción de eliminar en BD.
-     * - Refresca UI tras eliminación.
+     * - Gestiona acción de eliminar en BdD.
+     * - Refresca la interfaz tras la eliminación.
      *
-     * @param hilo Objeto de dominio que contiene datos del hilo.
+     * @param hilo Objeto de dominio(lógica) que contiene datos del hilo.
      */
     private fun dialogEliminarHiloCatalogo(hilo: HiloCatalogo) {
         val dialog = Dialog(this)

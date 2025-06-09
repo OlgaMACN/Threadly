@@ -12,7 +12,7 @@ import com.threadly.R
  * Adaptador para el RecyclerView que muestra el catálogo de hilos.
  *
  * Gestiona la conversión de objetos de dominio [HiloCatalogo] en filas visuales,
- * resalta búsquedas y ofrece callback para eliminación mediante long click.
+ * resalta búsquedas y tiene un callback para eliminación mediante long click.
  *
  * @property lista Lista mutable de hilos a mostrar.
  * @property onEliminarClick Callback a invocar cuando se solicita eliminar un hilo.
@@ -26,7 +26,7 @@ class AdaptadorCatalogo(
 ) : RecyclerView.Adapter<AdaptadorCatalogo.ViewHolder>() {
 
     /**
-     * Almacena el número de hilo que debe resaltarse tras una búsqueda.
+     * Almacena el número de hilo que debe resaltarse tras una búsqueda
      */
     private var hiloResaltado: String? = null
 

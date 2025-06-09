@@ -44,8 +44,11 @@ import utiles.funciones.ordenarHilos
  * un hilo por código. Utiliza un RecyclerView con [AdaptadorStock]
  * para mostrar los elementos.
  *
- * Esta clase hereda de [BaseActivity] para reutilizar comportamiento común
- * como la configuración de la toolbar.
+ * También permite ordenar la vista según el orden predeterminado de los hilos
+ * a través la función utilitaria de [OrdenarHilos] o según la cantidad en stock.
+ *
+ * Esta clase hereda de [BaseActivity] para reutilizar comportamientos comunes
+ * como la configuración del toolbar o la sesión activa.
  *
  * @author Olga y Sandra Macías Aragón
  *
@@ -53,7 +56,7 @@ import utiles.funciones.ordenarHilos
 class StockPersonal : BaseActivity() {
 
     /**
-     * RecyclerView que muestra la lista de hilos y sus madejas.
+     * RecyclerView que muestra la lista de hilos y sus madejas
      */
     private lateinit var tablaStock: RecyclerView
 
@@ -64,19 +67,19 @@ class StockPersonal : BaseActivity() {
     private lateinit var adaptadorStock: AdaptadorStock
 
     /**
-     * DAO para acceso a las operaciones CRUD de [HiloStockEntity] en Room.
+     * DAO para acceso a las operaciones CRUD de [HiloStockEntity] en Room
      */
     private lateinit var dao: HiloStockDao
 
     /**
      * Identificador del usuario actualmente conectado.
-     * Se obtiene mediante [SesionUsuario.obtenerSesion].
+     * Se obtiene mediante [SesionUsuario.obtenerSesion]
      */
     private var userId: Int = -1
 
     /**
      * Lista mutable local que contiene los objetos [HiloStock] leídos
-     * de la base de datos y se pasa al adaptador.
+     * de la base de datos y se pasa al adaptador
      */
     private val listaStock = mutableListOf<HiloStock>()
 
@@ -150,7 +153,7 @@ class StockPersonal : BaseActivity() {
      * Lee el stock del usuario desde la base de datos y actualiza
      * [listaStock], aplicando el orden actual del switch.
      * Ejecuta la lectura en [Dispatchers.IO] y la actualización de UI
-     * en el hilo principal.
+     * en el hilo principal, lo cual evita crasheos.
      */
     private fun refrescarUI() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -171,7 +174,7 @@ class StockPersonal : BaseActivity() {
     /**
      * Configura el buscador de hilos por código:
      * - Oculta el teclado al buscar.
-     * - Si encuentra el hilo, lo resalta y desplaza la tabla a su posición.
+     * - Si encuentra el hilo, lo resalta y se desplaza por la tabla a su posición.
      * - Si no, oculta la tabla y muestra un mensaje “sin resultados”.
      * - Al borrar el texto, restaura la lista completa y quita el resaltado.
      */
@@ -212,14 +215,15 @@ class StockPersonal : BaseActivity() {
                     sinResultados.visibility = View.GONE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
     /**
-     * Muestra un diálogo para añadir un nuevo hilo al stock:
-     * - Valida que los campos no estén vacíos y el formato del ID.
+     * Muestra un diálogo para añadir un hilo nuevo al stock:
+     * - Valida que los campos no estén vacíos y que el formato del ID sea correcto.
      * - Verifica que el hilo exista en el catálogo.
      * - Verifica que aún no esté en el stock del usuario.
      * - Inserta la entidad [HiloStockEntity] en la base de datos.
@@ -287,7 +291,11 @@ class StockPersonal : BaseActivity() {
                 )
 
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@StockPersonal, "Hilo añadido correctamente", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@StockPersonal,
+                        "Hilo añadido correctamente",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     refrescarUI()
                     dialog.dismiss()
                 }
@@ -336,6 +344,7 @@ class StockPersonal : BaseActivity() {
                     }
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
@@ -349,7 +358,11 @@ class StockPersonal : BaseActivity() {
                     val hiloActualizado = hiloStock.copy(madejas = hiloStock.madejas + cantidad)
                     dao.actualizarStock(hiloActualizado)
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@StockPersonal, "Madejas sumadas correctamente", Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                            this@StockPersonal,
+                            "Madejas sumadas correctamente",
+                            Toast.LENGTH_SHORT
+                        )
                             .show()
                         refrescarUI()
                         dialog.dismiss()
@@ -364,7 +377,7 @@ class StockPersonal : BaseActivity() {
      * Muestra un diálogo para restar madejas de un hilo existente:
      * - Al escribir el código, muestra las madejas actuales.
      * - El botón se habilita solo si el hilo existe.
-     * - Al confirmar, decrementa el total hasta un mínimo de 0 madejas.
+     * - Al confirmar, decrementa el total hasta un mínimo, sin sobrepasar, de 0 madejas.
      */
     private fun dialogEliminarMadeja() {
         val dialog = Dialog(this)
@@ -373,8 +386,10 @@ class StockPersonal : BaseActivity() {
         ajustarDialog(dialog)
         dialog.setCancelable(false)
 
-        val codigoHilo = dialog.findViewById<EditText>(R.id.edTxt_introducirNumHiloMadejasEliminarStk)
-        val madejas = dialog.findViewById<EditText>(R.id.edTxt_edTxt_introducirNumMadejasEliminarStk)
+        val codigoHilo =
+            dialog.findViewById<EditText>(R.id.edTxt_introducirNumHiloMadejasEliminarStk)
+        val madejas =
+            dialog.findViewById<EditText>(R.id.edTxt_edTxt_introducirNumMadejasEliminarStk)
         val madejasActuales = dialog.findViewById<TextView>(R.id.txtVw_madejasActualesStk)
         val btnGuardar = dialog.findViewById<Button>(R.id.btn_eliminarMadejaConfirmarStk)
         dialog.findViewById<Button>(R.id.btn_volver_stock_dialog_eliminarMadeja)
@@ -399,6 +414,7 @@ class StockPersonal : BaseActivity() {
                     }
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
@@ -426,7 +442,7 @@ class StockPersonal : BaseActivity() {
     }
 
     /**
-     * Muestra un diálogo de confirmación para eliminar un hilo completo del stock:
+     * Muestra un diálogo de confirmación para eliminar un hilo del stock:
      * - Resalta el ID del hilo en rojo dentro del mensaje.
      * - Al confirmar, elimina la entidad de la base de datos y refresca la UI.
      *
@@ -474,7 +490,6 @@ class StockPersonal : BaseActivity() {
                 }
             }
         }
-
         dialog.show()
     }
 }
