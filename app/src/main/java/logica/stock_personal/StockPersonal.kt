@@ -66,6 +66,9 @@ class StockPersonal : BaseActivity() {
      */
     private lateinit var adaptadorStock: AdaptadorStock
 
+    /** Switch para alternar el orden de la tabla */
+    private lateinit var switchOrdenar: Switch
+
     /**
      * DAO para acceso a las operaciones CRUD de [HiloStockEntity] en Room
      */
@@ -101,7 +104,7 @@ class StockPersonal : BaseActivity() {
         tablaStock.adapter = adaptadorStock
 
         /* switch para alternar el orden de la tabla (por cantidad o alfabético) */
-        val switchOrdenar = findViewById<Switch>(R.id.switch_orden_stock)
+        switchOrdenar = findViewById<Switch>(R.id.switch_orden_stock)
         switchOrdenar.setOnCheckedChangeListener { _, isChecked ->
             ordenarListaYActualizarUI(isChecked)
             /* deshabilita brevemente el switch para evitar clics rápidos consecutivos */
@@ -183,7 +186,6 @@ class StockPersonal : BaseActivity() {
         val hiloBuscar = findViewById<EditText>(R.id.edTxt_buscadorHilo)
         val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaStock)
         val sinResultados = findViewById<TextView>(R.id.txtVw_sinResultados)
-        val switchOrdenar = findViewById<Switch>(R.id.switch_orden_stock)
         sinResultados.visibility = View.GONE
 
         btnLupa.setOnClickListener {
@@ -215,6 +217,7 @@ class StockPersonal : BaseActivity() {
                     adaptadorStock.resaltarHilo(null)
                     adaptadorStock.actualizarLista(listaStock)
                     tablaStock.visibility = View.VISIBLE
+                    switchOrdenar.visibility = View.VISIBLE
                     sinResultados.visibility = View.GONE
                 }
             }
