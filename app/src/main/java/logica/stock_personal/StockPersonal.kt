@@ -183,6 +183,7 @@ class StockPersonal : BaseActivity() {
         val hiloBuscar = findViewById<EditText>(R.id.edTxt_buscadorHilo)
         val btnLupa = findViewById<ImageButton>(R.id.imgBtn_lupaStock)
         val sinResultados = findViewById<TextView>(R.id.txtVw_sinResultados)
+        val switchOrdenar = findViewById<Switch>(R.id.switch_orden_stock)
         sinResultados.visibility = View.GONE
 
         btnLupa.setOnClickListener {
@@ -199,9 +200,11 @@ class StockPersonal : BaseActivity() {
                 adaptadorStock.notifyDataSetChanged()
                 tablaStock.scrollToPosition(idx)
                 tablaStock.visibility = View.VISIBLE
+                switchOrdenar.visibility = View.VISIBLE
                 sinResultados.visibility = View.GONE
             } else {
                 tablaStock.visibility = View.GONE
+                switchOrdenar.visibility = View.GONE
                 sinResultados.visibility = View.VISIBLE
             }
         }
