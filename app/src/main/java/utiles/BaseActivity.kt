@@ -1,6 +1,7 @@
 package utiles
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
@@ -16,19 +17,35 @@ import androidx.appcompat.app.AppCompatActivity
  * @property usuarioId Identificador del usuario actual. Valor -1 indica sesión inválida.
  * @property nombreUsuario Nombre del usuario actual, por defecto "Usuario".
  *
+ * Funciones principales:
+ * - [onCreate]: Inicializa la actividad y obtiene datos del usuario del Intent.
+ * - [lanzar]: Inicia una nueva actividad que hereda de BaseActivity, pasando datos del usuario y extras opcionales.
+ * - [lanzarConResultado]: Similar a lanzar(), pero espera resultado con un requestCode.
+ * - [irAActividad]: Método simplificado para iniciar otra actividad heredada de BaseActivity.
+ *
+ * Si no se recibe un usuario válido (usuarioId < 0), la actividad se cierra automáticamente,
+ * simulando el cierre de sesión.
+ *
  * @author Olga y Sandra Macías Aragón
  *
  */
 open class BaseActivity : AppCompatActivity() {
 
+    /** Identificador del usuario actual. -1 indica sesión inválida o no establecida. */
     protected var usuarioId: Int = -1
+
+    /** Nombre del usuario actual, por defecto "Usuario". */
     protected var nombreUsuario: String = "Usuario"
 
     /**
      * Inicializa la actividad y extrae los datos del usuario del intent.
      * Si no se encuentra un ID válido, finaliza la actividad para cerrar la sesión.
+     *
+     * @param savedInstanceState Estado previamente guardado, si existe.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        /* forzar la orientación vertical */
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         super.onCreate(savedInstanceState)
 
         /* obtener datos del usuario desde el intent */
@@ -57,7 +74,14 @@ open class BaseActivity : AppCompatActivity() {
         startActivity(i)
     }
 
-
+    /**
+     * Lanza otra actividad que extienda de [BaseActivity] esperando un resultado,
+     * propagando automáticamente el usuarioId y nombreUsuario.
+     *
+     * @param destino Clase de la actividad destino.
+     * @param requestCode Código para identificar el resultado.
+     * @param extras Lambda para añadir más extras al intent si es necesario.
+     */
     fun lanzarConResultado(destino: Class<out BaseActivity>, requestCode: Int, extras: Intent.() -> Unit = {}) {
         val i = Intent(this, destino).apply {
             putExtra("usuario_id", usuarioId)
@@ -66,7 +90,6 @@ open class BaseActivity : AppCompatActivity() {
         }
         startActivityForResult(i, requestCode)
     }
-
 
     /**
      * Método simplificado para ir a otra actividad que extienda de [BaseActivity],

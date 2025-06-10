@@ -1,18 +1,28 @@
 package logica.catalogo_hilos
 
 /**
- * Representa un hilo dentro del catálogo de la aplicación Threadly.
- * Contiene información básica como el número del hilo, su nombre identificativo
- * y un código de color (en formato hexadecimal).
+ * Representa un elemento 'hilo' del catálogo de hilos en la aplicación Threadly.
  *
- * Esta clase se utiliza principalmente en la visualización, edición y almacenamiento
- * temporal del catálogo, así como en los adaptadores que gestionan la tabla de hilos.
+ * Contiene la información esencial para visualizar y manipular un hilo:
  *
- * @property numHilo Número identificador del hilo, representado como cadena (puede incluir ceros iniciales).
- * @property nombreHilo Nombre o descripción asociada al hilo (por ejemplo, "Rojo Carmesí").
- * @property color Código de color en formato hexadecimal (por ejemplo, "#FF5733"), o null si no se especifica.
+ * @property numHilo Identificador del hilo, formato texto (puede incluir ceros o letras iniciales).
+ * @property nombreHilo Nombre o descripción del hilo (por ejemplo, "Rojo Carmesí").
+ * @property color Código hexadecimal de color asociado al hilo (por ejemplo, "#FF5733"),
+ *                  o null si no se especifica color.
  *
- * * @author Olga y Sandra Macías Aragón
+ * Utilizado en:
+ *  - Adaptador de RecyclerView para mostrar filas de catálogo.
+ *  - Diálogos de creación y modificación de hilos.
+ *  - Lógica de búsqueda y resaltado en pantalla.
+ *
+ * @constructor Crea una instancia de [HiloCatalogo] con los atributos indicados.
+ *
+ * @param numHilo Número identificador del hilo.
+ * @param nombreHilo Nombre del hilo.
+ * @param color Color del hilo gracias al parseo del adaptador.
+ *
+ * @author Olga y Sandra Macías Aragón
+ *
  */
 data class HiloCatalogo(
     var numHilo: String,

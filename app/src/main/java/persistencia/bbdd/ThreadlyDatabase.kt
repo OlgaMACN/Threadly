@@ -4,11 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.threadly.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import persistencia.daos.GraficoDao
 import persistencia.daos.HiloCatalogoDao
 import persistencia.daos.HiloGraficoDao
@@ -21,10 +16,22 @@ import persistencia.entidades.HiloGraficoEntity
 import persistencia.entidades.HiloStockEntity
 import persistencia.entidades.PedidoEntity
 import persistencia.entidades.Usuario
-import utiles.SesionUsuario
 
-
-// TODO cambiar todo esto a producción, ahora está en desarrollo hasta que termine de añadir entidades
+/**
+ * Base de datos principal de la aplicación Threadly.
+ *
+ * Define todas las entidades y DAOs necesarios para gestionar:
+ * - Usuarios registrados
+ * - Catálogo de hilos por usuario
+ * - Stock personal de madejas
+ * - Pedidos almacenados
+ * - Gráficos asociados a pedidos
+ * - Hilos asignados a cada gráfico
+ *
+ * @version 19
+ * @author Olga y Sandra Macías Aragón
+ *
+ */
 @Database(
     entities = [
         Usuario::class,
@@ -33,13 +40,13 @@ import utiles.SesionUsuario
         HiloGraficoEntity::class,
         GraficoEntity::class,
         PedidoEntity::class
-
     ],
-    version = 13,
+    version = 19,
     exportSchema = false
 )
 abstract class ThreadlyDatabase : RoomDatabase() {
 
+    /* DAOs disponibles */
     abstract fun usuarioDAO(): UsuarioDAO
     abstract fun hiloCatalogoDao(): HiloCatalogoDao
     abstract fun hiloStockDao(): HiloStockDao
@@ -47,10 +54,16 @@ abstract class ThreadlyDatabase : RoomDatabase() {
     abstract fun graficoDao(): GraficoDao
     abstract fun pedidoDao(): PedidoDao
 
+    /* las clases que hacen de relación no se introducen en la BdD */
+
     companion object {
         @Volatile
         private var INSTANCE: ThreadlyDatabase? = null
 
+        /**
+         * Obtiene la instancia única de la base de datos Threadly.
+         * Si no existe, la crea y lanza una callback para insertar un usuario de prueba.
+         */
         fun getDatabase(context: Context): ThreadlyDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -58,26 +71,8 @@ abstract class ThreadlyDatabase : RoomDatabase() {
                     ThreadlyDatabase::class.java,
                     "threadly_database"
                 )
-                    .fallbackToDestructiveMigration()
-                    .addCallback(object : Callback() {
-                        override fun onCreate(db: SupportSQLiteDatabase) {
-                            super.onCreate(db)
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val dao = getDatabase(context).usuarioDAO()
-                                val usuarios = dao.obtenerTodos()
-                                if (usuarios.isEmpty()) {
-                                    val usuarioPrueba = Usuario(
-                                        username = "prueba",
-                                        password = "1234",
-                                        profilePic = R.drawable.img_avatar_defecto
-                                    )
-                                    val id = dao.insertar(usuarioPrueba).toInt()
-                                    SesionUsuario.guardarSesion(context, id)
-                                }
-                            }
-                        }
-                    })
                     .build()
+
                 INSTANCE = instance
                 instance
             }

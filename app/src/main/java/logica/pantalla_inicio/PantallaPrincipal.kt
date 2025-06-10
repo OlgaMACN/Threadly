@@ -10,89 +10,187 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import persistencia.bbdd.ThreadlyDatabase
+import persistencia.daos.GraficoDao
 import persistencia.daos.HiloStockDao
+import persistencia.daos.PedidoDao
 import utiles.BaseActivity
 import utiles.Consejos
+import utiles.PrecargaDatos.precargarCatalogoYStockSiNoExisten
 import utiles.SesionUsuario
 import utiles.funciones.funcionToolbar
 
 /**
- * Pantalla principal de bienvenida de la aplicación Threadly.
- * Muestra el nombre del usuario, la cantidad de madejas en stock,
- * un consejo aleatorio y permite navegar a la configuración personal.
+ * Actividad principal de la aplicación, donde se muestra la información general del usuario,
+ * estado de sus pedidos y stock, además de ofrecer un consejo aleatorio.
  *
- * Esta clase extiende de [BaseActivity] para aprovechar la funcionalidad común.
+ * Esta clase extiende de [BaseActivity] para incorporar funcionalidades
+ * comunes como la navegación y configuración de toolbar, o el registro de la sesión activa.
  *
- * @ author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
+ *
  */
 class PantallaPrincipal : BaseActivity() {
 
+    /**
+     * Vista que muestra el texto del consejo aleatorio
+     */
     private lateinit var txtTip: TextView
+
+    /**
+     * Vista que muestra el nombre de usuario actualmente en sesión
+     */
     private lateinit var txtNombreUser: TextView
+
+    /**
+     * Vista que muestra la imagen de perfil del usuario
+     */
     private lateinit var imgPerfil: ImageView
+
+    /**
+     * DAO para acceder a la tabla de stock de madejas por usuario
+     */
     private lateinit var dao: HiloStockDao
+
+    /**
+     * DAO para acceder a la tabla de pedidos del usuario
+     */
+    private lateinit var pedidoDao: PedidoDao
+
+    /**
+     * DAO para acceder a datos de gráficos y pedidos en curso
+     */
+    private lateinit var graficoDao: GraficoDao
+
+    /**
+     * Vista que muestra la cantidad total de madejas en stock
+     */
+    private lateinit var txtStock: TextView
+
+    /**
+     * Identificador del usuario actualmente logueado.
+     * Se inicializa a -1 para indicar si hay ausencia de usuario
+     */
     private var userId: Int = -1
 
     /**
-     * Se ejecuta al crear la actividad. Inicializa el toolbar, carga el usuario,
-     * muestra el stock actual, un consejo aleatorio y permite ir a la pantalla de configuración.
+     * Punto de partida de la actividad
+     *
+     * - Asigna el layout de la pantalla.
+     * - Configura el toolbar personalizado.
+     * - Obtiene las referencias a las vistas (TextViews, ImageView, etc).
+     * - Inicializa DAOs para las operaciones de la base de datos.
+     * - Comprueba la sesión de usuario y finaliza si no hay sesión.
+     * - Lanza una corrutina para precargar catálogo y stock si no existen.
+     * - Carga datos iniciales del usuario (nombre e imagen) y configura la
+     *   navegación a la pantalla de configuración.
+     *
+     * @param savedInstanceState Estado previo de la actividad, si existe.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pantalla_aa_inicio)
-        funcionToolbar(this) /* carga el toolbar personalizado */
+        funcionToolbar(this) /* carga el toolbar personalizado desde utilidades */
 
+        /* inicialización de vistas desde el layout */
         txtNombreUser = findViewById(R.id.txtVw_nombreUsuario)
         imgPerfil = findViewById(R.id.imgVw_imagenPerfil)
         txtTip = findViewById(R.id.txtVw_contenidoTip)
+        txtStock = findViewById(R.id.txtVw_contenidoStock)
 
+        /* inicialización de DAOs de acceso a datos */
         dao = ThreadlyDatabase.getDatabase(applicationContext).hiloStockDao()
+        pedidoDao = ThreadlyDatabase.getDatabase(applicationContext).pedidoDao()
+        graficoDao = ThreadlyDatabase.getDatabase(applicationContext).graficoDao()
+
+        /* obtención del identificador de usuario de la sesión actual */
         userId = SesionUsuario.obtenerSesion(this)
-        if (userId < 0) finish()
+        /* si no hay sesión válida, finaliza la actividad para evitar errores */
+        if (userId < 0) {
+            finish()
+            return
+        }
 
-        cargarUsuario() /* muestra imagen y nombre del usuario */
+        /* precarga asíncrona del catálogo y stock si no existen para el usuario */
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                /* método utilitario que inserta datos iniciales en BD si faltan */
+                precargarCatalogoYStockSiNoExisten(applicationContext, userId)
+            }
+            /* tras finalizar precarga, onResume se encargará de refrescar datos */
+        }
 
-        /* abre la pantalla de configuración (datos personales) */
+        /* primera carga de datos del usuario en UI (nombre e imagen) */
+        cargarUsuario()
+
+        /* botón de configuración para abrir DatosPersonales */
         findViewById<ImageButton>(R.id.imgBtn_configuracion).setOnClickListener {
             irAActividad(DatosPersonales::class.java)
         }
     }
 
     /**
-     * Método que se ejecuta cada vez que la pantalla vuelve a estar visible.
-     * Refresca los datos del usuario y el stock en pantalla.
+     * Llamado cuando la actividad vuelve a primer plano.
+     *
+     * - Refresca el valor total de stock de madejas.
+     * - Muestra el nombre del gráfico más reciente en curso o mensaje por defecto.
+     * - Actualiza el consejo aleatorio y recarga datos de usuario.
      */
     override fun onResume() {
         super.onResume()
 
         lifecycleScope.launch {
+            /* calcular total de madejas en stock desde la BD */
             val totalMadejas = withContext(Dispatchers.IO) {
                 dao.obtenerStockPorUsuario(userId)
                     .sumOf { it.madejas }
             }
 
-            findViewById<TextView>(R.id.txtVw_contenidoStock)
-                .text = totalMadejas.toString()
+            /* mostrar total de madejas en la vista correspondiente */
+            txtStock.text = "$totalMadejas"
 
+            /* obtener y mostrar el nombre del último gráfico/pedido en curso */
+            val txtGrafico = findViewById<TextView>(R.id.txtVw_contenidoGrafico)
+            val ultimoGrafico = withContext(Dispatchers.IO) {
+                graficoDao.obtenerUltimoGraficoEnCurso(userId)
+            }
+
+            txtGrafico.text = if (ultimoGrafico != null) {
+                ultimoGrafico.nombre
+            } else {
+                /* mensaje por defecto cuando no hay pedidos en curso */
+                "Sin pedidos en curso"
+            }
+
+            /* actualizar consejo aleatorio y refrescar los datos del usuario */
             consejoAleatorio()
             cargarUsuario()
         }
     }
 
     /**
-     * Carga el usuario en memoria (imagen y nombre) y actualiza la interfaz.
-     * Si no hay usuario cargado, no realiza ninguna acción.
+     * Carga en la interfaz el nombre de usuario y la imagen de perfil.
+     *
+     * - Obtiene la sesión activa, sale si no hay usuario.
+     * - Recupera datos de la BdD en corrutina para no crashear la app.
+     * - Asigna texto y recurso de imagen a las vistas.
+     *
+     * @see SesionUsuario
+     * @see ThreadlyDatabase.usuarioDAO
      */
     private fun cargarUsuario() {
+        /* obtener ID de sesión y terminar si inválido */
         val id = SesionUsuario.obtenerSesion(this).takeIf { it >= 0 } ?: return
         lifecycleScope.launch {
+            /* acceso a BD en hilo de IO para recuperar usuario */
             val u = withContext(Dispatchers.IO) {
                 ThreadlyDatabase.getDatabase(applicationContext)
                     .usuarioDAO()
                     .obtenerPorId(id)
-            } ?: return@launch
+            } ?: return@launch /* si usuario no existe, adiós */
 
+            /* asignación de nombre de usuario en la interfaz */
             txtNombreUser.text = u.username
+            /* selección de imagen de perfil según valor almacenado */
             imgPerfil.setImageResource(
                 when (u.profilePic) {
                     1 -> R.drawable.img_avatar2
@@ -107,14 +205,17 @@ class PantallaPrincipal : BaseActivity() {
     }
 
     /**
-     * Devuelve un consejo aleatorio para bordado y organización.
-     * Estos consejos son fijos y no están persistidos en la base de datos.
+     * Selecciona y muestra un consejo aleatorio.
      *
-     * @return Un [String] con el consejo elegido aleatoriamente.
+     * Los consejos están definidos en [Consejos] y no
+     * se almacenan en la base de datos para no consumir
+     * recursos innecesarios.
+     *
+     * @see Consejos.obtenerAleatorio
      */
     private fun consejoAleatorio() {
-        val consejo = Consejos.obtenerAleatorio()
+        /* obtener cadena de texto de consejo aleatorio y mostrarla */
+        val consejo: String = Consejos.obtenerAleatorio()
         this.txtTip.text = consejo
     }
-
 }

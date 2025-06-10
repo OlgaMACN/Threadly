@@ -22,7 +22,7 @@ package utiles.funciones
  * ```
  * Donde `numHilo` puede ser "B5200", "310", "BLANC", etc.
  *
- * * @author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
  */
 fun <T> ordenarHilos(listaHilos: List<T>, selector: (T) -> String): List<T> {
     return listaHilos.sortedWith(compareBy(

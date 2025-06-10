@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import logica.almacen_pedidos.PedidoGuardado
 
+
 /**
  * Exporta un pedido a un archivo CSV en la carpeta de descargas del dispositivo,
  * dentro de un subdirectorio llamado "Threadly".
@@ -29,7 +30,7 @@ import logica.almacen_pedidos.PedidoGuardado
  * 321,5
  * ...
  * ```
- * * @author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
  */
 @RequiresApi(Build.VERSION_CODES.Q)
 fun exportarPedidoCSV(context: Context, pedido: PedidoGuardado): Boolean {

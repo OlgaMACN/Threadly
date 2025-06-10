@@ -8,6 +8,7 @@ import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.firebase.BuildConfig
 import com.threadly.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,96 +22,82 @@ import java.util.Timer
 import java.util.TimerTask
 
 /**
- * Actividad que muestra la pantalla splash al iniciar la aplicación.
+ * Pantalla inicial de la aplicación (Splash)
  *
- * Muestra un logo con animación tras un breve retardo, y después de unos segundos
- * redirige al usuario a la pantalla principal si hay sesión activa, o al login en caso contrario.
+ * Esta actividad se lanza al iniciar la app. Sus funciones principales son:
+ * - Forzar el modo claro del dispositivo y ocultar la barra superior.
+ * - Mostrar una animación de fadeIn del logo, y después redirigir automáticamente
+ *   a la pantalla de inicio o de login según haya sesión activa o no.
  *
- * Características:
- * - Forzar modo claro.
- * - Ocultar la barra de título.
- * - Mostrar logo con efecto de desvanecimiento (fade-in)
- * - Transición automática a la pantalla siguiente tras el splash.
+ * La animación del logo se retrasa 2 segundos y la redirección ocurre a los 5 segundos.
+ *
+ * @constructor Crea la actividad splash que se ejecuta al iniciar la app.
  *
  * @author Olga y Sandra Macías Aragón
  *
  */
 class Splash : AppCompatActivity() {
-
     /**
-     * Método llamado al crear la actividad.
-     * Configura la vista, animaciones y la transición automática.
+     * Se ejecuta al crear la actividad. Configura el modo claro, y crea el usuario de prueba en modo debug.
+     * Lanza la animación del logo y redirige al login o pantalla principal después de unos segundos.
      *
-     * @param savedInstanceState Bundle con el estado previo, si existiera.
+     * @param savedInstanceState Estado previamente guardado (no se utiliza realmente en esta implementación).
      */
     override fun onCreate(savedInstanceState: Bundle?) {
-        /* forzar modo claro para toda la actividad */
+        /* forzar modo claro y ocultar Toolbar */
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
         super.onCreate(savedInstanceState)
-
-        /* ocultar la barra de título para una apariencia más limpia */
         supportActionBar?.hide()
-
-        /* habilitar modo edge-to-edge para que la interfaz ocupe toda la pantalla */
         enableEdgeToEdge()
 
-        /* establecer el layout de la actividad con el splash screen */
         setContentView(R.layout.splash_layout)
         val logo = findViewById<ImageView>(R.id.logoThreadly)
 
-        //todo quitar esta parte hasta el comentario masivo en producción, esto son pruebas
-        val db = ThreadlyDatabase.getDatabase(applicationContext)
-        val dao = db.usuarioDAO()
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val usuarios = dao.obtenerTodos()
-            if (usuarios.isEmpty()) {
-                val usuarioPrueba = Usuario(
-                    username = "prueba",
-                    password = "1234",
-                    profilePic = R.drawable.img_avatar_defecto
-                )
-                val id = dao.insertar(usuarioPrueba).toInt()
-                SesionUsuario.guardarSesion(applicationContext, id)
+        /* sólo para debug: inicializar la BdD y crear un usuario de prueba */
+        if (BuildConfig.DEBUG) {
+            val accesoBdD = ThreadlyDatabase.getDatabase(applicationContext)
+            val usuarioDao = accesoBdD.usuarioDAO()
+            CoroutineScope(Dispatchers.IO).launch {
+                val usuarios = usuarioDao.obtenerTodos()
+                if (usuarios.isEmpty()) {
+                    val prueba = Usuario(
+                        username = "prueba",
+                        password = "1234",
+                        profilePic = R.drawable.img_avatar_defecto
+                    )
+                    val nuevoId = usuarioDao.insertar(prueba).toInt()
+                    SesionUsuario.guardarSesion(applicationContext, nuevoId)
+                }
             }
-
-            ////////////////////////
-
-            /* crear un temporizador para mostrar el logo con animación después de 2.5 segundos */
-            val timerLogo = Timer()
-            timerLogo.schedule(object : TimerTask() {
-                override fun run() {
-                    /* ejecutar en el hilo UI para actualizar la vista */
-                    runOnUiThread {
-                        logo.visibility = View.VISIBLE
-                        val fadeIn = AlphaAnimation(0f, 1f) /* animación de opacidad de 0 a 1 */
-                        fadeIn.duration = 1000
-                        logo.startAnimation(fadeIn)
-                    }
-                }
-            }, 2500)
-
-            /* crear otro temporizador que ejecuta la transición tras 5 segundos */
-            Timer().schedule(object : TimerTask() {
-                override fun run() {
-                    /* comprobar si hay sesión activa para decidir la pantalla destino */
-                    val pantallaProgramada = if (SesionUsuario.haySesionActiva(this@Splash)) {
-                        /* si hay sesión activa, ir directamente a la pantalla principal */
-                        val intent = Intent(this@Splash, PantallaPrincipal::class.java).apply {
-                            /* pasar el id del usuario activo */
-                            putExtra("usuario_id", SesionUsuario.obtenerSesion(this@Splash))
-                        }
-                        intent
-                    } else {
-                        /* si no hay sesión activa, ir a la pantalla de login */
-                        Intent(this@Splash, LoginUserExiste::class.java)
-                    }
-                    /* iniciar la actividad destino */
-                    startActivity(pantallaProgramada)
-                    finish()
-                }
-            }, 5000)
         }
+
+        /* animación del logo */
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    logo.visibility = View.VISIBLE
+                    val fadeIn = AlphaAnimation(0f, 1f)
+                    fadeIn.duration = 1000
+                    logo.startAnimation(fadeIn)
+                }
+            }
+        }, 2000)
+
+        /* después de 5s redirigir según haya sesión o no */
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                val destino = if (SesionUsuario.haySesionActiva(this@Splash)) {
+                    Intent(this@Splash, PantallaPrincipal::class.java).apply {
+                        putExtra("usuario_id", SesionUsuario.obtenerSesion(this@Splash))
+                    }
+                } else {
+                    Intent(this@Splash, LoginUserExiste::class.java)
+                }
+                startActivity(destino)
+                finish()
+            }
+        }, 5000)
     }
 }
+

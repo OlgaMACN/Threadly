@@ -13,22 +13,26 @@ import com.threadly.R
  * Cada fila muestra el ID del hilo y la cantidad de madejas que posee el usuario.
  * Permite gestionar eventos de pulsación larga y resaltar un hilo buscado.
  *
- * @param items Lista mutable de hilos en el stock personal.
- * @param onLongClick Función lambda que se ejecuta al mantener pulsado un elemento.
- * @param hiloResaltado ID del hilo que debe mostrarse resaltado en la tabla.
+ * @param items Lista mutable de objetos [HiloStock] representando el stock.
+ * @param onEliminarClick Lambda que se ejecuta cuando se mantiene pulsada una fila.
+ *        Recibe la posición del elemento en la lista.
+ * @param hiloResaltado ID de hilo que debe mostrarse resaltado (o null para ninguno).
  *
- * * @author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
+ *
  */
 class AdaptadorStock(
     private var items: MutableList<HiloStock> = mutableListOf(),
-    private val onLongClick: (Int) -> Unit,
+    private val onEliminarClick: (Int) -> Unit,
     private var hiloResaltado: String? = null /* para resaltar el hilo encontrado mediante búsqueda */
 ) : RecyclerView.Adapter<AdaptadorStock.StockViewHolder>() {
 
     /**
      * ViewHolder que contiene y gestiona los elementos visuales de cada fila.
      *
-     * @param view Vista inflada que representa una fila de la tabla de stock.
+     * @property txtHilo TextView donde se muestra el ID del hilo.
+     * @property txtMadejas TextView donde se muestra el número de madejas.
+     * @property filaLayout Vista raíz de la fila, utilizada para cambiar el fondo.
      */
     inner class StockViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtHilo: TextView = view.findViewById(R.id.txtVw_hiloID)
@@ -36,16 +40,20 @@ class AdaptadorStock(
         val filaLayout: View = view /* contenedor completo de la fila (para cambiar fondo) */
 
         init {
-            /* asigna el evento de pulsación larga a la fila */
+            /* asigna el evento de pulsación larga a la fila completa */
             view.setOnLongClickListener {
-                onLongClick(adapterPosition)
+                onEliminarClick(adapterPosition)
                 true
             }
         }
     }
 
     /**
-     * Crea un nuevo ViewHolder al inflar el layout correspondiente a una fila del RecyclerView.
+     * Infla el layout de cada fila y crea un [StockViewHolder].
+     *
+     * @param parent Grupo padre donde se añadirá la nueva vista.
+     * @param viewType Tipo de vista (solo uno en este adaptador).
+     * @return Un nuevo [StockViewHolder] con la vista inflada.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -54,10 +62,12 @@ class AdaptadorStock(
     }
 
     /**
-     * Asocia los datos de un hilo con la vista de su fila correspondiente.
+     * Vincula los datos de un [HiloStock] a los elementos de la fila.
+     * - Muestra el ID y el número de madejas.
+     * - Resalta la fila si su ID coincide con [hiloResaltado].
      *
-     * @param holder ViewHolder a poblar con datos.
-     * @param position Posición del elemento en la lista.
+     * @param holder ViewHolder que contiene las vistas a poblar.
+     * @param position Posición del elemento en la lista [items].
      */
     override fun onBindViewHolder(holder: StockViewHolder, position: Int) {
         val item = items[position]
@@ -73,15 +83,17 @@ class AdaptadorStock(
     }
 
     /**
-     * Devuelve el número total de elementos en la lista del adaptador.
+     * Devuelve el número total de elementos que maneja el adaptador.
+     *
+     * @return Tamaño de la lista [items].
      */
     override fun getItemCount(): Int = items.size
 
     /**
-     * Actualiza toda la lista del adaptador con una nueva lista de hilos.
-     * Por ahora se usa `notifyDataSetChanged()` de forma global.
+     * Reemplaza la lista completa de hilos mostrados por [nuevaLista].
+     * Notifica al adaptador para refrescar toda la vista.
      *
-     * @param nuevaLista Nueva lista de hilos a mostrar.
+     * @param nuevaLista Nueva lista de [HiloStock] a mostrar.
      */
     @SuppressLint("NotifyDataSetChanged")
     fun actualizarLista(nuevaLista: List<HiloStock>) {
@@ -90,23 +102,11 @@ class AdaptadorStock(
     }
 
     /**
-     * Actualiza un hilo específico en la lista, si existe, y notifica el cambio.
+     * Ajusta qué hilo debe mostrarse resaltado.
+     * Si [hiloId] es null, elimina cualquier resaltado previo.
+     * Notifica al adaptador para refrescar las filas afectadas.
      *
-     * @param hiloActualizado Hilo con nuevos datos que debe reemplazar al anterior.
-     */
-    fun actualizarHilo(hiloActualizado: HiloStock) {
-        val index = items.indexOfFirst { it.hiloId == hiloActualizado.hiloId }
-        if (index != -1) {
-            items[index] = hiloActualizado
-            notifyItemChanged(index)
-        }
-    }
-
-    /**
-     * Resalta visualmente un hilo específico en la tabla.
-     * Si es null, se elimina cualquier resaltado previo.
-     *
-     * @param hiloId ID del hilo a resaltar o null para eliminar resaltado.
+     * @param hiloId ID de hilo a resaltar, o null para ninguno.
      */
     @SuppressLint("NotifyDataSetChanged")
     fun resaltarHilo(hiloId: String?) {

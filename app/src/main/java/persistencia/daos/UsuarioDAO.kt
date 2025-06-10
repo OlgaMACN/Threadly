@@ -12,13 +12,13 @@ import persistencia.entidades.Usuario
  * DAO para la entidad [Usuario].
  *
  * Define las operaciones para insertar, actualizar, eliminar y consultar usuarios en la base de datos.
- * * @author Olga y Sandra Macías Aragón
+ *
+ * @author Olga y Sandra Macías Aragón
+ *
+ * @see Usuario
  */
 @Dao
 interface UsuarioDAO {
-    @Query("DELETE FROM usuario WHERE userId = :id")
-    suspend fun eliminarPorId(id: Int)
-
     /**
      * Inserta un nuevo usuario en la base de datos.
      * La operación aborta si ya existe un usuario con la misma clave primaria.
@@ -29,31 +29,30 @@ interface UsuarioDAO {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertar(usuario: Usuario): Long
 
+    /**
+     * Elimina un usuario dado su ID.
+     *
+     * @param id ID del usuario a eliminar.
+     */
+    @Query("DELETE FROM usuario WHERE userId = :id")
+    suspend fun eliminarPorId(id: Int)
+
+    /**
+     * Elimina un usuario dado su ID (alias de eliminarPorId).
+     *
+     * @param id ID del usuario a eliminar.
+     */
     @Query("DELETE FROM usuario WHERE userId = :id")
     suspend fun eliminarUsuarioPorId(id: Int)
 
-    @Update
-    suspend fun actualizarUsuario(usuario: Usuario)
-
-
+    /**
+     * Obtiene un usuario por su nombre de usuario.
+     *
+     * @param nombre Nombre de usuario (username).
+     * @return El [Usuario] correspondiente o null si no existe.
+     */
     @Query("SELECT * FROM usuario WHERE username = :nombre")
     suspend fun getPorNombre(nombre: String): Usuario?
-
-    /**
-     * Actualiza los datos de un usuario existente.
-     *
-     * @param usuario Objeto [Usuario] con datos actualizados.
-     */
-    @Update
-    suspend fun actualizar(usuario: Usuario)
-
-    /**
-     * Elimina un usuario de la base de datos.
-     *
-     * @param usuario Objeto [Usuario] a eliminar.
-     */
-    @Delete
-    suspend fun eliminar(usuario: Usuario)
 
     /**
      * Realiza la consulta para login validando usuario y contraseña.
@@ -83,6 +82,35 @@ interface UsuarioDAO {
     @Query("SELECT * FROM Usuario WHERE username = :nombre")
     suspend fun obtenerPorNombre(nombre: String): Usuario?
 
+    /**
+     * Obtiene la lista completa de usuarios registrados.
+     *
+     * @return Lista de todos los usuarios.
+     */
     @Query("SELECT * FROM Usuario")
     suspend fun obtenerTodos(): List<Usuario>
+
+    /**
+     * Actualiza los datos de un usuario existente.
+     *
+     * @param usuario Objeto [Usuario] con datos actualizados.
+     */
+    @Update
+    suspend fun actualizarUsuario(usuario: Usuario)
+
+    /**
+     * Actualiza los datos de un usuario existente (alias de actualizarUsuario).
+     *
+     * @param usuario Objeto [Usuario] con datos actualizados.
+     */
+    @Update
+    suspend fun actualizar(usuario: Usuario)
+
+    /**
+     * Elimina un usuario de la base de datos.
+     *
+     * @param usuario Objeto [Usuario] a eliminar.
+     */
+    @Delete
+    suspend fun eliminar(usuario: Usuario)
 }

@@ -12,6 +12,9 @@ import javax.xml.parsers.DocumentBuilderFactory
  * Esta función está pensada para importar un conjunto de códigos de hilos,
  * por ejemplo, para inicializar un stock vacío en base a un archivo de catálogo.
  *
+ * Utiliza el modelo DOM (Document Object Model) para cargar y navegar
+ * la estructura completa del XML en memoria y extraer los nodos `<codigo>`.
+ *
  * @param context El contexto de la aplicación, necesario para acceder a los recursos.
  * @param resourceId El ID del recurso XML ubicado en la carpeta `res/raw`.
  * @return Una lista mutable de [HiloStock] con los códigos leídos y cantidad 0.
@@ -29,7 +32,7 @@ import javax.xml.parsers.DocumentBuilderFactory
  * - Sólo se utiliza el contenido de la etiqueta `<codigo>`.
  * - Los códigos se transforman a mayúsculas automáticamente.
  *
- * * @author Olga y Sandra Macías Aragón
+ * @author Olga y Sandra Macías Aragón
  */
 fun LeerXMLCodigo(context: Context, resourceId: Int): MutableList<HiloStock> {
     val lista = mutableListOf<HiloStock>()
