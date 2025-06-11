@@ -65,7 +65,7 @@ class LoginUserExisteTest {
      * Verifica que las vistas se inicializan correctamente y tienen los IDs esperados.
      */
     @Test
-    fun `inicializarVistas should initialize all view components`() {
+    fun testInicializarVistas_OK() {
         scenario.onActivity { activity ->
             val usuarioEditText: EditText = activity.findViewById(R.id.edTxt_ingresarNombreUser)
             val contrasenaEditText: EditText = activity.findViewById(R.id.edTxt_ingresarConstrasenaUser)
@@ -82,7 +82,7 @@ class LoginUserExisteTest {
      * Verifica que el botón de ojo alterna la visibilidad de la contraseña y el ícono.
      */
     @Test
-    fun `configurarBotonOjo should toggle password visibility and eye icon`() {
+    fun testConfigurarBienOjo_OK() {
         scenario.onActivity { activity ->
             val contrasenaEditText: EditText = activity.findViewById(R.id.edTxt_ingresarConstrasenaUser)
             val eyeIcon: ImageView = activity.findViewById(R.id.imgVw_eye_closed)
@@ -112,7 +112,7 @@ class LoginUserExisteTest {
      * (por ejemplo, un Toast si los campos están vacíos).
      */
     @Test
-    fun `configurarBotonEntrar should trigger login attempt on click`() {
+    fun testConfigurarBotonEntrar_OK() {
         scenario.onActivity { activity ->
             val usuarioEditText: EditText = activity.findViewById(R.id.edTxt_ingresarNombreUser)
             val contrasenaEditText: EditText = activity.findViewById(R.id.edTxt_ingresarConstrasenaUser)
@@ -133,7 +133,7 @@ class LoginUserExisteTest {
      * Verifica que al hacer clic en el texto "Crear Cuenta", se inicia la actividad LoginUserNoExiste.
      */
     @Test
-    fun `configurarCrearCuenta should navigate to LoginUserNoExiste`() {
+    fun testConfigurarCrearCuenta_KO() {
         scenario.onActivity { activity ->
             val crearCuentaTextView: TextView = activity.findViewById(R.id.txtVw_crearCuenta)
 
@@ -152,7 +152,7 @@ class LoginUserExisteTest {
      * Cubre varios escenarios de validación y lógica de negocio.
      */
     @Test
-    fun `intentarIniciarSesion with empty fields should show toast and clear inputs`() {
+    fun testIntentarIniciarSesion_OK() {
         scenario.onActivity { activity ->
             val usuarioEditText: EditText = activity.findViewById(R.id.edTxt_ingresarNombreUser)
             val contrasenaEditText: EditText = activity.findViewById(R.id.edTxt_ingresarConstrasenaUser)
@@ -170,7 +170,7 @@ class LoginUserExisteTest {
     }
 
     @Test
-    fun `intentarIniciarSesion with long fields should show toast and clear inputs`() {
+    fun testIntentarIniciarSesion_KO() {
         scenario.onActivity { activity ->
             val usuarioEditText: EditText = activity.findViewById(R.id.edTxt_ingresarNombreUser)
             val contrasenaEditText: EditText = activity.findViewById(R.id.edTxt_ingresarConstrasenaUser)
@@ -188,7 +188,7 @@ class LoginUserExisteTest {
     }
 
     @Test
-    fun `intentarIniciarSesion with non-existent user should show toast`() {
+    fun testIntentarIniciarSesion_UserNoExiste() {
         scenario.onActivity { activity ->
             val usuarioEditText: EditText = activity.findViewById(R.id.edTxt_ingresarNombreUser)
             val contrasenaEditText: EditText = activity.findViewById(R.id.edTxt_ingresarConstrasenaUser)
@@ -214,7 +214,7 @@ class LoginUserExisteTest {
     }
 
     @Test
-    fun `intentarIniciarSesion with incorrect password should show toast`() {
+    fun testIntentarIniciarSesion_PwdIncorrecta() {
         scenario.onActivity { activity ->
             val usuarioEditText: EditText = activity.findViewById(R.id.edTxt_ingresarNombreUser)
             val contrasenaEditText: EditText = activity.findViewById(R.id.edTxt_ingresarConstrasenaUser)
@@ -243,7 +243,7 @@ class LoginUserExisteTest {
     }
 
     @Test
-    fun `intentarIniciarSesion with successful login should navigate to PantallaPrincipal`() {
+    fun testIntentarIniciarSesion() {
         scenario.onActivity { activity ->
             val usuarioEditText: EditText = activity.findViewById(R.id.edTxt_ingresarNombreUser)
             val contrasenaEditText: EditText = activity.findViewById(R.id.edTxt_ingresarConstrasenaUser)
