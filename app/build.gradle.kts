@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.kapt")
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -34,9 +35,23 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    dataBinding {
+        enable = true
+    }
+
+//    viewBinding {
+//        enable = true
+//    }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 dependencies {
+    implementation(libs.firebase.firestore)
     kapt(libs.androidx.room.compiler)
     implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.room.ktx)
@@ -52,7 +67,18 @@ dependencies {
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.room.common.jvm) /* dependencias de room */
     implementation(libs.androidx.room.runtime.android)
+    implementation(libs.androidx.hilt.work)
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.core)
+    testImplementation(libs.androidx.junit.v115)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation (libs.hamcrest.hamcrest)
+    testImplementation(libs.androidx.core.testing)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.core.ktx)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.fragment.testing)
+    debugImplementation(libs.androidx.fragment.testing.manifest)
 }
